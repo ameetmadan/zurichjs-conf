@@ -14,6 +14,14 @@ interface SitemapUrl {
   priority: string;
 }
 
+const escapeXml = (str: string): string =>
+  str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+
 const generateSitemap = (baseUrl: string): string => {
   const infoSlugs = getAllPageSlugs();
   const blogPosts = getAllPosts();
@@ -75,10 +83,10 @@ const generateSitemap = (baseUrl: string): string => {
   const urlElements = pages
     .map(
       (page) => `  <url>
-    <loc>${page.loc}</loc>
-    <lastmod>${page.lastmod}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
+    <loc>${escapeXml(page.loc)}</loc>
+    <lastmod>${escapeXml(page.lastmod)}</lastmod>
+    <changefreq>${escapeXml(page.changefreq)}</changefreq>
+    <priority>${escapeXml(page.priority)}</priority>
   </url>`
     )
     .join('\n');
