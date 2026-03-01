@@ -10,7 +10,12 @@ export function getAllSlugs(): string[] {
   return fs
     .readdirSync(BLOG_DIR)
     .filter((file) => file.endsWith('.mdx'))
-    .map((file) => file.replace(/\.mdx$/, ''));
+    .map((file) => file.replace(/\.mdx$/, ''))
+    .filter((slug) => {
+      const filePath = path.join(BLOG_DIR, `${slug}.mdx`);
+      const { data } = matter(fs.readFileSync(filePath, 'utf-8'));
+      return !data.draft;
+    });
 }
 
 export function getAllPosts(): BlogPostMeta[] {
@@ -27,11 +32,13 @@ export function getAllPosts(): BlogPostMeta[] {
     };
   });
 
-  return posts.sort(
-    (a, b) =>
-      new Date(b.frontmatter.date).getTime() -
-      new Date(a.frontmatter.date).getTime()
-  );
+  return posts
+    .filter((post) => !post.frontmatter.draft)
+    .sort(
+      (a, b) =>
+        new Date(b.frontmatter.date).getTime() -
+        new Date(a.frontmatter.date).getTime()
+    );
 }
 
 export function getPostBySlug(slug: string): BlogPost {
