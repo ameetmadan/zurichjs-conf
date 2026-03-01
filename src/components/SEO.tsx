@@ -130,6 +130,8 @@ export interface SEOProps {
   publishedTime?: string;
   /** Article modified date */
   modifiedTime?: string;
+  /** Author name (for meta name="author" and article:author) */
+  author?: string;
 }
 
 /**
@@ -334,6 +336,7 @@ export const SEO: React.FC<SEOProps> = ({
   keywords,
   publishedTime,
   modifiedTime,
+  author,
 }) => {
   // Build full title with site name
   const fullTitle = `${title} | ZurichJS Conf 2026`;
@@ -395,12 +398,18 @@ export const SEO: React.FC<SEOProps> = ({
       {/* Additional logo reference for better recognition */}
       <meta property="og:logo" content={`${BASE_URL}/images/logo/zurichjs-square.png`} />
 
+      {/* Author */}
+      {author && <meta name="author" content={author} />}
+
       {/* Article-specific OG tags */}
       {ogType === 'article' && publishedTime && (
         <meta property="article:published_time" content={publishedTime} />
       )}
       {ogType === 'article' && modifiedTime && (
         <meta property="article:modified_time" content={modifiedTime} />
+      )}
+      {ogType === 'article' && author && (
+        <meta property="article:author" content={author} />
       )}
 
       {/* Twitter Card Meta Tags */}

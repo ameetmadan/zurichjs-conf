@@ -15,6 +15,7 @@ import {
 } from '@/components/SEO';
 import { BlogPostHeader, mdxComponents, BlueskyComments } from '@/components/blog';
 import { getAllSlugs, getPostBySlug } from '@/lib/blog';
+import { getAuthor } from '@/lib/blog/authors';
 import type { BlogFrontmatter } from '@/lib/blog';
 
 interface BlogPostPageProps {
@@ -77,6 +78,8 @@ export default function BlogPostPage({
   slug,
   mdxSource,
 }: BlogPostPageProps) {
+  const author = getAuthor(frontmatter.author);
+
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: '/' },
     { name: 'Blog', url: '/blog' },
@@ -91,7 +94,8 @@ export default function BlogPostPage({
     datePublished: frontmatter.date,
     author: {
       '@type': 'Person',
-      name: frontmatter.author,
+      name: author.name,
+      ...(author.bluesky && { url: author.bluesky }),
     },
     publisher: {
       '@id': `${BASE_URL}/#organization`,
@@ -108,6 +112,7 @@ export default function BlogPostPage({
         canonical={`/blog/${slug}`}
         ogType="article"
         publishedTime={frontmatter.date}
+        author={author.name}
         keywords={frontmatter.tags?.join(', ')}
         jsonLd={[organizationSchema, breadcrumbSchema, blogPostingSchema]}
       />
