@@ -88,9 +88,9 @@ export default function BlogPage({ posts, tags }: BlogPageProps) {
                 variant="light"
                 className="mb-6 text-2xl font-bold"
               >
-                The Community Build
+                ZurichJS Blog
               </Heading>
-              <p className="text-sm text-brand-gray-medium leading-relaxed">
+              <p className="text-base text-brand-gray-medium leading-relaxed">
                 This Blog is an is an experiment and a space for thinking out
                 loud together. Not every post is a breakthrough or a new
                 invention. Instead, this blog captures the ideas, experiments,

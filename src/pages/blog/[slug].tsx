@@ -130,7 +130,7 @@ export default function BlogPostPage({
 
             <BlogPostHeader frontmatter={frontmatter} />
 
-            <article>
+            <article className="text-base">
               <MDXRemote {...mdxSource} components={mdxComponents} />
             </article>
 
