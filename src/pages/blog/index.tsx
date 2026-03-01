@@ -58,7 +58,7 @@ export default function BlogPage({ posts, tags }: BlogPageProps) {
     typeof router.query.tag === "string" ? router.query.tag : undefined;
 
   const filteredPosts = activeTag
-    ? posts.filter((post) => post.frontmatter.tags.includes(activeTag))
+    ? posts.filter((post) => post.frontmatter.tags?.includes(activeTag))
     : posts;
 
   const breadcrumbSchema = generateBreadcrumbSchema([

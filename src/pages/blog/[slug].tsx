@@ -97,7 +97,7 @@ export default function BlogPostPage({
       '@id': `${BASE_URL}/#organization`,
     },
     url: `${BASE_URL}/blog/${slug}`,
-    keywords: frontmatter.tags.join(', '),
+    keywords: frontmatter.tags?.join(', '),
   };
 
   return (
@@ -108,7 +108,7 @@ export default function BlogPostPage({
         canonical={`/blog/${slug}`}
         ogType="article"
         publishedTime={frontmatter.date}
-        keywords={frontmatter.tags.join(', ')}
+        keywords={frontmatter.tags?.join(', ')}
         jsonLd={[organizationSchema, breadcrumbSchema, blogPostingSchema]}
       />
       <main className="min-h-screen bg-white">

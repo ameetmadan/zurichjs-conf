@@ -3,7 +3,7 @@ export interface BlogFrontmatter {
   date: string;
   author: string;
   excerpt: string;
-  tags: string[];
+  tags?: string[];
   coverImage?: string;
   blueskyPostUri?: string;
 }

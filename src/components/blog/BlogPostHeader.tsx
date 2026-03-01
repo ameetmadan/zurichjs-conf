@@ -94,7 +94,7 @@ export function BlogPostHeader({ frontmatter }: BlogPostHeaderProps) {
           })}
         </span>
       </div>
-      {frontmatter.tags.length > 0 && (
+      {frontmatter.tags && frontmatter.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-4">
           {frontmatter.tags.map((tag) => (
             <Tag key={tag} label={tag} tone="neutral" className="bg-brand-blue text-brand-white" />
