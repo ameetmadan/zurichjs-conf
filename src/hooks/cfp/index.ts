@@ -39,8 +39,5 @@ export {
 // Bookmarks
 export { useBookmarks } from './useBookmarks';
 
-// Navigation
-export { useNextUnreviewed } from './useNextUnreviewed';
-
 // Types
 export type { ReviewerDashboardData, ReviewerSubmissionData } from './reviewer';

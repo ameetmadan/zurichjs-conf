@@ -4,7 +4,7 @@
  */
 
 import Link from 'next/link';
-import { Check, Eye, AlertCircle, SlidersHorizontal, HelpCircle, SkipForward, ArrowLeft } from 'lucide-react';
+import { Check, Eye, AlertCircle, SlidersHorizontal, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/atoms';
 import { SCORE_LABELS, SCORE_DESCRIPTIONS, ReviewScores, SubmissionStats } from './types';
 
@@ -20,6 +20,8 @@ interface ReviewFormProps {
   onPrivateNotesChange: (value: string) => void;
   onFeedbackChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  onSkipToNext?: () => void;
+  secondaryActionLabel?: string;
   onShowGuidelines?: () => void;
 }
 
@@ -39,6 +41,8 @@ export function ReviewForm({
   onPrivateNotesChange,
   onFeedbackChange,
   onSubmit,
+  onSkipToNext,
+  secondaryActionLabel = 'Skip This Talk',
   onShowGuidelines,
 }: ReviewFormProps) {
   const allScoresFilled = areAllScoresFilled(scores);
@@ -165,6 +169,18 @@ export function ReviewForm({
         >
           {hasExistingReview ? 'Update Review' : 'Submit Review'}
         </Button>
+
+        {onSkipToNext && (
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={isSubmitting}
+            onClick={onSkipToNext}
+            className="w-full rounded-xl"
+          >
+            {secondaryActionLabel}
+          </Button>
+        )}
       </form>
     </div>
   );
@@ -200,7 +216,6 @@ export function SuccessMessage({
               href={nextHref}
               className="w-full px-4 py-2.5 bg-brand-primary text-black font-semibold rounded-xl hover:bg-brand-primary-dark transition-colors inline-flex items-center justify-center gap-2"
             >
-              <SkipForward className="w-4 h-4" />
               Review Next
             </Link>
           )}
@@ -208,7 +223,6 @@ export function SuccessMessage({
             href={dashboardUrl}
             className="w-full px-4 py-2.5 text-brand-gray-light hover:text-white transition-colors inline-flex items-center justify-center gap-2 text-xs sm:text-sm"
           >
-            <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Link>
         </div>

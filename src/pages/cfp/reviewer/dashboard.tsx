@@ -11,6 +11,7 @@ import { Lock, AlertTriangle } from 'lucide-react';
 import { useQueryState, parseAsString, parseAsInteger, parseAsStringLiteral } from 'nuqs';
 import { SEO } from '@/components/SEO';
 import { Heading } from '@/components/atoms';
+import { saveReviewerNavigationSnapshot } from '@/lib/cfp/reviewer-navigation';
 import { supabase } from '@/lib/supabase/client';
 import { useCfpReviewerDashboard } from '@/hooks/useCfp';
 import { useBookmarks } from '@/hooks/cfp';
@@ -194,6 +195,13 @@ export default function ReviewerDashboard() {
   const dashboardParams = useMemo(() => {
     return searchParams?.toString() || '';
   }, [searchParams]);
+
+  useEffect(() => {
+    saveReviewerNavigationSnapshot({
+      dashboardParams,
+      submissionIds: filteredSubmissions.map((submission) => submission.id),
+    });
+  }, [dashboardParams, filteredSubmissions]);
 
   const hasActiveFilters = searchInput || typeFilter || levelFilter;
 
