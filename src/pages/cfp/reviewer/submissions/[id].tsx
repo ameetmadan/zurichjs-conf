@@ -290,7 +290,7 @@ export default function ReviewerSubmission() {
                     {submission.talk_level}
                   </span>
                 </div>
-                <Heading level="h1" className="text-2xl font-bold text-white mb-4">
+                <Heading level="h1" className="text-xl sm:text-2xl font-bold text-white mb-4">
                   {submission.title}
                 </Heading>
               </div>

@@ -88,11 +88,11 @@ export function Pagination({
     <div className={`mt-6 pt-6 border-t ${borderClass} flex flex-col sm:flex-row items-center justify-between gap-4`}>
       <div className="flex items-center gap-4">
         {showItemCount && totalItems > 0 && (
-          <span className={`text-sm ${s.text}`}>
-            Showing <span className="font-medium">{startItem}</span> -{' '}
+          <p className={`text-sm w-max ${s.text}`}>
+            <span className="hidden sm:block sm:ml-1">Showing </span><span className="font-medium">{startItem}</span> -{' '}
             <span className="font-medium">{endItem}</span> of{' '}
             <span className="font-medium">{totalItems}</span>
-          </span>
+          </p>
         )}
         {showPageSizeSelector && onPageSizeChange && (
           <div className="flex items-center gap-2">
@@ -105,7 +105,7 @@ export function Pagination({
               size="sm"
               anchor="top"
               compact
-              className="w-16"
+              className="min-w-[4ch]"
             />
           </div>
         )}

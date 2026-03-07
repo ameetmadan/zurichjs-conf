@@ -327,8 +327,8 @@ export default function ReviewerDashboard() {
 
           {/* Results Summary */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="flex items-center gap-4">
-              <Heading level="h1" className="text-2xl font-bold text-white">
+            <div className="flex items-center flex-wrap gap-4">
+              <Heading level="h1" className="text-xl sm:text-2xl font-bold text-white">
                 Submissions
               </Heading>
               <span className="text-brand-gray-light text-sm">

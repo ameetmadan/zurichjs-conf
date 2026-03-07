@@ -4,8 +4,8 @@
  */
 
 export const TYPE_LABELS: Record<string, string> = {
-  lightning: 'Lightning Talk (15 min)',
-  standard: 'Standard Talk (30 min)',
+  lightning: 'Lightning (15\')',
+  standard: 'Standard (30\')',
   workshop: 'Workshop',
 };
 
