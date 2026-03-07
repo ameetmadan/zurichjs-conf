@@ -53,16 +53,16 @@ export function StatsCards({ total, reviewed, pending }: StatsCardsProps) {
   return (
     <div className="space-y-4 mb-8">
       <div className="grid sm:grid-cols-3 gap-4">
-        <div className="bg-brand-gray-dark rounded-xl p-6">
-          <div className="text-3xl font-bold text-white mb-1">{total}</div>
+        <div className="bg-brand-gray-dark rounded-xl p-4 sm:p-6">
+          <div className="text-2xl sm:text-3xl font-bold text-white mb-1">{total}</div>
           <div className="text-brand-gray-light text-sm">Total Submissions</div>
         </div>
-        <div className="bg-brand-gray-dark rounded-xl p-6">
-          <div className="text-3xl font-bold text-green-400 mb-1">{reviewed}</div>
+        <div className="bg-brand-gray-dark rounded-xl p-4 sm:p-6">
+          <div className="text-2xl sm:text-3xl font-bold text-green-400 mb-1">{reviewed}</div>
           <div className="text-brand-gray-light text-sm">Reviewed by You</div>
         </div>
-        <div className="bg-brand-gray-dark rounded-xl p-6">
-          <div className="text-3xl font-bold text-brand-primary mb-1">{pending}</div>
+        <div className="bg-brand-gray-dark rounded-xl p-4 sm:p-6">
+          <div className="text-2xl sm:text-3xl font-bold text-brand-primary mb-1">{pending}</div>
           <div className="text-brand-gray-light text-sm">Pending Review</div>
         </div>
       </div>
@@ -70,8 +70,8 @@ export function StatsCards({ total, reviewed, pending }: StatsCardsProps) {
       {/* Progress Bar */}
       <div className="bg-brand-gray-dark rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-brand-gray-light">Your Progress</span>
-          <span className="text-sm font-medium text-white">
+          <span className="text-xs sm:text-sm text-brand-gray-light">Your Progress</span>
+          <span className="text-xs sm:text-sm font-medium text-white">
             {reviewed} of {total} reviewed ({percentage}%)
           </span>
         </div>
@@ -137,7 +137,7 @@ export function FilterBar({
               type="text"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Search by title, abstract, or tags..."
+              placeholder='Search submissions (e.g. react -"ai" "event sourcing")...'
               className="w-full bg-brand-gray-darkest text-white placeholder:text-brand-gray-medium rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
             />
             {searchQuery && (
@@ -277,7 +277,7 @@ export function SubmissionCard({ submission, isAnonymous = false, dashboardParam
   return (
     <Link
       href={href}
-      className={`block bg-brand-gray-dark rounded-xl p-6 hover:bg-brand-gray-dark/70 border-2 border-transparent hover:border-brand-gray-medium transition-all ${urgencyBorder}`}
+      className={`block bg-brand-gray-dark rounded-xl p-4 sm:p-6 hover:bg-brand-gray-dark/70 border-2 border-transparent hover:border-brand-gray-medium transition-all ${urgencyBorder}`}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="flex-1 min-w-0">
@@ -300,14 +300,14 @@ export function SubmissionCard({ submission, isAnonymous = false, dashboardParam
               </button>
             )}
             <StatusBadge status={submission.status} />
-            <span className="text-brand-gray-medium text-sm">
+            <span className="text-brand-gray-medium text-xs sm:text-sm">
               {TYPE_LABELS[submission.submission_type]}
             </span>
-            <span className="text-brand-gray-medium text-sm capitalize">
+            <span className="text-brand-gray-medium text-xs sm:text-sm capitalize">
               {submission.talk_level}
             </span>
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">
+          <h3 className="text-md sm:text-lg font-semibold text-white mb-2 line-clamp-2">
             {submission.title}
           </h3>
           <p className="text-brand-gray-light text-sm line-clamp-2 mb-3">
@@ -344,11 +344,11 @@ export function SubmissionCard({ submission, isAnonymous = false, dashboardParam
               </div>
             </div>
           ) : (
-            <div className="mb-2">
-              <span className="px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-full text-sm font-medium">
+            <div className="mb-2 flex gap-1">
+              <span className="px-2 sm:px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-full text-xs sm:text-sm font-medium">
                 Needs Review
               </span>
-              <div className="text-sm text-brand-gray-medium mt-1 ml-1 inline-flex items-center gap-1.5">
+              <div className="text-xs sm:text-sm text-brand-gray-medium mt-1 ml-1 inline-flex items-center gap-1.5">
                 <span className={`w-2 h-2 rounded-full ${urgencyDot}`} />
                 {submission.stats.review_count} review{submission.stats.review_count !== 1 ? 's' : ''}
               </div>

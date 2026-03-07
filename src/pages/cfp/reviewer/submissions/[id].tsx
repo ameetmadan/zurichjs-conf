@@ -3,15 +3,15 @@
  * View submission and submit/edit review
  */
 
-import React, { useReducer, useState, useEffect, useCallback } from 'react';
+import React, { useReducer, useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { SEO } from '@/components/SEO';
 import { Heading } from '@/components/atoms';
+import { getNextReviewerSubmissionId } from '@/lib/cfp/reviewer-navigation';
 import { supabase } from '@/lib/supabase/client';
 import { useCfpReviewerSubmission, useSubmitReview } from '@/hooks/useCfp';
-import { useNextUnreviewed } from '@/hooks/cfp';
 import { ReviewGuide } from '@/components/cfp/ReviewGuide';
 import { useEscapeKey, useSubmitShortcut } from '@/hooks/useKeyboardShortcuts';
 import {
@@ -82,6 +82,7 @@ function formReducer(state: FormState, action: FormAction): FormState {
 export default function ReviewerSubmission() {
   const router = useRouter();
   const { id, returnTo } = router.query;
+  const returnToParam = typeof returnTo === 'string' ? returnTo : '';
 
   const [authChecked, setAuthChecked] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
@@ -104,8 +105,8 @@ export default function ReviewerSubmission() {
   }, [router]);
 
   // Build dashboard URL with preserved filters
-  const dashboardUrl = returnTo
-    ? `/cfp/reviewer/dashboard?${decodeURIComponent(returnTo as string)}`
+  const dashboardUrl = returnToParam
+    ? `/cfp/reviewer/dashboard?${decodeURIComponent(returnToParam)}`
     : '/cfp/reviewer/dashboard';
 
   // Fetch submission data
@@ -114,8 +115,10 @@ export default function ReviewerSubmission() {
   // Submit review mutation
   const submitReviewMutation = useSubmitReview();
 
-  // Next unreviewed submission from cache
-  const nextSubmissionId = useNextUnreviewed(id as string);
+  const nextSubmissionId = useMemo(() => {
+    if (typeof id !== 'string') return null;
+    return getNextReviewerSubmissionId(id, returnToParam);
+  }, [id, returnToParam]);
 
   // Reset form synchronously when submission changes (avoids stale success state)
   const [lastResetId, setLastResetId] = useState<string | undefined>();
@@ -148,10 +151,18 @@ export default function ReviewerSubmission() {
   }, [submission, form.initialized]);
 
   const hasExistingReview = !!submission?.my_review;
+  const nextSubmissionHref = nextSubmissionId
+    ? `/cfp/reviewer/submissions/${nextSubmissionId}${returnToParam ? `?returnTo=${encodeURIComponent(returnToParam)}` : ''}`
+    : null;
 
   const handleScoreChange = (field: keyof ReviewScores, value: number) => {
     dispatch({ type: 'SET_SCORE', field, value });
   };
+
+  const handleSecondaryAction = useCallback(() => {
+    if (submitReviewMutation.isPending) return;
+    void router.push(nextSubmissionHref ?? dashboardUrl);
+  }, [dashboardUrl, nextSubmissionHref, router, submitReviewMutation.isPending]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -290,7 +301,7 @@ export default function ReviewerSubmission() {
                     {submission.talk_level}
                   </span>
                 </div>
-                <Heading level="h1" className="text-2xl font-bold text-white mb-4">
+                <Heading level="h1" className="text-xl sm:text-2xl font-bold text-white mb-4">
                   {submission.title}
                 </Heading>
               </div>
@@ -325,7 +336,7 @@ export default function ReviewerSubmission() {
                 <SuccessMessage
                   nextSubmissionId={nextSubmissionId}
                   dashboardUrl={dashboardUrl}
-                  returnTo={returnTo as string}
+                  returnTo={returnToParam || undefined}
                 />
               ) : reviewer.role !== 'readonly' ? (
                 <ReviewForm
@@ -340,6 +351,8 @@ export default function ReviewerSubmission() {
                   onPrivateNotesChange={(v) => dispatch({ type: 'SET_PRIVATE_NOTES', value: v })}
                   onFeedbackChange={(v) => dispatch({ type: 'SET_FEEDBACK', value: v })}
                   onSubmit={handleSubmit}
+                  onSkipToNext={handleSecondaryAction}
+                  secondaryActionLabel={nextSubmissionHref ? 'Skip This Talk' : 'Back to Dashboard'}
                   onShowGuidelines={() => setShowGuide(true)}
                 />
               ) : null}

@@ -11,6 +11,7 @@ import { Lock, AlertTriangle } from 'lucide-react';
 import { useQueryState, parseAsString, parseAsInteger, parseAsStringLiteral } from 'nuqs';
 import { SEO } from '@/components/SEO';
 import { Heading } from '@/components/atoms';
+import { saveReviewerNavigationSnapshot } from '@/lib/cfp/reviewer-navigation';
 import { supabase } from '@/lib/supabase/client';
 import { useCfpReviewerDashboard } from '@/hooks/useCfp';
 import { useBookmarks } from '@/hooks/cfp';
@@ -40,6 +41,8 @@ export default function ReviewerDashboard() {
     'q',
     parseAsString.withDefault('')
   );
+  const [searchInput, setSearchInput] = useState(searchQuery);
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
   const [typeFilter, setTypeFilter] = useQueryState(
     'type',
     parseAsString.withDefault('')
@@ -63,6 +66,25 @@ export default function ReviewerDashboard() {
     parseAsInteger.withDefault(10)
   );
 
+  useEffect(() => {
+    setSearchInput(searchQuery);
+    setDebouncedSearch(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+    }, 400);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchInput]);
+
+  useEffect(() => {
+    if (debouncedSearch === searchQuery) return;
+    void setSearchQuery(debouncedSearch || null);
+    void setCurrentPage(1);
+  }, [debouncedSearch, searchQuery, setSearchQuery, setCurrentPage]);
+
   // Check authentication on mount
   useEffect(() => {
     const checkAuth = async () => {
@@ -80,10 +102,7 @@ export default function ReviewerDashboard() {
   }, [router]);
 
   // Fetch dashboard data
-  const { reviewer, submissions, isLoading, error } = useCfpReviewerDashboard();
-
-  const reviewedCount = submissions.filter((s) => s.my_review).length;
-  const pendingCount = submissions.filter((s) => !s.my_review).length;
+  const { reviewer, submissions, stats, isLoading, error } = useCfpReviewerDashboard(debouncedSearch);
 
   // Bookmarks
   const { isBookmarked, toggleBookmark } = useBookmarks(reviewer?.email);
@@ -101,15 +120,6 @@ export default function ReviewerDashboard() {
       result = result.filter((s) => !s.my_review);
     } else if (reviewFilter === 'bookmarked') {
       result = result.filter((s) => isBookmarked(s.id));
-    }
-
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter((s) =>
-        s.title.toLowerCase().includes(query) ||
-        s.abstract.toLowerCase().includes(query) ||
-        s.tags?.some((t) => t.name.toLowerCase().includes(query))
-      );
     }
 
     if (typeFilter) {
@@ -142,7 +152,7 @@ export default function ReviewerDashboard() {
     });
 
     return result;
-  }, [submissions, reviewFilter, searchQuery, typeFilter, levelFilter, sortBy, isBookmarked]);
+  }, [submissions, reviewFilter, typeFilter, levelFilter, sortBy, isBookmarked]);
 
   // Pagination
   const totalPages = Math.ceil(filteredSubmissions.length / pageSize);
@@ -153,9 +163,8 @@ export default function ReviewerDashboard() {
 
   // Wrapper functions to reset page when filters change
   const handleSearchChange = useCallback((value: string) => {
-    setSearchQuery(value || null);
-    setCurrentPage(1);
-  }, [setSearchQuery, setCurrentPage]);
+    setSearchInput(value);
+  }, []);
 
   const handleReviewFilterChange = useCallback((value: ReviewFilterType) => {
     setReviewFilter(value);
@@ -187,9 +196,18 @@ export default function ReviewerDashboard() {
     return searchParams?.toString() || '';
   }, [searchParams]);
 
-  const hasActiveFilters = searchQuery || typeFilter || levelFilter;
+  useEffect(() => {
+    saveReviewerNavigationSnapshot({
+      dashboardParams,
+      submissionIds: filteredSubmissions.map((submission) => submission.id),
+    });
+  }, [dashboardParams, filteredSubmissions]);
+
+  const hasActiveFilters = searchInput || typeFilter || levelFilter;
 
   const clearAllFilters = async () => {
+    setSearchInput('');
+    setDebouncedSearch('');
     await Promise.all([
       setSearchQuery(null),
       setTypeFilter(null),
@@ -295,10 +313,10 @@ export default function ReviewerDashboard() {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 py-8">
-          <StatsCards total={submissions.length} reviewed={reviewedCount} pending={pendingCount} />
+          <StatsCards total={stats.total} reviewed={stats.reviewed} pending={stats.pending} />
 
-          <FilterBar
-            searchQuery={searchQuery}
+        <FilterBar
+          searchQuery={searchInput}
             reviewFilter={reviewFilter}
             typeFilter={typeFilter}
             levelFilter={levelFilter}
@@ -317,13 +335,13 @@ export default function ReviewerDashboard() {
 
           {/* Results Summary */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="flex items-center gap-4">
-              <Heading level="h1" className="text-2xl font-bold text-white">
+            <div className="flex items-center flex-wrap gap-4">
+              <Heading level="h1" className="text-xl sm:text-2xl font-bold text-white">
                 Submissions
               </Heading>
               <span className="text-brand-gray-light text-sm">
                 {filteredSubmissions.length} result{filteredSubmissions.length !== 1 ? 's' : ''}
-                {hasActiveFilters && ` (filtered from ${submissions.length})`}
+                {hasActiveFilters && ` (filtered from ${stats.total})`}
               </span>
             </div>
           </div>

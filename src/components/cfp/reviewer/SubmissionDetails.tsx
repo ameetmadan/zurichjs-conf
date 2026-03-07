@@ -90,14 +90,14 @@ export function SubmissionDetails({ submission, isAnonymous, isSuperAdmin = fals
 
       {/* Abstract */}
       <section>
-        <h2 className="text-lg font-bold text-white mb-4">Abstract</h2>
+        <h2 className="text-md sm:text-lg font-bold text-white mb-4">Abstract</h2>
         <p className="text-brand-gray-light whitespace-pre-wrap break-words">{submission.abstract}</p>
       </section>
 
       {/* Outline */}
       {submission.outline && (
         <section>
-          <h2 className="text-lg font-bold text-white mb-4">Outline</h2>
+          <h2 className="text-md sm:text-lg font-bold text-white mb-4">Outline</h2>
           <p className="text-brand-gray-light whitespace-pre-wrap break-words">{submission.outline}</p>
         </section>
       )}
@@ -105,7 +105,7 @@ export function SubmissionDetails({ submission, isAnonymous, isSuperAdmin = fals
       {/* Speaker Notes */}
       {submission.additional_notes && (
         <section>
-          <h2 className="text-lg font-bold text-white mb-4">Speaker notes</h2>
+          <h2 className="text-md sm:text-lg font-bold text-white mb-4">Speaker notes</h2>
           <p className="text-brand-gray-light whitespace-pre-wrap break-words">{submission.additional_notes}</p>
         </section>
       )}
@@ -113,15 +113,15 @@ export function SubmissionDetails({ submission, isAnonymous, isSuperAdmin = fals
       {/* Workshop Details */}
       {submission.submission_type === 'workshop' && (
         <section className="bg-brand-gray-dark rounded-2xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Workshop Details</h2>
+          <h2 className="text-md sm:text-lg font-semibold text-white mb-4">Workshop Details</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <h3 className="text-sm font-medium text-brand-gray-medium mb-1">Duration</h3>
+              <h3 className="text-xs sm:text-sm font-medium text-brand-gray-medium mb-1">Duration</h3>
               <p className="text-white">{submission.workshop_duration_hours} hours</p>
             </div>
             {submission.workshop_max_participants && (
               <div>
-                <h3 className="text-sm font-medium text-brand-gray-medium mb-1">Max Participants</h3>
+                <h3 className="text-xs sm:text-sm font-medium text-brand-gray-medium mb-1">Max Participants</h3>
                 <p className="text-white">{submission.workshop_max_participants}</p>
               </div>
             )}
@@ -132,10 +132,10 @@ export function SubmissionDetails({ submission, isAnonymous, isSuperAdmin = fals
       {/* Travel Info - hidden for anonymous reviews */}
       {!isAnonymous && (
         <section className="bg-brand-gray-dark rounded-2xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Travel</h2>
+          <h2 className="text-md sm:text-lg font-semibold text-white mb-4">Travel</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <h3 className="text-sm font-medium text-brand-gray-medium mb-1">Travel Assistance</h3>
+              <h3 className="text-xs sm:text-sm font-medium text-brand-gray-medium mb-1">Travel Assistance</h3>
               <p className="text-white">
                 {submission.speaker?.travel_assistance_required ? (
                   submission.speaker.assistance_type === 'both' ? 'Travel & Accommodation needed' :
@@ -147,13 +147,13 @@ export function SubmissionDetails({ submission, isAnonymous, isSuperAdmin = fals
             </div>
             {submission.speaker?.departure_airport && (
               <div>
-                <h3 className="text-sm font-medium text-brand-gray-medium mb-1">Departure Airport</h3>
+                <h3 className="text-xs sm:text-sm font-medium text-brand-gray-medium mb-1">Departure Airport</h3>
                 <p className="text-white">{submission.speaker.departure_airport}</p>
               </div>
             )}
             {submission.speaker?.special_requirements && (
               <div className="sm:col-span-2">
-                <h3 className="text-sm font-medium text-brand-gray-medium mb-1">Special Requirements</h3>
+                <h3 className="text-xs sm:text-sm font-medium text-brand-gray-medium mb-1">Special Requirements</h3>
                 <p className="text-white whitespace-pre-wrap">{submission.speaker.special_requirements}</p>
               </div>
             )}
@@ -164,10 +164,10 @@ export function SubmissionDetails({ submission, isAnonymous, isSuperAdmin = fals
       {/* Video/Slides Links - super admin only */}
       {isSuperAdmin && submission.previous_recording_url && (
         <section className="bg-brand-gray-dark rounded-2xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Speaker Resources</h2>
+          <h2 className="text-md sm:text-lg font-semibold text-white mb-4">Speaker Resources</h2>
           <div className="space-y-3">
             <div>
-              <h3 className="text-sm font-medium text-brand-gray-medium mb-1">Previous Recording</h3>
+              <h3 className="text-xs sm:text-sm font-medium text-brand-gray-medium mb-1">Previous Recording</h3>
               <a
                 href={submission.previous_recording_url}
                 target="_blank"
@@ -179,7 +179,7 @@ export function SubmissionDetails({ submission, isAnonymous, isSuperAdmin = fals
             </div>
             {submission.slides_url && (
               <div>
-                <h3 className="text-sm font-medium text-brand-gray-medium mb-1">Slides</h3>
+                <h3 className="text-xs sm:text-sm font-medium text-brand-gray-medium mb-1">Slides</h3>
                 <a
                   href={submission.slides_url}
                   target="_blank"
