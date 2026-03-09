@@ -365,15 +365,29 @@ function buildTopTags(
   tagJoins: Array<{ tag_id: string }>,
   tagNameMap: Map<string, string>
 ): CfpTagCount[] {
-  const counts = new Map<string, number>();
+  // Normalize casing: group by lowercase key, keep most frequent original form
+  const countsByKey = new Map<string, number>();
+  const nameForms = new Map<string, Map<string, number>>();
   for (const j of tagJoins) {
     const name = tagNameMap.get(j.tag_id);
-    if (name) {
-      counts.set(name, (counts.get(name) || 0) + 1);
-    }
+    if (!name) continue;
+    const key = name.toLowerCase().trim();
+    countsByKey.set(key, (countsByKey.get(key) || 0) + 1);
+    const forms = nameForms.get(key) || new Map<string, number>();
+    forms.set(name, (forms.get(name) || 0) + 1);
+    nameForms.set(key, forms);
   }
-  return [...counts.entries()]
-    .map(([name, count]) => ({ name, count }))
+  return [...countsByKey.entries()]
+    .map(([key, count]) => {
+      // Pick the most common casing variant
+      const forms = nameForms.get(key)!;
+      let bestName = key;
+      let bestFreq = 0;
+      for (const [form, freq] of forms) {
+        if (freq > bestFreq) { bestName = form; bestFreq = freq; }
+      }
+      return { name: bestName, count };
+    })
     .sort((a, b) => b.count - a.count)
     .slice(0, 15);
 }
