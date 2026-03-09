@@ -22,11 +22,11 @@ export function LogisticsSection({ logistics, totalSpeakers }: LogisticsSectionP
         <h3 className="text-lg font-semibold text-black">Travel &amp; Logistics</h3>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Assistance summary */}
         <div className="lg:col-span-1 space-y-4">
           <div className="rounded-xl border border-gray-200 bg-white p-4">
-            <div className="text-3xl font-bold text-black">{travelAssistanceNeeded}</div>
+            <div className="text-2xl sm:text-3xl font-bold text-black">{travelAssistanceNeeded}</div>
             <div className="text-sm text-gray-500">
               speakers need travel assistance ({travelPct}%)
             </div>

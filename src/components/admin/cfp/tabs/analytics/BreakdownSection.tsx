@@ -33,7 +33,7 @@ export function BreakdownSection({ byType, byLevel }: BreakdownSectionProps) {
   const totalByLevel = Object.values(byLevel).reduce((s, v) => s + v.total, 0);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
       {/* By Type */}
       <section>
         <div className="flex items-center gap-2 mb-4">
@@ -55,7 +55,7 @@ export function BreakdownSection({ byType, byLevel }: BreakdownSectionProps) {
                     </div>
                     <span className="text-2xl font-bold text-black">{data.total}</span>
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-gray-500">
                     <span>{pct}% of total</span>
                     <span className="text-green-600">{data.accepted} accepted ({acceptRate}%)</span>
                     <span>Avg score: {formatScore(data.avgScore)}</span>
@@ -92,7 +92,7 @@ export function BreakdownSection({ byType, byLevel }: BreakdownSectionProps) {
                     <span className={`font-medium ${config.color}`}>{config.label}</span>
                     <span className="text-2xl font-bold text-black">{data.total}</span>
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-gray-500">
                     <span>{pct}% of total</span>
                     <span className="text-green-600">{data.accepted} accepted ({acceptRate}%)</span>
                     <span>Avg score: {formatScore(data.avgScore)}</span>

@@ -32,7 +32,7 @@ export function DemographicsSection({ demographics }: DemographicsSectionProps) 
       </div>
 
       {/* Summary metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <MetricCard label="Total Speakers" value={totalSpeakers} />
         <MetricCard
           label="Profile Complete"
@@ -70,7 +70,7 @@ export function DemographicsSection({ demographics }: DemographicsSectionProps) 
                   <div key={country} className="flex items-center gap-3">
                     <span className="text-xs text-gray-400 w-4">{i + 1}.</span>
                     <span className="text-sm text-black flex-1 truncate">{country}</span>
-                    <div className="w-24 bg-gray-100 rounded-full h-2 overflow-hidden">
+                    <div className="hidden sm:block w-16 sm:w-24 bg-gray-100 rounded-full h-2 overflow-hidden">
                       <div
                         className="h-full bg-blue-300 rounded-full"
                         style={{ width: `${(count / maxCount) * 100}%` }}
@@ -100,7 +100,7 @@ export function DemographicsSection({ demographics }: DemographicsSectionProps) 
                   <div key={company} className="flex items-center gap-3">
                     <span className="text-xs text-gray-400 w-4">{i + 1}.</span>
                     <span className="text-sm text-black flex-1 truncate">{company}</span>
-                    <div className="w-24 bg-gray-100 rounded-full h-2 overflow-hidden">
+                    <div className="hidden sm:block w-16 sm:w-24 bg-gray-100 rounded-full h-2 overflow-hidden">
                       <div
                         className="h-full bg-purple-300 rounded-full"
                         style={{ width: `${(count / maxCount) * 100}%` }}
@@ -117,7 +117,7 @@ export function DemographicsSection({ demographics }: DemographicsSectionProps) 
 
       {/* Profile completeness bar */}
       <div className="mt-6 pt-4 border-t border-gray-100">
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
           <span className="text-sm text-gray-600">Profile Completeness</span>
           <span className="text-sm font-medium text-black">{profileComplete} complete / {profileIncomplete} incomplete</span>
         </div>

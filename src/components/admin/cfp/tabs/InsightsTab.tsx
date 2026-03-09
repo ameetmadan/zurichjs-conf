@@ -93,7 +93,7 @@ export function InsightsTab({ insights, stats, isLoading }: InsightsTabProps) {
           {alerts.map((alert, i) => (
             <div
               key={i}
-              className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm ${
+              className={`flex items-start sm:items-center gap-2 sm:gap-3 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-sm ${
                 alert.level === 'warning'
                   ? 'bg-amber-50 text-amber-800 border border-amber-200'
                   : alert.level === 'success'
@@ -119,15 +119,15 @@ export function InsightsTab({ insights, stats, isLoading }: InsightsTabProps) {
         <h3 className="text-lg font-semibold text-black mb-4">Decision Readiness</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="rounded-xl border border-gray-200 bg-white p-4 text-center">
-            <div className="text-3xl font-bold text-black">{totalAnalyzed}</div>
+            <div className="text-2xl sm:text-3xl font-bold text-black">{totalAnalyzed}</div>
             <div className="text-sm text-gray-500">Total analyzed</div>
           </div>
           <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-center">
-            <div className="text-3xl font-bold text-green-700">{readyToDecide}</div>
+            <div className="text-2xl sm:text-3xl font-bold text-green-700">{readyToDecide}</div>
             <div className="text-sm text-green-600">Ready for decision</div>
           </div>
           <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-center">
-            <div className="text-3xl font-bold text-amber-700">{needsWork}</div>
+            <div className="text-2xl sm:text-3xl font-bold text-amber-700">{needsWork}</div>
             <div className="text-sm text-amber-600">Needs more data</div>
           </div>
         </div>
@@ -149,7 +149,7 @@ export function InsightsTab({ insights, stats, isLoading }: InsightsTabProps) {
             })}
           </div>
         )}
-        <div className="flex flex-wrap gap-4 mt-2 text-xs text-gray-500">
+        <div className="flex flex-wrap gap-2 sm:gap-4 mt-2 text-xs text-gray-500">
           {Object.entries(STATUS_COLORS).map(([status, colors]) => (
             <div key={status} className="flex items-center gap-1.5">
               <div className={`w-3 h-3 rounded-full ${colors.barColor}`} />
@@ -175,7 +175,7 @@ export function InsightsTab({ insights, stats, isLoading }: InsightsTabProps) {
                 className={`rounded-xl p-4 border ${colors.bg} ${colors.border}`}
               >
                 <div className="flex items-baseline justify-between">
-                  <div className="text-3xl font-bold text-black">{count}</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-black">{count}</div>
                   <div className="text-sm text-gray-400">{pct}%</div>
                 </div>
                 <div className={`text-sm font-medium ${colors.text} mt-1`}>
@@ -202,7 +202,7 @@ export function InsightsTab({ insights, stats, isLoading }: InsightsTabProps) {
                 key={bucket}
                 className="rounded-xl p-4 border border-gray-200 bg-white"
               >
-                <div className="text-3xl font-bold text-black mb-1">{count}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-black mb-1">{count}</div>
                 <div className="text-sm font-medium text-gray-600 mb-2">
                   {SCORE_BUCKET_LABELS[bucket] || bucket}
                 </div>
@@ -233,7 +233,7 @@ export function InsightsTab({ insights, stats, isLoading }: InsightsTabProps) {
                 key={bucket}
                 className="rounded-xl p-4 border border-gray-200 bg-white"
               >
-                <div className="text-3xl font-bold text-black mb-1">{count}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-black mb-1">{count}</div>
                 <div className="text-sm font-medium text-gray-600 mb-2">
                   {COVERAGE_BUCKET_LABELS[bucket] || bucket}
                 </div>
@@ -251,7 +251,7 @@ export function InsightsTab({ insights, stats, isLoading }: InsightsTabProps) {
 
       {/* Summary */}
       <section className="pt-4 border-t border-gray-200">
-        <div className="flex flex-wrap gap-6 text-sm text-gray-600">
+        <div className="flex flex-wrap gap-3 sm:gap-6 text-sm text-gray-600">
           <div>
             <span className="font-medium text-black">Total submissions analyzed:</span>{' '}
             {totalAnalyzed}

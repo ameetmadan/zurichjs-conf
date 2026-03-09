@@ -25,7 +25,7 @@ export function ReviewActivitySection({ reviewActivity, timeline }: ReviewActivi
       </div>
 
       {/* Summary metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <div className="rounded-xl border border-gray-200 bg-white p-4">
           <div className="text-2xl font-bold text-black">{totalReviews}</div>
           <div className="text-xs text-gray-500">Total reviews</div>
@@ -46,7 +46,7 @@ export function ReviewActivitySection({ reviewActivity, timeline }: ReviewActivi
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Score distribution */}
         <div>
           <h4 className="text-sm font-semibold text-black mb-3">Score Distribution</h4>
@@ -73,7 +73,7 @@ export function ReviewActivitySection({ reviewActivity, timeline }: ReviewActivi
             <Clock className="w-4 h-4 text-gray-500" />
             <h4 className="text-sm font-semibold text-black">Reviews / Day (Last 30 Days)</h4>
           </div>
-          <div className="flex items-end gap-px h-24">
+          <div className="flex items-end gap-px h-16 sm:h-24">
             {reviewsPerDay.map(({ date, count }) => (
               <div
                 key={date}
@@ -94,7 +94,7 @@ export function ReviewActivitySection({ reviewActivity, timeline }: ReviewActivi
       {timeline.length > 0 && (
         <div className="mt-8">
           <h4 className="text-sm font-semibold text-black mb-3">Submission Timeline (Cumulative)</h4>
-          <div className="flex items-end gap-px h-20">
+          <div className="flex items-end gap-px h-16 sm:h-20">
             {timeline.map(({ date, cumulative }) => {
               const maxCumulative = timeline[timeline.length - 1]?.cumulative || 1;
               return (
