@@ -3,7 +3,8 @@
  * Popular tags across submissions
  */
 
-import { Tag } from 'lucide-react';
+import { Tag, Info } from 'lucide-react';
+import { Tooltip } from '@/components/atoms';
 import type { CfpTagCount } from '@/lib/types/cfp-analytics';
 
 interface TagsSectionProps {
@@ -20,6 +21,9 @@ export function TagsSection({ topTags }: TagsSectionProps) {
       <div className="flex items-center gap-2 mb-4">
         <Tag className="w-5 h-5 text-gray-600" />
         <h3 className="text-lg font-semibold text-black">Popular Topics</h3>
+        <Tooltip content="Most frequently tagged topics across all submissions — larger tags have more submissions.">
+          <Info className="w-4 h-4 text-gray-400 cursor-help" />
+        </Tooltip>
       </div>
       <div className="flex flex-wrap gap-2">
         {topTags.map(({ name, count }) => {

@@ -3,7 +3,8 @@
  * Visual funnel showing submission flow through statuses
  */
 
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Info } from 'lucide-react';
+import { Tooltip } from '@/components/atoms';
 import type { CfpFunnelData } from '@/lib/types/cfp-analytics';
 
 interface FunnelSectionProps {
@@ -32,7 +33,12 @@ export function FunnelSection({ funnel }: FunnelSectionProps) {
 
   return (
     <section>
-      <h3 className="text-lg font-semibold text-black mb-4">Submission Funnel</h3>
+      <div className="flex items-center gap-2 mb-4">
+        <h3 className="text-lg font-semibold text-black">Submission Funnel</h3>
+        <Tooltip content="Tracks how submissions progress through each stage, from draft to final decision.">
+          <Info className="w-4 h-4 text-gray-400 cursor-help" />
+        </Tooltip>
+      </div>
 
       {/* Main funnel flow - horizontal on desktop */}
       <div className="hidden lg:flex items-end gap-2 mb-6">

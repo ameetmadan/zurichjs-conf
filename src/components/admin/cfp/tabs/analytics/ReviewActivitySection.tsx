@@ -4,6 +4,7 @@
  */
 
 import { BarChart3, Clock, Info } from 'lucide-react';
+import { Tooltip } from '@/components/atoms';
 import type { CfpReviewActivity, CfpTimelineEntry } from '@/lib/types/cfp-analytics';
 
 interface ReviewActivitySectionProps {
@@ -22,6 +23,9 @@ export function ReviewActivitySection({ reviewActivity, timeline }: ReviewActivi
       <div className="flex items-center gap-2 mb-4">
         <BarChart3 className="w-5 h-5 text-gray-600" />
         <h3 className="text-lg font-semibold text-black">Review Activity</h3>
+        <Tooltip content="How active reviewers are — score distribution, reviews per day, and coverage metrics.">
+          <Info className="w-4 h-4 text-gray-400 cursor-help" />
+        </Tooltip>
       </div>
 
       {/* Summary metrics */}
@@ -95,13 +99,9 @@ export function ReviewActivitySection({ reviewActivity, timeline }: ReviewActivi
         <div className="mt-8">
           <div className="flex items-center gap-1.5 mb-3">
             <h4 className="text-sm font-semibold text-black">Submission Timeline (Cumulative)</h4>
-            <div className="relative group">
+            <Tooltip content="Each bar shows the total number of submissions received up to that date. Rising bars indicate new submissions; flat sections mean quiet periods.">
               <Info className="w-3.5 h-3.5 text-gray-400 cursor-help" />
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10 w-64 rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-lg">
-                Each bar shows the total number of submissions received up to that date. Rising bars indicate new submissions coming in; flat sections mean quiet periods.
-                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
-              </div>
-            </div>
+            </Tooltip>
           </div>
           <div className="flex items-end gap-px h-16 sm:h-20">
             {timeline.map(({ date, cumulative }) => {

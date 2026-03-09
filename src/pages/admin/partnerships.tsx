@@ -3,11 +3,14 @@
  * Manage partnerships, coupons, vouchers, and tracking
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search } from 'lucide-react';
 import AdminHeader from '@/components/admin/AdminHeader';
+import { AdminLoginForm } from '@/components/admin/AdminLoginForm';
+import { AdminLoadingScreen } from '@/components/admin/AdminLoadingScreen';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import {
   Partnership,
   PartnershipType,
@@ -33,9 +36,8 @@ import {
 } from '@/components/admin/partnerships';
 
 export default function PartnershipsDashboard() {
-  const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
   const queryClient = useQueryClient();
+  const { isAuthenticated, isLoading: isAuthLoading, logout } = useAdminAuth();
 
   // Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,18 +50,6 @@ export default function PartnershipsDashboard() {
   const [detailedPartnership, setDetailedPartnership] = useState<PartnershipWithDetails | null>(null);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [emailPartnership, setEmailPartnership] = useState<Partnership | null>(null);
-
-  // Auth check
-  const { data: isAuthenticated, isLoading: isAuthLoading } = useQuery({
-    queryKey: ['admin', 'auth'],
-    queryFn: async () => {
-      const res = await fetch('/api/admin/verify');
-      return res.ok;
-    },
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
 
   // Queries
   const { data: partnershipsData, isLoading: isLoadingPartnerships } = useQuery({
@@ -102,82 +92,14 @@ export default function PartnershipsDashboard() {
     setEmailPartnership(null);
   });
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError('');
-    try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
-      if (response.ok) {
-        setPassword('');
-        queryClient.invalidateQueries({ queryKey: ['admin', 'auth'] });
-        queryClient.invalidateQueries({ queryKey: partnershipQueryKeys.all });
-      } else {
-        setLoginError('Invalid password');
-      }
-    } catch {
-      setLoginError('Login failed. Please try again.');
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/admin/logout', { method: 'POST' });
-      queryClient.clear();
-      window.location.reload();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
-
-  if (isAuthLoading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center text-black">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-[#F1E271] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="mt-4">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-8 text-black">
-        <Head><title>Admin Login | ZurichJS Conference</title></Head>
-        <div className="max-w-sm w-full bg-white rounded-lg shadow-md p-5 sm:p-6">
-          <div className="text-center mb-5 sm:mb-6">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#F1E271] flex items-center justify-center mx-auto mb-3">
-              <span className="text-lg sm:text-xl font-bold">Z</span>
-            </div>
-            <h1 className="text-lg sm:text-xl font-bold">Admin Login</h1>
-          </div>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin password"
-              className="w-full px-4 py-2.5 sm:py-2 border rounded-lg text-black placeholder-gray-500 focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271]"
-            />
-            {loginError && <p className="text-red-500 text-sm">{loginError}</p>}
-            <button type="submit" className="w-full bg-[#F1E271] text-black font-medium py-2.5 sm:py-2 rounded-lg hover:bg-[#E5D665]">
-              Login
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
+  if (isAuthLoading) return <AdminLoadingScreen />;
+  if (!isAuthenticated) return <AdminLoginForm title="Partnerships" />;
 
   return (
-    <div className="min-h-screen bg-gray-100 text-black">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-black">
       <Head><title>Partnerships | ZurichJS Admin</title></Head>
 
-      <AdminHeader title="Partnerships" subtitle="Manage partners, coupons, and tracking" onLogout={handleLogout} />
+      <AdminHeader title="Partnerships" subtitle="Manage partners, coupons, and tracking" onLogout={logout} />
 
       <main className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
         <StatsCards

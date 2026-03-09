@@ -3,7 +3,8 @@
  * Speaker demographics, geography, and company distribution
  */
 
-import { Users, MapPin, Building2, Handshake } from 'lucide-react';
+import { Users, MapPin, Building2, Handshake, Info } from 'lucide-react';
+import { Tooltip } from '@/components/atoms';
 import type { CfpDemographics } from '@/lib/types/cfp-analytics';
 
 interface DemographicsSectionProps {
@@ -29,6 +30,9 @@ export function DemographicsSection({ demographics }: DemographicsSectionProps) 
       <div className="flex items-center gap-2 mb-4">
         <Users className="w-5 h-5 text-gray-600" />
         <h3 className="text-lg font-semibold text-black">Speaker Demographics</h3>
+        <Tooltip content="Geographic and company distribution of speakers, plus profile completion rates.">
+          <Info className="w-4 h-4 text-gray-400 cursor-help" />
+        </Tooltip>
       </div>
 
       {/* Summary metrics */}

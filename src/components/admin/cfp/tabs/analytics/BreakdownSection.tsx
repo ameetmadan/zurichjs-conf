@@ -3,7 +3,8 @@
  * Submission breakdowns by type and level with acceptance rates
  */
 
-import { Mic, GraduationCap } from 'lucide-react';
+import { Mic, GraduationCap, Info } from 'lucide-react';
+import { Tooltip } from '@/components/atoms';
 import type { CfpTypeBreakdown, CfpLevelBreakdown } from '@/lib/types/cfp-analytics';
 
 interface BreakdownSectionProps {
@@ -39,6 +40,9 @@ export function BreakdownSection({ byType, byLevel }: BreakdownSectionProps) {
         <div className="flex items-center gap-2 mb-4">
           <Mic className="w-5 h-5 text-gray-600" />
           <h3 className="text-lg font-semibold text-black">By Talk Type</h3>
+          <Tooltip content="Breakdown of submissions and acceptance rates by talk format (lightning, standard, workshop).">
+            <Info className="w-4 h-4 text-gray-400 cursor-help" />
+          </Tooltip>
         </div>
         <div className="space-y-3">
           {(Object.entries(byType) as Array<[string, { total: number; accepted: number; avgScore: number | null }]>).map(
@@ -79,6 +83,9 @@ export function BreakdownSection({ byType, byLevel }: BreakdownSectionProps) {
         <div className="flex items-center gap-2 mb-4">
           <GraduationCap className="w-5 h-5 text-gray-600" />
           <h3 className="text-lg font-semibold text-black">By Talk Level</h3>
+          <Tooltip content="Breakdown by audience level — shows acceptance rate and average review score per level.">
+            <Info className="w-4 h-4 text-gray-400 cursor-help" />
+          </Tooltip>
         </div>
         <div className="space-y-3">
           {(Object.entries(byLevel) as Array<[string, { total: number; accepted: number; avgScore: number | null }]>).map(

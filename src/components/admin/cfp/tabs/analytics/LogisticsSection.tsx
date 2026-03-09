@@ -3,7 +3,8 @@
  * Travel assistance, airports, and special requirements
  */
 
-import { Plane, Hotel, AlertCircle } from 'lucide-react';
+import { Plane, Hotel, AlertCircle, Info } from 'lucide-react';
+import { Tooltip } from '@/components/atoms';
 import type { CfpLogistics } from '@/lib/types/cfp-analytics';
 
 interface LogisticsSectionProps {
@@ -20,6 +21,9 @@ export function LogisticsSection({ logistics, totalSpeakers }: LogisticsSectionP
       <div className="flex items-center gap-2 mb-4">
         <Plane className="w-5 h-5 text-gray-600" />
         <h3 className="text-lg font-semibold text-black">Travel &amp; Logistics</h3>
+        <Tooltip content="Travel assistance needs, top departure airports, and special requirements from speakers.">
+          <Info className="w-4 h-4 text-gray-400 cursor-help" />
+        </Tooltip>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">

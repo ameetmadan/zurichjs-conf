@@ -20,4 +20,3 @@ export { SpeakerAvatar } from './SpeakerAvatar';
 // Layout components
 export { StatsCards } from './StatsCards';
 export { TabNavigation } from './TabNavigation';
-export { CfpLoginForm } from './CfpLoginForm';

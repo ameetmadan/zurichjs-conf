@@ -8,6 +8,10 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AdminHeader from '@/components/admin/AdminHeader';
+import { AdminLoginForm } from '@/components/admin/AdminLoginForm';
+import { AdminLoadingScreen } from '@/components/admin/AdminLoadingScreen';
+import { AdminTabBar, type AdminTab } from '@/components/admin/AdminTabBar';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/contexts/ToastContext';
 import {
   OverviewTab,
@@ -26,10 +30,18 @@ import {
 
 const ITEMS_PER_PAGE = 10;
 
+const TRAVEL_TABS: AdminTab<TabType>[] = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'speakers', label: 'Speakers' },
+  { id: 'flights', label: 'Flights' },
+  { id: 'reimbursements', label: 'Reimbursements' },
+];
+
 export default function AdminTravelPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { isAuthenticated, isLoading: isAuthLoading, logout } = useAdminAuth();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [reimbursementFilter, setReimbursementFilter] = useState<CfpReimbursementStatus | 'all'>('pending');
   const [flightDirection, setFlightDirection] = useState<'all' | 'inbound' | 'outbound'>('all');
@@ -38,18 +50,6 @@ export default function AdminTravelPage() {
   const [speakersPage, setSpeakersPage] = useState(1);
   const [flightsPage, setFlightsPage] = useState(1);
   const [reimbursementsPage, setReimbursementsPage] = useState(1);
-
-  // Auth check
-  const { data: isAuthenticated, isLoading: isAuthLoading } = useQuery({
-    queryKey: ['admin', 'auth'],
-    queryFn: async () => {
-      const res = await fetch('/api/admin/verify');
-      return res.ok;
-    },
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
 
   // Data queries
   const { data: stats, isLoading: isLoadingStats } = useQuery({
@@ -131,28 +131,8 @@ export default function AdminTravelPage() {
   useEffect(() => setFlightsPage(1), [flightDirection]);
   useEffect(() => setReimbursementsPage(1), [reimbursementFilter]);
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/admin/logout', { method: 'POST' });
-      queryClient.clear();
-      router.push('/admin');
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
-  };
-
-  if (isAuthLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-      </div>
-    );
-  }
-
-  if (isAuthenticated === false) {
-    router.push('/admin');
-    return null;
-  }
+  if (isAuthLoading) return <AdminLoadingScreen />;
+  if (!isAuthenticated) return <AdminLoginForm title="Travel Management" />;
 
   return (
     <>
@@ -160,28 +140,13 @@ export default function AdminTravelPage() {
         <title>Travel Management | Admin - ZurichJS</title>
       </Head>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <AdminHeader title="Travel Management" subtitle="Speaker travel & reimbursements" onLogout={handleLogout} />
+        <AdminHeader title="Travel Management" subtitle="Speaker travel & reimbursements" onLogout={logout} />
 
-        {/* Tabs */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-1 inline-flex space-x-1">
-            {(['overview', 'speakers', 'flights', 'reimbursements'] as TabType[]).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`${
-                  activeTab === tab
-                    ? 'bg-[#F1E271] text-black shadow-sm'
-                    : 'text-gray-600 hover:text-black hover:bg-gray-50'
-                } px-4 sm:px-6 py-2.5 rounded-md font-medium text-sm transition-all cursor-pointer capitalize`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+          <AdminTabBar tabs={TRAVEL_TABS} activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
           {activeTab === 'overview' && <OverviewTab stats={stats} isLoading={isLoadingStats} onNavigate={setActiveTab} />}
 
           {activeTab === 'speakers' && (
