@@ -71,28 +71,46 @@ export function LogisticsSection({ logistics, totalSpeakers }: LogisticsSectionP
             <p className="text-sm text-gray-400">No airport data available</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {topAirports.map(({ airport, count }) => {
-                const maxCount = topAirports[0]?.count || 1;
-                const barWidth = (count / maxCount) * 100;
-                return (
-                  <div key={airport} className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2">
-                    <span className="text-sm font-mono font-semibold text-black w-12">{airport}</span>
-                    <div className="flex-1 bg-white rounded-full h-2 overflow-hidden">
-                      <div
-                        className="h-full bg-blue-300 rounded-full"
-                        style={{ width: `${barWidth}%` }}
-                      />
-                    </div>
-                    <span className="text-sm font-medium text-black w-6 text-right">{count}</span>
-                  </div>
-                );
-              })}
+              {topAirports.map(({ airport, count }) => (
+                <div key={airport} className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5">
+                  <span className="inline-flex items-center rounded-md bg-blue-100 px-2.5 py-0.5 text-xs font-mono font-bold text-blue-800 border border-blue-200 flex-shrink-0">
+                    {airportCode(airport)}
+                  </span>
+                  <span className="text-sm text-gray-600 flex-1 truncate">{airportLabel(airport)}</span>
+                  <span className="text-sm font-semibold text-black tabular-nums">{count}</span>
+                </div>
+              ))}
             </div>
           )}
         </div>
       </div>
     </section>
   );
+}
+
+/** Parse "AMS - AMSTERDAM, NETHERLANDS" into { code: "AMS", label: "Amsterdam, Netherlands" } */
+function parseAirport(raw: string): { code: string; label: string } {
+  const dashIdx = raw.indexOf(' - ');
+  if (dashIdx > 0) {
+    const code = raw.slice(0, dashIdx).trim();
+    const rest = raw.slice(dashIdx + 3).trim();
+    // Title-case the label
+    const label = rest
+      .toLowerCase()
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+    return { code, label };
+  }
+  return { code: raw, label: '' };
+}
+
+function airportLabel(raw: string): string {
+  const { label } = parseAirport(raw);
+  return label;
+}
+
+function airportCode(raw: string): string {
+  const { code } = parseAirport(raw);
+  return code;
 }
 
 function AssistanceRow({
