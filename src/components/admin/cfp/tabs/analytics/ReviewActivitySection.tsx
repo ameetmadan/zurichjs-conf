@@ -3,7 +3,7 @@
  * Review metrics, score distribution, and activity timeline
  */
 
-import { BarChart3, Clock } from 'lucide-react';
+import { BarChart3, Clock, Info } from 'lucide-react';
 import type { CfpReviewActivity, CfpTimelineEntry } from '@/lib/types/cfp-analytics';
 
 interface ReviewActivitySectionProps {
@@ -93,7 +93,16 @@ export function ReviewActivitySection({ reviewActivity, timeline }: ReviewActivi
       {/* Submission timeline */}
       {timeline.length > 0 && (
         <div className="mt-8">
-          <h4 className="text-sm font-semibold text-black mb-3">Submission Timeline (Cumulative)</h4>
+          <div className="flex items-center gap-1.5 mb-3">
+            <h4 className="text-sm font-semibold text-black">Submission Timeline (Cumulative)</h4>
+            <div className="relative group">
+              <Info className="w-3.5 h-3.5 text-gray-400 cursor-help" />
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10 w-64 rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-lg">
+                Each bar shows the total number of submissions received up to that date. Rising bars indicate new submissions coming in; flat sections mean quiet periods.
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+              </div>
+            </div>
+          </div>
           <div className="flex items-end gap-px h-16 sm:h-20">
             {timeline.map(({ date, cumulative }) => {
               const maxCumulative = timeline[timeline.length - 1]?.cumulative || 1;
