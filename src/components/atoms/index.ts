@@ -23,6 +23,7 @@ export { Disclosure, DisclosureGroup, ControlledDisclosure } from './Disclosure'
 export { SearchableSelect } from './SearchableSelect';
 export { AirportInput } from './AirportInput';
 export { Pagination } from './Pagination';
+export { Tooltip } from './Tooltip';
 
 export type { LogoProps } from './Logo';
 export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';

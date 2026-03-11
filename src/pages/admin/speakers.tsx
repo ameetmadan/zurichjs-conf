@@ -4,12 +4,15 @@
  * Separate from CFP - this is for speakers who have been accepted
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
 import AdminHeader from '@/components/admin/AdminHeader';
+import { AdminLoginForm } from '@/components/admin/AdminLoginForm';
+import { AdminLoadingScreen } from '@/components/admin/AdminLoadingScreen';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import {
   SpeakerWithSessions,
   AddSpeakerModal,
@@ -18,7 +21,6 @@ import {
   SpeakerCard,
 } from '@/components/admin/speakers';
 
-// Fetch speakers with their sessions (now returned in single request)
 async function fetchSpeakers(): Promise<{ speakers: SpeakerWithSessions[] }> {
   const res = await fetch('/api/admin/cfp/speakers');
   if (!res.ok) throw new Error('Failed to fetch speakers');
@@ -26,43 +28,20 @@ async function fetchSpeakers(): Promise<{ speakers: SpeakerWithSessions[] }> {
 }
 
 export default function SpeakersDashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddSpeaker, setShowAddSpeaker] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState<SpeakerWithSessions | null>(null);
   const [showAddSession, setShowAddSession] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { isAuthenticated, isLoading: isAuthLoading, logout } = useAdminAuth();
 
-  // Check auth status using dedicated verify endpoint
-  const { data: isAuthenticatedData, isLoading: isAuthLoading } = useQuery({
-    queryKey: ['admin', 'auth'],
-    queryFn: async () => {
-      const res = await fetch('/api/admin/verify');
-      return res.ok;
-    },
-    retry: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
-  });
-
-  // Sync with local state for login form
-  React.useEffect(() => {
-    if (isAuthenticatedData !== undefined) {
-      setIsAuthenticated(isAuthenticatedData);
-    }
-  }, [isAuthenticatedData]);
-
-  // Fetch speakers
   const { data: speakersData, isLoading: isLoadingSpeakers } = useQuery({
     queryKey: ['speakers', 'list'],
     queryFn: fetchSpeakers,
     enabled: isAuthenticated === true,
   });
 
-  // Toggle visibility mutation
   const toggleVisibilityMutation = useMutation({
     mutationFn: async ({ id, isVisible }: { id: string; isVisible: boolean }) => {
       const res = await fetch(`/api/admin/cfp/speakers/${id}`, {
@@ -81,31 +60,6 @@ export default function SpeakersDashboard() {
     },
   });
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError('');
-    try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
-      if (response.ok) {
-        setIsAuthenticated(true);
-      } else {
-        setLoginError('Invalid password');
-      }
-    } catch {
-      setLoginError('Login failed. Please try again.');
-    }
-  };
-
-  const handleLogout = async () => {
-    await fetch('/api/admin/logout', { method: 'POST' });
-    setIsAuthenticated(false);
-  };
-
-  // Filter speakers
   const speakers = speakersData?.speakers || [];
   const confirmedSpeakers = speakers.filter((s) => {
     const hasAcceptedSession = s.submissions?.some((sub) => sub.status === 'accepted');
@@ -123,63 +77,22 @@ export default function SpeakersDashboard() {
     );
   });
 
-  // Loading state
-  if (isAuthLoading || isAuthenticated === null) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-      </div>
-    );
-  }
-
-  // Login form
-  if (isAuthenticated === false) {
-    return (
-      <>
-        <Head>
-          <title>Speakers Dashboard - Admin</title>
-        </Head>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
-            <h1 className="text-2xl font-bold text-black mb-6 text-center">Speakers Dashboard</h1>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-black mb-1">Admin Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
-                  placeholder="Enter admin password"
-                />
-              </div>
-              {loginError && <p className="text-red-600 text-sm">{loginError}</p>}
-              <button
-                type="submit"
-                className="w-full py-3 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-semibold rounded-lg transition-all cursor-pointer"
-              >
-                Login
-              </button>
-            </form>
-          </div>
-        </div>
-      </>
-    );
-  }
+  if (isAuthLoading) return <AdminLoadingScreen />;
+  if (!isAuthenticated) return <AdminLoginForm title="Speakers Dashboard" />;
 
   return (
     <>
       <Head>
         <title>Speakers Dashboard - Admin</title>
       </Head>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <AdminHeader
           title="Speakers Dashboard"
           subtitle="Manage confirmed speakers for the conference"
-          onLogout={handleLogout}
+          onLogout={logout}
         />
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <StatCard label="Total Speakers" value={confirmedSpeakers.length} />

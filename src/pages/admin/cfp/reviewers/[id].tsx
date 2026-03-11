@@ -10,8 +10,10 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Mail, Calendar, Star, FileText } from 'lucide-react';
 import AdminHeader from '@/components/admin/AdminHeader';
+import { AdminLoginForm } from '@/components/admin/AdminLoginForm';
+import { AdminLoadingScreen } from '@/components/admin/AdminLoadingScreen';
 import { Pagination } from '@/components/atoms';
-import { CfpLoginForm } from '@/components/admin/cfp/CfpLoginForm';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { fetchReviewerActivity } from '@/lib/cfp/api';
 import { formatScore } from '@/lib/cfp/scoring';
 import { cfpQueryKeys, type CfpReviewerActivity } from '@/lib/types/cfp-admin';
@@ -35,18 +37,7 @@ export default function ReviewerDetailPage() {
   const [dateRange, setDateRange] = useState<DateRange>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 15;
-
-  // Check auth status
-  const { data: isAuthenticated, isLoading: isAuthLoading } = useQuery({
-    queryKey: ['admin', 'auth'],
-    queryFn: async () => {
-      const res = await fetch('/api/admin/verify');
-      return res.ok;
-    },
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
+  const { isAuthenticated, isLoading: isAuthLoading, logout } = useAdminAuth();
 
   // Fetch reviewer info
   const { data: reviewerInfo, isLoading: isLoadingReviewer } = useQuery<ReviewerInfo>({
@@ -74,31 +65,8 @@ export default function ReviewerDetailPage() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/admin/logout', { method: 'POST' });
-      router.reload();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
-
-  // Loading state
-  if (isAuthLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-          <p className="text-lg font-medium text-black">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Login form
-  if (!isAuthenticated) {
-    return <CfpLoginForm />;
-  }
+  if (isAuthLoading) return <AdminLoadingScreen />;
+  if (!isAuthenticated) return <AdminLoginForm title="Reviewer Activity" />;
 
   // Loading reviewer data
   if (isLoadingReviewer || !reviewerInfo) {
@@ -108,7 +76,7 @@ export default function ReviewerDetailPage() {
           <title>Reviewer Activity | ZurichJS</title>
         </Head>
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-          <AdminHeader title="Reviewer Activity" subtitle="ZurichJS Conference 2026" onLogout={handleLogout} />
+          <AdminHeader title="Reviewer Activity" subtitle="ZurichJS Conference 2026" onLogout={logout} />
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             <div className="flex justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
@@ -125,7 +93,7 @@ export default function ReviewerDetailPage() {
         <title>{reviewerInfo.name || reviewerInfo.email} - Reviewer Activity | ZurichJS</title>
       </Head>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <AdminHeader title="Reviewer Activity" subtitle="ZurichJS Conference 2026" onLogout={handleLogout} />
+        <AdminHeader title="Reviewer Activity" subtitle="ZurichJS Conference 2026" onLogout={logout} />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {/* Back link */}

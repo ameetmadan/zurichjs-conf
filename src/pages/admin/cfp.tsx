@@ -4,11 +4,12 @@
  */
 
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/contexts/ToastContext';
 import AdminHeader from '@/components/admin/AdminHeader';
+import { AdminLoginForm } from '@/components/admin/AdminLoginForm';
+import { AdminLoadingScreen } from '@/components/admin/AdminLoadingScreen';
 import {
   SubmissionModal,
   ReviewersTab,
@@ -16,6 +17,7 @@ import {
   SubmissionsTab,
   TagsTab,
   InsightsTab,
+  AnalyticsTab,
   StatsCards,
   TabNavigation,
 } from '@/components/admin/cfp';
@@ -31,10 +33,11 @@ import {
   fetchReviewersWithActivity,
   fetchTags,
   fetchInsights,
+  fetchAnalytics,
   updateSubmissionStatus,
   deleteTag,
 } from '@/lib/cfp/api';
-import { CfpLoginForm } from '@/components/admin/cfp/CfpLoginForm';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 export default function CfpAdminDashboard() {
   const [activeTab, setActiveTab] = useState<CfpTab>('submissions');
@@ -42,21 +45,9 @@ export default function CfpAdminDashboard() {
   const [selectedSubmission, setSelectedSubmission] = useState<CfpAdminSubmission | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkActionStatus, setBulkActionStatus] = useState<string>('');
-  const router = useRouter();
   const queryClient = useQueryClient();
   const toast = useToast();
-
-  // Check auth status
-  const { data: isAuthenticated, isLoading: isAuthLoading } = useQuery({
-    queryKey: ['admin', 'auth'],
-    queryFn: async () => {
-      const res = await fetch('/api/admin/verify');
-      return res.ok;
-    },
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
+  const { isAuthenticated, isLoading: isAuthLoading, logout } = useAdminAuth();
 
   // Fetch data
   const { data: stats } = useQuery({
@@ -92,6 +83,13 @@ export default function CfpAdminDashboard() {
     queryFn: fetchInsights,
     enabled: isAuthenticated === true && activeTab === 'insights',
     staleTime: 30 * 1000,
+  });
+
+  const { data: analyticsData, isLoading: isLoadingAnalytics } = useQuery({
+    queryKey: cfpQueryKeys.analytics,
+    queryFn: fetchAnalytics,
+    enabled: isAuthenticated === true && activeTab === 'analytics',
+    staleTime: 60 * 1000,
   });
 
   const { data: tagsData, isLoading: isLoadingTags } = useQuery({
@@ -199,36 +197,12 @@ export default function CfpAdminDashboard() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/admin/logout', { method: 'POST' });
-      queryClient.clear();
-      router.reload();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
-
   const speakers = speakersData?.speakers || [];
   const reviewers = reviewersData?.reviewers || [];
   const tags = tagsData?.tags || [];
 
-  // Loading state
-  if (isAuthLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-          <p className="text-lg font-medium text-black">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Login form
-  if (!isAuthenticated) {
-    return <CfpLoginForm />;
-  }
+  if (isAuthLoading) return <AdminLoadingScreen />;
+  if (!isAuthenticated) return <AdminLoginForm title="CFP Admin" />;
 
   return (
     <>
@@ -236,7 +210,7 @@ export default function CfpAdminDashboard() {
         <title>CFP Admin | ZurichJS</title>
       </Head>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <AdminHeader title="CFP Management" subtitle="ZurichJS Conference 2026" onLogout={handleLogout} />
+        <AdminHeader title="CFP Management" subtitle="ZurichJS Conference 2026" onLogout={logout} />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <StatsCards stats={stats} />
@@ -273,7 +247,10 @@ export default function CfpAdminDashboard() {
                 <TagsTab tags={tags} isLoading={isLoadingTags} onDelete={(id) => deleteTagMutation.mutate(id)} isDeleting={deleteTagMutation.isPending} />
               )}
               {activeTab === 'insights' && (
-                <InsightsTab insights={insightsData?.insights || null} isLoading={isLoadingInsights} />
+                <InsightsTab insights={insightsData?.insights || null} stats={stats} isLoading={isLoadingInsights} />
+              )}
+              {activeTab === 'analytics' && (
+                <AnalyticsTab analytics={analyticsData?.analytics || null} isLoading={isLoadingAnalytics} />
               )}
             </div>
           </div>

@@ -12,7 +12,7 @@ export { AddTagForm } from './AddTagForm';
 export { ReviewerModal } from './ReviewerModal';
 
 // Tab components
-export { ReviewersTab, SpeakersTab, InsightsTab } from './tabs';
+export { ReviewersTab, SpeakersTab, InsightsTab, AnalyticsTab } from './tabs';
 export { SubmissionsTab } from './SubmissionsTab';
 export { TagsTab } from './TagsTab';
 export { SpeakerAvatar } from './SpeakerAvatar';
@@ -20,4 +20,3 @@ export { SpeakerAvatar } from './SpeakerAvatar';
 // Layout components
 export { StatsCards } from './StatsCards';
 export { TabNavigation } from './TabNavigation';
-export { CfpLoginForm } from './CfpLoginForm';
