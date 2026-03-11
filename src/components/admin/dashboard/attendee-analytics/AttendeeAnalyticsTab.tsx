@@ -9,6 +9,7 @@ import { SummarySection } from './SummarySection';
 import { BreakdownSection } from './BreakdownSection';
 import { DemographicsSection } from './DemographicsSection';
 import { AcquisitionSection } from './AcquisitionSection';
+import { CompanyInsightsSection } from './CompanyInsightsSection';
 
 async function fetchAttendeeAnalytics(): Promise<{ analytics: AttendeeAnalytics }> {
   const res = await fetch('/api/admin/attendee-analytics');
@@ -59,6 +60,13 @@ export function AttendeeAnalyticsTab() {
         demographics={analytics.demographics}
         totalAttendees={analytics.summary.confirmedAttendees}
       />
+
+      {analytics.companyInsights && (
+        <>
+          <div className="border-t border-gray-100" />
+          <CompanyInsightsSection insights={analytics.companyInsights} />
+        </>
+      )}
 
       <div className="border-t border-gray-100" />
 

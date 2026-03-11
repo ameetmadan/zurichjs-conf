@@ -4,6 +4,8 @@
  */
 
 import { createServiceRoleClient } from '@/lib/supabase';
+import { env } from '@/config/env';
+import { enrichCompanies } from './company-enrichment';
 import type {
   AttendeeAnalytics,
   AttendeeSummary,
@@ -49,7 +51,18 @@ export async function getAttendeeAnalytics(): Promise<AttendeeAnalytics> {
   const demographics = buildDemographics(confirmed);
   const acquisition = buildAcquisition(confirmed);
 
-  return { summary, byCategory, byStage, demographics, acquisition };
+  // Enrich companies with AI classification (optional, requires ANTHROPIC_API_KEY)
+  const anthropicKey = env.anthropic?.apiKey ?? null;
+  const companyInsightsRaw = await enrichCompanies(demographics.topCompanies, anthropicKey);
+  const companyInsights = companyInsightsRaw ? {
+    companies: companyInsightsRaw.enrichedCompanies,
+    bySize: companyInsightsRaw.bySize,
+    bySector: companyInsightsRaw.bySector,
+    enrichedCount: companyInsightsRaw.enrichedCount,
+    totalCompanies: companyInsightsRaw.totalCompanies,
+  } : null;
+
+  return { summary, byCategory, byStage, demographics, acquisition, companyInsights };
 }
 
 function buildSummary(allTickets: TicketRow[], confirmed: TicketRow[]): AttendeeSummary {
