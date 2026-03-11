@@ -15,6 +15,11 @@ export const authors: Record<string, BlogAuthor> = {
     name: "Nadja",
     bluesky: "https://bsky.app/profile/nadja-hesselbjerg.bsky.social",
   },
+  faris: {
+    name: "Faris Aziz",
+    github: "farisaziz12",
+    bluesky: "https://bsky.app/profile/faziz-dev.com",
+  },
 };
 
 export function getAuthor(slug: string): BlogAuthor {
