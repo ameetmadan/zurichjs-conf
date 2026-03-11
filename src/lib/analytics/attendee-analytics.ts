@@ -188,29 +188,42 @@ function buildAcquisition(tickets: TicketRow[]): AttendeeAcquisition {
   };
 }
 
+/** Check if a value is effectively empty (n/a, -, none, etc.) */
+function isEmptyValue(val: string | null | undefined): boolean {
+  if (!val) return true;
+  const normalized = val.trim().toLowerCase();
+  return normalized === '' || /^(n\/?a|na|none|-|\.|\?|unknown|x|xx|xxx)$/.test(normalized);
+}
+
+function cleanValue(val: string | null | undefined): string | null {
+  if (!val || isEmptyValue(val)) return null;
+  return val.trim();
+}
+
 function normalizeCompany(t: TicketRow): string | null {
   const company = t.company
     || (t.metadata as { session_metadata?: { company?: string } })?.session_metadata?.company
     || null;
-  return company?.trim() || null;
+  return cleanValue(company);
 }
 
 function normalizeJobTitle(t: TicketRow): string | null {
   const jobTitle = t.job_title
     || (t.metadata as { session_metadata?: { jobTitle?: string } })?.session_metadata?.jobTitle
     || null;
-  return jobTitle?.trim() || null;
+  return cleanValue(jobTitle);
 }
 
 function extractCountry(t: TicketRow): string | null {
   const country = (t.metadata as { session_metadata?: { country?: string } })?.session_metadata?.country;
-  return country?.trim() || null;
+  return cleanValue(country);
 }
 
 function extractCity(t: TicketRow): string | null {
   const city = (t.metadata as { session_metadata?: { city?: string } })?.session_metadata?.city;
-  if (!city?.trim()) return null;
-  return normalizeCityName(city.trim());
+  const cleaned = cleanValue(city);
+  if (!cleaned) return null;
+  return normalizeCityName(cleaned);
 }
 
 /** Normalize city names so variants like Zürich/Zurich are merged */
