@@ -1,38 +1,63 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { LinkGroup, NavLink, NewsletterForm } from '@/components/molecules';
-import { Logo, Button, SocialIcon, SocialIconType } from '@/components/atoms';
+import { LinkGroup, NewsletterForm } from '@/components/molecules';
+import { Logo, Button, SocialIcon } from '@/components/atoms';
 import { SectionContainer, SectionSplitView } from '@/components/organisms';
+import { subscribeToNewsletter } from '@/lib/api/newsletter';
 
 export interface SiteFooterProps {
   showContactLinks?: boolean;
-  about: {
-    title: string;
-    copy: string;
-    orgNote?: string;
-    moreHref?: string;
-  };
-  conference: {
-    title: string;
-    links: NavLink[];
-  };
-  legal: {
-    title: string;
-    links: NavLink[];
-  };
-  newsletter: {
-    title: string;
-    copy?: string;
-    ctaLabel?: string;
-    onSubscribe?: (email: string) => Promise<void> | void;
-    privacyHref?: string;
-  };
-  socials?: {
-    kind: SocialIconType;
-    href: string;
-    label?: string;
-  }[];
 }
+
+const about = {
+  title: 'Who are we?',
+  copy: 'Our mission is to be the #1 JavaScript resource for developers in the Zurich tech scene, offering everything from meetups and workshops, to creating unparalleled networking opportunities, while making sure everybody feels welcome and included.',
+  orgNote: 'Zurich JS Conf is part of the Swiss JavaScript Group, a non-profit association registered in Switzerland.',
+  moreHref: '/about',
+};
+
+const conferenceLinks = {
+  title: 'Conference',
+  links: [
+    { label: 'Call for Papers', href: '/cfp' },
+    { label: 'Speakers', href: '/#speakers', locked: true },
+    { label: 'Schedule', href: '/#schedule' },
+    { label: 'Venue', href: '/about#venue' },
+    { label: 'Workshops', href: '/#schedule', locked: true },
+    { label: 'Sponsor us', href: '/sponsorship' },
+    { label: 'F.A.Q.', href: '/faq' },
+    { label: 'Trip Cost Calculator', href: '/trip-cost' },
+    { label: 'Convince Your Boss', href: '/convince-your-boss' },
+    { label: 'Blog', href: '/blog' },
+  ],
+} as const;
+
+const legalLinks = {
+  title: 'Legal',
+  links: [
+    { label: 'Terms of Service', href: '/info/terms-of-service' },
+    { label: 'Privacy Policy', href: '/info/privacy-policy' },
+    { label: 'Refund Policy', href: '/info/refund-policy' },
+    { label: 'Code of Conduct', href: '/info/code-of-conduct' },
+  ],
+} as const;
+
+const newsletterConfig = {
+  title: 'Stay in the know',
+  copy: 'Get updates about speakers, schedule, and early bird tickets.',
+  ctaLabel: 'Sign up',
+  onSubscribe: async (email: string) => {
+    await subscribeToNewsletter({ email, source: 'footer' });
+  },
+  privacyHref: '/info/privacy-policy',
+};
+
+const socials = [
+  { kind: 'linkedin' as const, href: 'https://www.linkedin.com/company/zurichjs', label: 'Follow ZurichJS on LinkedIn' },
+  { kind: 'bluesky' as const, href: 'https://bsky.app/profile/zurichjs.bsky.social', label: 'Follow ZurichJS on Bluesky' },
+  { kind: 'x' as const, href: 'https://www.x.com/zurichjs', label: 'Follow ZurichJS on X' },
+  { kind: 'instagram' as const, href: 'https://www.instagram.com/zurich.js', label: 'Follow ZurichJS on Instagram' },
+];
 
 /**
  * SiteFooter organism component
@@ -41,11 +66,6 @@ export interface SiteFooterProps {
  */
 export const SiteFooter: React.FC<SiteFooterProps> = ({
   showContactLinks = false,
-  about,
-  conference,
-  legal,
-  newsletter,
-  socials = [],
 }) => {
 
   const container = {
@@ -100,12 +120,12 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
                       <motion.div variants={item} className="flex flex-col justify-between gap-2.5 self-start h-full">
                           <h3 className="text-brand-white font-semibold text-lg w-max">Ask us anything</h3>
                           <p className="text-sm text-brand-gray-medium">If you have any uncertainties or burning questions, don’t hesitate to reach out.</p>
-                          <Button variant="outline" size="sm" className="w-fit mt-auto" href="mailto:">Send inquiry</Button>
+                          <Button variant="outline" size="sm" className="w-fit mt-auto" href="mailto:hello@zurichjs.com">Send inquiry</Button>
                       </motion.div>
                       <motion.div variants={item} className="flex flex-col justify-between gap-2.5 self-start h-full">
                           <h3 className="text-brand-white font-semibold text-lg w-max">Give us your feedback</h3>
                           <p className="text-sm text-brand-gray-medium">We want to make this a great experience for everyone. If you have feedback, let us know!</p>
-                          <Button variant="outline" size="sm" className="w-fit mt-auto" href="mailto:">Send feedback</Button>
+                          <Button variant="outline" size="sm" className="w-fit mt-auto" href="mailto:hello@zurichjs.com">Send feedback</Button>
                       </motion.div>
                       <motion.div variants={item} className="flex flex-col justify-between gap-2.5 xl:max-w-xs 2xl:max-w-[unset] self-start h-full">
                           <h3 className="text-brand-white font-semibold text-lg">Found a bug?</h3>
@@ -133,23 +153,21 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
             className="grid grid-cols-1 grid-rows-3 gap-5 pt-8 lg:gap-8 lg:grid-rows-none lg:grid-cols-[2fr_2fr_3fr]"
           >
             <motion.div variants={item} >
-              <LinkGroup title={conference.title} links={conference.links} />
+              <LinkGroup title={conferenceLinks.title} links={[...conferenceLinks.links]} />
             </motion.div>
 
             <motion.div variants={item}>
-              <LinkGroup title={legal.title} links={legal.links} />
+              <LinkGroup title={legalLinks.title} links={[...legalLinks.links]} />
             </motion.div>
 
             <motion.div variants={item} className="flex flex-col justify-between gap-2.5 xl:max-w-xs 2xl:max-w-[unset] self-start">
-              <h3 className="text-brand-white font-semibold text-lg">{newsletter.title}</h3>
-              {newsletter.copy && (
-                <p className="text-brand-gray-light text-sm">{newsletter.copy}</p>
-              )}
+              <h3 className="text-brand-white font-semibold text-lg">{newsletterConfig.title}</h3>
+              <p className="text-brand-gray-light text-sm">{newsletterConfig.copy}</p>
 
               <NewsletterForm
-                ctaLabel={newsletter.ctaLabel}
-                onSubscribe={newsletter.onSubscribe}
-                privacyHref={newsletter.privacyHref}
+                ctaLabel={newsletterConfig.ctaLabel}
+                onSubscribe={newsletterConfig.onSubscribe}
+                privacyHref={newsletterConfig.privacyHref}
               />
             </motion.div>
           </motion.div>
@@ -163,18 +181,16 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
               <Logo width={120} height={32} />
             </div>
 
-            {socials.length > 0 && (
-              <div className="flex gap-2 md:justify-end">
-                {socials.map((social, index) => (
-                  <SocialIcon
-                    key={index}
-                    kind={social.kind}
-                    href={social.href}
-                    label={social.label}
-                  />
-                ))}
-              </div>
-            )}
+            <div className="flex gap-2 md:justify-end">
+              {socials.map((social) => (
+                <SocialIcon
+                  key={social.kind}
+                  kind={social.kind}
+                  href={social.href}
+                  label={social.label}
+                />
+              ))}
+            </div>
           </motion.div>
         </motion.div>
       </SectionContainer>

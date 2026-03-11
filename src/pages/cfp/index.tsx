@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Users, Eye, BarChart3 } from 'lucide-react';
 import { SEO } from '@/components/SEO';
 import { Heading, Kicker, IconButton } from '@/components/atoms';
-import {ShapedSection, SectionContainer, DynamicSiteFooter} from '@/components/organisms';
+import {ShapedSection, SectionContainer, SiteFooter} from '@/components/organisms';
 import { SectionSplitView } from '@/components/organisms/SectionSplitView';
 import { BackgroundMedia, Countdown } from '@/components/molecules';
 import { useMotion } from '@/contexts/MotionContext';
@@ -410,7 +410,7 @@ function CfpLanding() {
           dropBottom={true}
           compactTop={true}
         >
-          <DynamicSiteFooter />
+          <SiteFooter />
         </ShapedSection>
       </main>
     </>

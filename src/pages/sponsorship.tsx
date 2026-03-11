@@ -6,7 +6,7 @@ import {
     SponsorshipAudienceSection,
     SponsorshipValuesSection,
     SponsorshipTiersSection,
-    DynamicSiteFooter,
+    SiteFooter,
 } from '@/components/organisms';
 import { SponsorshipInquiryModal } from '@/components/molecules';
 import { SEO } from '@/components/SEO';
@@ -68,7 +68,7 @@ export default function SponsorshipPage({ detectedCurrency }: SponsorshipPagePro
               variant="dark"
               dropBottom={true}
           >
-              <DynamicSiteFooter showContactLinks={true} />
+              <SiteFooter showContactLinks />
           </ShapedSection>
       </main>
     </>

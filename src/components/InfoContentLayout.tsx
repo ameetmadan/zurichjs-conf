@@ -7,7 +7,7 @@ import {
 import { PageNavigation } from "@/components/PageNavigation";
 import { SEO, organizationSchema, generateBreadcrumbSchema } from "@/components/SEO";
 import type { InfoPage } from "@/data/info-pages";
-import {DynamicSiteFooter, ShapedSection} from "@/components/organisms";
+import {SiteFooter, ShapedSection} from "@/components/organisms";
 
 export interface InfoContentLayoutProps {
   page: InfoPage;
@@ -68,11 +68,11 @@ export const InfoContentLayout: React.FC<InfoContentLayoutProps> = ({
         </div>
       </main>
     <ShapedSection
-        shape="straight"
-        variant="dark"
-        compactTop={true}
+      shape="straight"
+      variant="dark"
+      compactTop={true}
     >
-        <DynamicSiteFooter showContactLinks />
+      <SiteFooter showContactLinks />
     </ShapedSection>
     </>
   );

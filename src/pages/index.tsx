@@ -9,7 +9,7 @@ import {
     SpeakersSection,
     LearnSection,
     NavBar,
-    DynamicSiteFooter
+    SiteFooter
 } from '@/components/organisms';
 import { SEO, eventSchema, organizationSchema, websiteSchema, speakableSchema, generateFAQSchema } from '@/components/SEO';
 import { heroData, scheduleData, timelineData, sponsorsData, learningData } from '@/data';
@@ -160,7 +160,7 @@ export default function Home() {
               variant="dark"
               compactTop={true}
           >
-              <DynamicSiteFooter />
+              <SiteFooter />
           </ShapedSection>
       </main>
     </>

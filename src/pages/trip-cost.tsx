@@ -44,7 +44,7 @@ import { createTicketPricingQueryOptions } from '@/lib/queries/tickets';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { analytics } from '@/lib/analytics/client';
 import type { SupportedCurrency } from '@/config/currency';
-import {DynamicSiteFooter, ShapedSection} from "@/components/organisms";
+import {SiteFooter, ShapedSection} from "@/components/organisms";
 
 const DEFAULT_INPUT: TripCostInput = {
   ticketCHF: DEFAULT_TICKET_PRICE_CHF,
@@ -303,13 +303,13 @@ export default function TripCostPage() {
           </div>
         </SectionContainer>
       </main>
-        <ShapedSection
-            shape="straight"
-            variant="dark"
-            compactTop={true}
-        >
-            <DynamicSiteFooter showContactLinks />
-        </ShapedSection>
+      <ShapedSection
+        shape="straight"
+        variant="dark"
+        compactTop={true}
+      >
+        <SiteFooter showContactLinks />
+      </ShapedSection>
       {/* Sticky mobile total bar */}
       <div
         className={`fixed bottom-0 inset-x-0 z-40 lg:hidden bg-black border-t border-brand-gray-dark px-4 py-3 transition-transform duration-300 ${breakdownVisible ? 'translate-y-full' : 'translate-y-0'}`}

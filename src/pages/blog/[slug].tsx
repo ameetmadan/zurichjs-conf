@@ -12,7 +12,7 @@ import { BlogPostHeader, mdxComponents, BlueskyComments } from '@/components/blo
 import { getAllSlugs, getPostBySlug } from '@/lib/blog';
 import { getAuthor } from '@/lib/blog/authors';
 import type { BlogFrontmatter } from '@/lib/blog';
-import {DynamicSiteFooter, ShapedSection} from "@/components/organisms";
+import {SiteFooter, ShapedSection} from "@/components/organisms";
 import React from "react";
 
 interface BlogPostPageProps {
@@ -117,7 +117,7 @@ export default function BlogPostPage({
             variant="dark"
             compactTop={true}
         >
-            <DynamicSiteFooter />
+            <SiteFooter />
         </ShapedSection>
     </>
   );

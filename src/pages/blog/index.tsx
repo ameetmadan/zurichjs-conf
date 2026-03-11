@@ -9,7 +9,7 @@ import {
 import { BlogPostCard, BlogTagFilter } from "@/components/blog";
 import { getAllPosts, getAllTags } from "@/lib/blog";
 import type { BlogPostMeta } from "@/lib/blog";
-import {DynamicSiteFooter, ShapedSection} from "@/components/organisms";
+import {SiteFooter, ShapedSection} from "@/components/organisms";
 import React from "react";
 
 interface BlogPageProps {
@@ -103,7 +103,7 @@ export default function BlogPage({ posts, tags }: BlogPageProps) {
             variant="dark"
             compactTop={true}
         >
-            <DynamicSiteFooter />
+            <SiteFooter />
         </ShapedSection>
     </>
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import { SEO, organizationSchema, generateBreadcrumbSchema } from "@/components/SEO";
 import { aboutPageData } from "@/data/about-us";
-import { DynamicSiteFooter, ShapedSection, AboutCTASection} from "@/components/organisms";
+import { SiteFooter, ShapedSection, AboutCTASection} from "@/components/organisms";
 import {Button, Heading, Kicker} from "@/components/atoms";
 import {TeamMemberCard} from "@/components/molecules/TeamMemberCard";
 import {ValueCard} from "@/components/molecules/ValueCard";
@@ -212,7 +212,7 @@ export default function AboutUs() {
         compactTop={true}
         dropBottom={true}
       >
-        <DynamicSiteFooter />
+        <SiteFooter />
       </ShapedSection>
     </main>
   </>

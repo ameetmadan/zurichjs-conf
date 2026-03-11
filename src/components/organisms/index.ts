@@ -7,7 +7,6 @@ export { TicketsSection } from './TicketsSection';
 export { TicketsSectionWithStripe } from './TicketsSectionWithStripe';
 export { TimelineSection } from './TimelineSection';
 export { SiteFooter } from './SiteFooter';
-export { DynamicSiteFooter } from './DynamicSiteFooter';
 export { PageHeader } from './PageHeader';
 export { NavBar } from './NavBar';
 export { CheckoutForm } from './CheckoutForm';
