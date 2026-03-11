@@ -1,15 +1,10 @@
 import React from "react";
 import { SEO, organizationSchema, generateBreadcrumbSchema } from "@/components/SEO";
-import { NavBar } from "@/components/organisms/NavBar";
-import { AboutHeroSection } from "@/components/organisms/AboutHeroSection";
-import { AboutMissionSection } from "@/components/organisms/AboutMissionSection";
-import { AboutStatsSection } from "@/components/organisms/AboutStatsSection";
-import { AboutTeamSection } from "@/components/organisms/AboutTeamSection";
-import { AboutVenueSection } from "@/components/organisms/AboutVenueSection";
-import { AboutValuesSection } from "@/components/organisms/AboutValuesSection";
-import { AboutCTASection } from "@/components/organisms/AboutCTASection";
 import { aboutPageData } from "@/data/about-us";
-import {DynamicSiteFooter, ShapedSection} from "@/components/organisms";
+import { DynamicSiteFooter, ShapedSection, AboutCTASection} from "@/components/organisms";
+import {Button, Heading, Kicker} from "@/components/atoms";
+import {TeamMemberCard} from "@/components/molecules/TeamMemberCard";
+import {ValueCard} from "@/components/molecules/ValueCard";
 
 export default function AboutUs() {
   // Breadcrumb schema for about page
@@ -27,39 +22,199 @@ export default function AboutUs() {
         keywords="zurichjs team, javascript community zurich, swiss javascript group, technopark zurich conference"
         jsonLd={[organizationSchema, breadcrumbSchema]}
       />
-      <NavBar />
-      <main className="min-h-screen bg-white">
-        <div className="max-w-screen-lg mx-auto px-4">
-          <div className="py-16 md:py-24">
-            <AboutHeroSection data={aboutPageData.hero} />
-            <AboutMissionSection data={aboutPageData.mission} />
+      <main className="min-h-screen">
+        <ShapedSection
+          shape="down"
+          dropTop
+          variant="light"
+        >
+          <Heading level="h1" variant="light" className="text-2xl lg:text-3xl font-bold mt-40 mb-20">
+        {aboutPageData.hero.title}
+      </Heading>
+        <Kicker variant="light" className="mb-4">
+          {aboutPageData.mission.kicker}
+        </Kicker>
+        <Heading level="h2" variant="light" className="mb-8 text-xl font-bold">
+          {aboutPageData.mission.title}
+        </Heading>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          <div className="space-y-4">
+            {aboutPageData.mission.leftColumn.map((text, index) => (
+              <p
+                key={index}
+                className="text-gray-700 leading-relaxed text-base"
+                dangerouslySetInnerHTML={{ __html: text }}
+              />
+            ))}
+          </div>
+          <div className="space-y-4">
+            {aboutPageData.mission.rightColumn.map((text, index) => (
+              <p
+                key={index}
+                className="text-gray-700 leading-relaxed text-base"
+                dangerouslySetInnerHTML={{ __html: text }}
+              />
+            ))}
           </div>
         </div>
+    </ShapedSection>
 
-        <AboutStatsSection data={aboutPageData.stats} />
-
-        <div className="max-w-screen-lg mx-auto px-4">
-          <AboutTeamSection data={aboutPageData.team} />
+      <ShapedSection
+        shape="down"
+        variant="gray"
+      >
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+          {aboutPageData.stats.map((stat, index) => (
+            <div className="text-center" key={index}>
+              <p className="text-5xl md:text-6xl font-bold mb-2">
+                {stat.value}
+              </p>
+              <p className="text-base">{stat.label}</p>
+            </div>
+          ))}
         </div>
+      </ShapedSection>
 
-        <AboutVenueSection data={aboutPageData.venue} />
-
-        <div className="max-w-screen-lg mx-auto px-4 mb-16">
-          <AboutValuesSection data={aboutPageData.values} />
+      <ShapedSection
+        shape="down"
+        variant="light"
+      >
+        <Kicker variant="light" className="mb-4">
+          {aboutPageData.team.kicker}
+        </Kicker>
+        <Heading level="h2" variant="light" className="mb-6 text-xl font-bold">
+          {aboutPageData.team.title}
+        </Heading>
+        <p className="text-base text-gray-700 leading-relaxed mb-12 max-w-3xl">
+          {aboutPageData.team.description}
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {aboutPageData.team.members.map((member, index) => (
+            <TeamMemberCard
+              key={index}
+              imageSrc={member.imageSrc}
+              imageAlt={member.imageAlt}
+              name={member.name}
+              role={member.role}
+            />
+          ))}
         </div>
+        <div className="mt-16">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">
+            {aboutPageData.team.volunteersTitle}
+          </h3>
+          <p className="text-base text-gray-700 leading-relaxed mb-8 max-w-3xl">
+            {aboutPageData.team.volunteersDescription}
+          </p>
+          <div className="flex flex-wrap gap-4">
+            {aboutPageData.team.volunteers.map((name, index) => (
+              <div key={index} className=" bg-brand-gray-lightest rounded-lg p-2 px-4 text-brand-gray-darkest leading-relaxed flex items-center">
+                <p className="font-medium">{name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+    </ShapedSection>
 
+      <ShapedSection
+        shape="down"
+        variant="medium"
+      >
+        <div className="rich-text-renderer" id={"venue"}>
+          <Kicker variant="dark" className="mb-4">
+            {aboutPageData.venue.kicker}
+          </Kicker>
+          <Heading level="h2" variant="dark" className="mb-8 text-xl font-bold">
+            {aboutPageData.venue.title}
+          </Heading>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            <div className="space-y-4">
+              {aboutPageData.venue.description.map((text, index) => (
+                <p
+                  key={index}
+                  className="text-white leading-relaxed text-base"
+                  dangerouslySetInnerHTML={{ __html: text }}
+                />
+              ))}
+            </div>
+            <div>
+              <div className="mb-6 w-full h-64 bg-gray-200 rounded-lg overflow-hidden">
+                <iframe
+                  src={aboutPageData.venue.mapUrl}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title={`${aboutPageData.venue.title} location`}
+                />
+              </div>
+              <div className="space-y-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  asChild
+                  href={aboutPageData.venue.directionsUrl}
+                >
+                  Get Directions
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  asChild
+                  href={aboutPageData.venue.websiteUrl}
+                >
+                  Visit Website
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ShapedSection>
+
+      <ShapedSection
+        shape="down"
+        variant="light"
+      >
+        <Kicker variant="light" className="mb-4">
+          {aboutPageData.values.kicker}
+        </Kicker>
+        <Heading level="h2" variant="light" className="mb-12 text-xl font-bold">
+          {aboutPageData.values.title}
+        </Heading>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {aboutPageData.values.values.map((value, index) => (
+            <ValueCard
+              key={index}
+              icon={value.icon}
+              title={value.title}
+              description={value.description}
+            />
+          ))}
+        </div>
+      </ShapedSection>
+
+      <ShapedSection
+        shape="down"
+        variant="yellow"
+      >
         <AboutCTASection data={aboutPageData.ctaSlides} />
 
-          {/*TODO(bugdan): change above to be shaped sections */}
-          <ShapedSection
-              shape="tighten"
-              variant="dark"
-              compactTop={true}
-              dropBottom={true}
-          >
-              <DynamicSiteFooter />
-          </ShapedSection>
-      </main>
-    </>
+      </ShapedSection>
+
+      <ShapedSection
+        shape="tighten"
+        variant="dark"
+        compactTop={true}
+        dropBottom={true}
+      >
+        <DynamicSiteFooter />
+      </ShapedSection>
+    </main>
+  </>
   );
 }

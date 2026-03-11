@@ -19,7 +19,7 @@ export interface ShapedSectionProps {
    * - medium: Medium gray background with white text
    * - dark: black background with white text
    */
-  variant: 'light' | 'yellow' | 'medium' | 'dark';
+  variant: 'light' | 'yellow' | 'gray' | 'medium' | 'dark';
 
   /**
    * Whether to keep the top edge straight
@@ -85,8 +85,9 @@ export const ShapedSection: React.FC<ShapedSectionProps> = ({
 }) => {
   // Map variants to Tailwind theme colors (defined in @theme in globals.css)
   const variantStyles = {
-    light: 'bg-brand-white text-black',
-    yellow: 'bg-brand-yellow-main text-black',
+    light: 'bg-brand-white text-brand-black',
+    yellow: 'bg-brand-yellow-main text-brand-black',
+    gray: 'bg-brand-gray-light text-brand-black',
     medium: 'bg-brand-gray-darkest text-brand-white',
     dark: 'bg-brand-black text-brand-white',
   };

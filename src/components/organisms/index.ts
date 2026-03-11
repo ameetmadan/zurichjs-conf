@@ -25,6 +25,7 @@ export {
   SponsorshipTiersSection,
   SponsorshipContactSection,
 } from './sponsorship';
+export { AboutCTASection } from './AboutCTASection';
 
 export type { HeroProps } from './Hero';
 export type { DiagonalSectionProps } from './DiagonalSection';
