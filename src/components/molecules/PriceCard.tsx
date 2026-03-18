@@ -36,9 +36,9 @@ export interface PriceCardProps {
    */
   title: string;
   /**
-   * Short description/blurb
+   * Short description/blurb (string or React node for rich content)
    */
-  blurb?: string;
+  blurb?: React.ReactNode;
   /**
    * Compare/original price
    */
@@ -71,6 +71,10 @@ export interface PriceCardProps {
    * Stock availability info
    */
   stock?: StockInfo;
+  /**
+   * Hide the "X left" stock badge even when stock info is available
+   */
+  hideStockBadge?: boolean;
 }
 
 /**
@@ -89,9 +93,10 @@ export const PriceCard: React.FC<PriceCardProps> = ({
   variant = 'standard',
   delay = 0,
   stock,
+  hideStockBadge = false,
 }) => {
   const isVip = variant === 'vip';
-  const hasLimitedStock = stock?.total !== null && stock?.remaining !== null;
+  const hasLimitedStock = !hideStockBadge && stock?.total !== null && stock?.remaining !== null;
 
   const handleCTAClick = () => {
     // Track ticket button click
@@ -148,18 +153,18 @@ export const PriceCard: React.FC<PriceCardProps> = ({
             )}
             {title}
           </Heading>
-          {/* VIP remaining stock badge */}
-          {isVip && hasLimitedStock && !stock?.soldOut && stock?.remaining && (
-            <span className="bg-gray-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+          {/* Remaining stock badge for limited tickets */}
+          {hasLimitedStock && !stock?.soldOut && stock?.remaining && (
+            <span className="bg-gray-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 whitespace-nowrap">
               {stock.remaining} left
             </span>
           )}
         </div>
         <div className="flex flex-col gap-4 sm:gap-8">
           {blurb && (
-            <p className="text-sm text-brand-gray-lightest leading-relaxed">
+            <div className="text-sm text-brand-gray-lightest leading-relaxed">
               {blurb}
-            </p>
+            </div>
           )}
 
           {/* Price */}

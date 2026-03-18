@@ -28,9 +28,9 @@ export interface Plan {
    */
   title: string;
   /**
-   * Short description/blurb
+   * Short description/blurb (string or React node for rich content)
    */
-  blurb?: string;
+  blurb?: React.ReactNode;
   /**
    * Compare/original price (in base units)
    */
@@ -59,6 +59,10 @@ export interface Plan {
    * Stock availability info
    */
   stock?: StockInfo;
+  /**
+   * Hide the "X left" stock badge
+   */
+  hideStockBadge?: boolean;
 }
 
 export interface TicketsSectionProps {
@@ -171,6 +175,7 @@ export const TicketsSection: React.FC<TicketsSectionProps> = ({
                 variant={plan.variant}
                 delay={index * 0.06}
                 stock={plan.stock}
+                hideStockBadge={plan.hideStockBadge}
               />
             )
           )}
