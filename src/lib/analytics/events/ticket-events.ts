@@ -40,6 +40,9 @@ export interface CartQuantityUpdatedEvent {
     TicketProperties & {
       old_quantity: number;
       new_quantity: number;
+      quantity?: number;
+      ticket_type?: string;
+      cart_total?: number;
     };
 }
 

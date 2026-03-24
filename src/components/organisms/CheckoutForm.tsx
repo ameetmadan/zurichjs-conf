@@ -50,6 +50,10 @@ export interface CheckoutFormProps {
    * Called when user's email is captured (for abandonment tracking)
    */
   onEmailCaptured?: (email: string) => void;
+  /**
+   * Called when a form field value is captured (for abandonment tracking)
+   */
+  onFieldCaptured?: (fieldName: string, value: string) => void;
 }
 
 /**
@@ -66,11 +70,13 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   defaultValues,
   cartData,
   onEmailCaptured,
+  onFieldCaptured,
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
@@ -86,6 +92,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
     currentStep: 'checkout',
     cartData,
     onEmailCaptured,
+    onFieldCaptured,
+    getFormValues: () => getValues(),
   });
 
   // Create tracking-enabled register wrapper

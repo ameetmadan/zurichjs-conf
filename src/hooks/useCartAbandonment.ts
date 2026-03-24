@@ -62,6 +62,11 @@ interface UseCartAbandonmentOptions {
   userEmail?: string | null;
 
   /**
+   * Captured user first name (if available)
+   */
+  userFirstName?: string | null;
+
+  /**
    * Optional field tracking statistics
    */
   fieldTrackingStats?: {
@@ -87,6 +92,7 @@ export const useCartAbandonment = (options: UseCartAbandonmentOptions) => {
     currentStep,
     cartData,
     userEmail,
+    userFirstName,
     fieldTrackingStats,
     onAbandonment,
   } = options;
@@ -119,12 +125,17 @@ export const useCartAbandonment = (options: UseCartAbandonmentOptions) => {
 
     const abandonmentData: EventProperties<'checkout_abandoned'> = {
       abandonment_stage: currentStep,
+      step_reached: currentStep,
       time_spent_seconds: timeSpent,
+      time_in_form_ms: Math.round(timeSpent * 1000),
       cart_item_count: cartData.items.length,
       cart_total_amount: cartData.total,
+      cart_total: cartData.total,
       cart_currency: cartData.currency,
+      currency: cartData.currency,
       cart_items: formattedItems,
       email: userEmail || undefined,
+      first_name: userFirstName || undefined,
       ...fieldTrackingStats,
     };
 
@@ -139,6 +150,7 @@ export const useCartAbandonment = (options: UseCartAbandonmentOptions) => {
     currentStep,
     cartData,
     userEmail,
+    userFirstName,
     fieldTrackingStats,
     formatCartItems,
     onAbandonment,
