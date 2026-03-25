@@ -10,6 +10,7 @@ import { DemographicsSection } from './DemographicsSection';
 import { LogisticsSection } from './LogisticsSection';
 import { ReviewActivitySection } from './ReviewActivitySection';
 import { TagsSection } from './TagsSection';
+import { ContentInsightsSection } from './ContentInsightsSection';
 
 interface AnalyticsTabProps {
   analytics: CfpAnalytics | null;
@@ -65,6 +66,9 @@ export function AnalyticsTab({ analytics, isLoading }: AnalyticsTabProps) {
           <TagsSection topTags={analytics.topTags} />
         </>
       )}
+
+      <div className="border-t border-gray-100" />
+      <ContentInsightsSection contentInsights={analytics.contentInsights} />
     </div>
   );
 }

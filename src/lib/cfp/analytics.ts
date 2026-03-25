@@ -15,6 +15,7 @@ import type {
   CfpReviewActivity,
   CfpTimelineEntry,
   CfpTagCount,
+  CfpContentInsights,
 } from '../types/cfp-analytics';
 
 function createCfpServiceClient() {
@@ -34,7 +35,7 @@ export async function getCfpAnalytics(): Promise<CfpAnalytics> {
     tagJoinsResult,
     tagsResult,
   ] = await Promise.all([
-    supabase.from('cfp_submissions').select('id, status, submission_type, talk_level, speaker_id, created_at, submitted_at'),
+    supabase.from('cfp_submissions').select('id, status, submission_type, talk_level, speaker_id, created_at, submitted_at, title, abstract, additional_notes, outline, slides_url, previous_recording_url'),
     supabase.from('cfp_speakers').select('id, first_name, last_name, company, country, city, bio, profile_image_url, travel_assistance_required, assistance_type, departure_airport, special_requirements, company_interested_in_sponsoring'),
     supabase.from('cfp_reviews').select('id, submission_id, score_overall, created_at'),
     supabase.from('cfp_submission_tags').select('submission_id, tag_id'),
@@ -49,6 +50,12 @@ export async function getCfpAnalytics(): Promise<CfpAnalytics> {
     speaker_id: string;
     created_at: string;
     submitted_at: string | null;
+    title: string;
+    abstract: string;
+    additional_notes: string | null;
+    outline: string | null;
+    slides_url: string | null;
+    previous_recording_url: string | null;
   }>;
 
   const speakers = (speakersResult.data || []) as Array<{
@@ -127,6 +134,9 @@ export async function getCfpAnalytics(): Promise<CfpAnalytics> {
   // --- Top Tags ---
   const topTags = buildTopTags(tagJoins, tagNameMap);
 
+  // --- Content Insights ---
+  const contentInsights = buildContentInsights(submissions, tagJoins, tagNameMap);
+
   return {
     funnel,
     byType,
@@ -136,6 +146,7 @@ export async function getCfpAnalytics(): Promise<CfpAnalytics> {
     reviewActivity,
     submissionTimeline,
     topTags,
+    contentInsights,
   };
 }
 
@@ -390,4 +401,112 @@ function buildTopTags(
     })
     .sort((a, b) => b.count - a.count)
     .slice(0, 15);
+}
+
+/** AI-related keywords to search for in submission content and tags */
+const AI_KEYWORDS: Array<{ pattern: RegExp; label: string }> = [
+  { pattern: /\bai\b/i, label: 'AI' },
+  { pattern: /\bartificial intelligence\b/i, label: 'AI' },
+  { pattern: /\bmachine learning\b/i, label: 'Machine Learning' },
+  { pattern: /\bml\b/i, label: 'Machine Learning' },
+  { pattern: /\bdeep learning\b/i, label: 'Deep Learning' },
+  { pattern: /\bllm\b/i, label: 'LLM' },
+  { pattern: /\blarge language model/i, label: 'LLM' },
+  { pattern: /\bgpt\b/i, label: 'GPT' },
+  { pattern: /\bchatgpt\b/i, label: 'GPT' },
+  { pattern: /\bopenai\b/i, label: 'OpenAI' },
+  { pattern: /\bclaude\b/i, label: 'Claude' },
+  { pattern: /\banthropic\b/i, label: 'Claude' },
+  { pattern: /\bmcp\b/i, label: 'MCP' },
+  { pattern: /\bmodel context protocol\b/i, label: 'MCP' },
+  { pattern: /\brag\b/i, label: 'RAG' },
+  { pattern: /\bretrieval.augmented/i, label: 'RAG' },
+  { pattern: /\bvector\b/i, label: 'Vector/Embeddings' },
+  { pattern: /\bembedding/i, label: 'Vector/Embeddings' },
+  { pattern: /\bagent(?:ic|s)?\b/i, label: 'Agents' },
+  { pattern: /\bcopilot\b/i, label: 'Copilot' },
+  { pattern: /\bgen(?:erative)?\s*ai\b/i, label: 'Generative AI' },
+  { pattern: /\bprompt engineering\b/i, label: 'Prompt Engineering' },
+  { pattern: /\bfine.?tun/i, label: 'Fine-tuning' },
+  { pattern: /\btransformer\b/i, label: 'Transformer' },
+  { pattern: /\bneural network/i, label: 'Neural Network' },
+  { pattern: /\bnlp\b/i, label: 'NLP' },
+  { pattern: /\bnatural language processing\b/i, label: 'NLP' },
+  { pattern: /\bgemini\b/i, label: 'Gemini' },
+  { pattern: /\bmistral\b/i, label: 'Mistral' },
+  { pattern: /\bollama\b/i, label: 'Ollama' },
+  { pattern: /\blangchain\b/i, label: 'LangChain' },
+  { pattern: /\bvercel ai\b/i, label: 'Vercel AI SDK' },
+  { pattern: /\bai sdk\b/i, label: 'AI SDK' },
+];
+
+function buildContentInsights(
+  submissions: Array<{
+    id: string;
+    status: string;
+    title: string;
+    abstract: string;
+    additional_notes: string | null;
+    outline: string | null;
+    slides_url: string | null;
+    previous_recording_url: string | null;
+  }>,
+  tagJoins: Array<{ submission_id: string; tag_id: string }>,
+  tagNameMap: Map<string, string>,
+): CfpContentInsights {
+  // Only analyze non-draft submissions
+  const analyzed = submissions.filter((s) => s.status !== 'draft');
+
+  // Build tag text per submission for AI matching
+  const tagsBySubmission = new Map<string, string[]>();
+  for (const j of tagJoins) {
+    const name = tagNameMap.get(j.tag_id);
+    if (!name) continue;
+    if (!tagsBySubmission.has(j.submission_id)) {
+      tagsBySubmission.set(j.submission_id, []);
+    }
+    tagsBySubmission.get(j.submission_id)!.push(name);
+  }
+
+  // Count AI keyword matches
+  const keywordCounts = new Map<string, number>();
+  let aiTopicCount = 0;
+
+  for (const s of analyzed) {
+    const searchText = [
+      s.title,
+      s.abstract,
+      s.additional_notes || '',
+      s.outline || '',
+      ...(tagsBySubmission.get(s.id) || []),
+    ].join(' ');
+
+    const matchedLabels = new Set<string>();
+    for (const { pattern, label } of AI_KEYWORDS) {
+      if (pattern.test(searchText)) {
+        matchedLabels.add(label);
+      }
+    }
+
+    if (matchedLabels.size > 0) {
+      aiTopicCount++;
+      for (const label of matchedLabels) {
+        keywordCounts.set(label, (keywordCounts.get(label) || 0) + 1);
+      }
+    }
+  }
+
+  const aiKeywords = [...keywordCounts.entries()]
+    .map(([keyword, count]) => ({ keyword, count }))
+    .sort((a, b) => b.count - a.count);
+
+  return {
+    totalAnalyzed: analyzed.length,
+    aiTopicCount,
+    aiKeywords,
+    withSpeakerNotes: analyzed.filter((s) => s.additional_notes?.trim()).length,
+    withOutline: analyzed.filter((s) => s.outline?.trim()).length,
+    withSlides: analyzed.filter((s) => s.slides_url?.trim()).length,
+    withRecording: analyzed.filter((s) => s.previous_recording_url?.trim()).length,
+  };
 }

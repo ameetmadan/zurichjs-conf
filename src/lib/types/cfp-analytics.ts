@@ -20,6 +20,8 @@ export interface CfpAnalytics {
   submissionTimeline: CfpTimelineEntry[];
   /** Tag popularity */
   topTags: CfpTagCount[];
+  /** Content insights: AI topic density, speaker notes usage */
+  contentInsights: CfpContentInsights;
 }
 
 export interface CfpFunnelData {
@@ -103,4 +105,21 @@ export interface CfpTimelineEntry {
 export interface CfpTagCount {
   name: string;
   count: number;
+}
+
+export interface CfpContentInsights {
+  /** Total submissions analyzed (non-draft) */
+  totalAnalyzed: number;
+  /** Submissions mentioning AI-related topics */
+  aiTopicCount: number;
+  /** Top AI keywords found with their frequency */
+  aiKeywords: Array<{ keyword: string; count: number }>;
+  /** Submissions with speaker notes (additional_notes) filled in */
+  withSpeakerNotes: number;
+  /** Submissions with an outline provided */
+  withOutline: number;
+  /** Submissions with slides URL */
+  withSlides: number;
+  /** Submissions with a previous recording URL */
+  withRecording: number;
 }
