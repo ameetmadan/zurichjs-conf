@@ -6,11 +6,12 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { CartItem as CartItemType } from '@/types/cart';
-import { formatPrice } from '@/lib/cart';
+import { formatPrice, calculateOrderSummary } from '@/lib/cart';
 import { CrownIcon, TicketCheck, Trash2Icon, Minus, Plus } from "lucide-react";
 import { analytics } from '@/lib/analytics/client';
 import type { EventProperties } from '@/lib/analytics/events';
 import { mapVariantToCategory } from '@/lib/analytics/helpers';
+import { useCart } from '@/contexts/CartContext';
 
 export interface CartItemProps {
   /**
@@ -41,11 +42,14 @@ export const CartItem: React.FC<CartItemProps> = ({
   onRemove,
   delay = 0,
 }) => {
+  const { cart } = useCart();
   const totalPrice = item.price * item.quantity;
   const previousQuantity = useRef(item.quantity);
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity !== previousQuantity.current) {
+      const orderSummary = calculateOrderSummary(cart);
+
       // Track quantity change
       analytics.track('cart_quantity_updated', {
         ticket_category: mapVariantToCategory(item.variant),
@@ -55,6 +59,9 @@ export const CartItem: React.FC<CartItemProps> = ({
         ticket_count: newQuantity,
         old_quantity: previousQuantity.current,
         new_quantity: newQuantity,
+        quantity: newQuantity,
+        ticket_type: item.variant || item.title,
+        cart_total: orderSummary.total,
       } as EventProperties<'cart_quantity_updated'>);
 
       previousQuantity.current = newQuantity;

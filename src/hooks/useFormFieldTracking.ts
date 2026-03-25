@@ -34,10 +34,12 @@ interface UseFormFieldTrackingOptions {
     }>;
   };
   onEmailCaptured?: (email: string) => void;
+  onFieldCaptured?: (fieldName: string, value: string) => void;
+  getFormValues?: () => { firstName?: string; lastName?: string; company?: string; jobTitle?: string };
 }
 
 export const useFormFieldTracking = (options: UseFormFieldTrackingOptions) => {
-  const { currentStep, cartData, onEmailCaptured } = options;
+  const { currentStep, cartData, onEmailCaptured, onFieldCaptured, getFormValues } = options;
   const [fieldsState, setFieldsState] = useState<Map<string, FieldTracking>>(new Map());
   const [emailCaptured, setEmailCaptured] = useState(false);
   const sessionStartTime = useRef<number>(Date.now());
@@ -51,15 +53,24 @@ export const useFormFieldTracking = (options: UseFormFieldTrackingOptions) => {
 
       const timeToEmail = (Date.now() - sessionStartTime.current) / 1000;
 
-      // Identify the user in PostHog
+      // Identify the user in PostHog with all available form data
+      const formValues = getFormValues?.();
       analytics.identify(email, {
         email: email,
+        first_name: formValues?.firstName || undefined,
+        last_name: formValues?.lastName || undefined,
+        name: formValues?.firstName
+          ? `${formValues.firstName} ${formValues.lastName || ''}`.trim()
+          : undefined,
+        company: formValues?.company || undefined,
+        job_title: formValues?.jobTitle || undefined,
       });
 
       // Track the email capture event
       if (cartData) {
         analytics.track('checkout_email_captured', {
           email: email,
+          timestamp_iso: new Date().toISOString(),
           step: currentStep,
           time_to_email_seconds: timeToEmail,
           cart_item_count: cartData.cart_item_count,
@@ -74,7 +85,7 @@ export const useFormFieldTracking = (options: UseFormFieldTrackingOptions) => {
         onEmailCaptured(email);
       }
     }
-  }, [emailCaptured, currentStep, cartData, onEmailCaptured]);
+  }, [emailCaptured, currentStep, cartData, onEmailCaptured, getFormValues]);
 
   /**
    * Track field focus event
@@ -124,15 +135,21 @@ export const useFormFieldTracking = (options: UseFormFieldTrackingOptions) => {
       field_name: fieldName,
       field_type: fieldType,
       field_filled: isFilled,
+      had_value: isFilled,
       time_spent_seconds: timeSpent,
       step: currentStep,
     } as EventProperties<'checkout_form_field_blurred'>);
+
+    // Report captured field values for important fields
+    if (isFilled && onFieldCaptured) {
+      onFieldCaptured(fieldName, value);
+    }
 
     // If this is the email field and it's filled, capture it
     if (fieldName === 'email' && isFilled && !emailCaptured && value.includes('@')) {
       captureEmail(value);
     }
-  }, [currentStep, fieldsState, emailCaptured, captureEmail]);
+  }, [currentStep, fieldsState, emailCaptured, captureEmail, onFieldCaptured]);
 
   /**
    * Track field completion (when field is successfully filled)

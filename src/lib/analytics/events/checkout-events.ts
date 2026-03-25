@@ -14,7 +14,10 @@ import type {
 
 export interface CheckoutStartedEvent {
   event: 'checkout_started';
-  properties: BaseEventProperties & CartProperties & UserProperties;
+  properties: BaseEventProperties & CartProperties & UserProperties & {
+    cart_total?: number;
+    currency?: string;
+  };
 }
 
 export interface CheckoutCompletedEvent {
@@ -39,6 +42,10 @@ export interface CheckoutAbandonedEvent {
       fields_touched?: string[];
       form_completion_percent?: number;
       last_field_interacted?: string;
+      step_reached?: string;
+      time_in_form_ms?: number;
+      cart_total?: number;
+      currency?: string;
     };
 }
 
@@ -57,6 +64,7 @@ export interface CheckoutFormFieldBlurredEvent {
     field_name: string;
     field_type: string;
     field_filled: boolean;
+    had_value?: boolean;
     time_spent_seconds?: number;
     step: 'review' | 'attendees' | 'upsells' | 'checkout';
   };
@@ -76,6 +84,7 @@ export interface CheckoutEmailCapturedEvent {
   properties: BaseEventProperties &
     CartProperties & {
       email: string;
+      timestamp_iso?: string;
       step: 'review' | 'attendees' | 'upsells' | 'checkout';
       time_to_email_seconds?: number;
     };

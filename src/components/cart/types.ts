@@ -58,6 +58,7 @@ export interface CheckoutStepProps extends CartStepProps {
   onRemoveVoucher: () => void;
   onSubmit: (data: CheckoutFormData) => void;
   onEmailCaptured: (email: string) => void;
+  onFieldCaptured?: (fieldName: string, value: string) => void;
 }
 
 // Re-export for convenience

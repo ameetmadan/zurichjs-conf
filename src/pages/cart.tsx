@@ -64,6 +64,7 @@ export default function CartPage() {
   const [currentStep, setCurrentStep] = useState<CartStep>('review');
   const [attendees, setAttendees] = useState<AttendeeInfo[]>([]);
   const [capturedEmail, setCapturedEmail] = useState<string | null>(null);
+  const [capturedFirstName, setCapturedFirstName] = useState<string | null>(null);
   const { mutate: createCheckout, isPending: isSubmitting, error } = useCheckout();
   const { mutate: scheduleAbandonmentEmail } = useCartAbandonmentEmail();
   const [checkoutCompleted, setCheckoutCompleted] = useState(false);
@@ -176,10 +177,15 @@ export default function CartPage() {
     analytics.track('checkout_started', {
       cart_item_count: cart.items.length,
       cart_total_amount: orderSummary.total,
+      cart_total: orderSummary.total,
       cart_currency: orderSummary.currency,
+      currency: orderSummary.currency,
       cart_items: mapCartItemsToAnalytics(cart.items),
       email: data.email,
+      first_name: data.firstName,
+      last_name: data.lastName,
       company: data.company,
+      job_title: data.jobTitle,
     } as EventProperties<'checkout_started'>);
 
     setCheckoutCompleted(true);
@@ -218,6 +224,7 @@ export default function CartPage() {
       currency: orderSummary.currency,
     },
     userEmail: capturedEmail,
+    userFirstName: capturedFirstName,
     onAbandonment: (data) => {
       if (data.email) {
         scheduleAbandonmentEmail({
@@ -358,6 +365,9 @@ export default function CartPage() {
                 onRemoveVoucher={removeVoucher}
                 onSubmit={handleCheckoutSubmit}
                 onEmailCaptured={setCapturedEmail}
+                onFieldCaptured={(fieldName, value) => {
+                  if (fieldName === 'firstName') setCapturedFirstName(value);
+                }}
               />
             )}
           </AnimatePresence>

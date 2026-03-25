@@ -22,6 +22,7 @@ export function CheckoutStep({
   onRemoveVoucher,
   onSubmit,
   onEmailCaptured,
+  onFieldCaptured,
 }: CheckoutStepProps) {
   return (
     <motion.div
@@ -61,6 +62,7 @@ export function CheckoutStep({
                 cart_items: mapCartItemsToAnalytics(cart.items),
               }}
               onEmailCaptured={onEmailCaptured}
+              onFieldCaptured={onFieldCaptured}
             />
           </div>
 
