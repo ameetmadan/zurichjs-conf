@@ -194,6 +194,12 @@ export default function ReviewerSubmission() {
         },
       });
 
+      // Auto-navigate to next talk if available, otherwise show success message
+      if (nextSubmissionHref) {
+        void router.push(nextSubmissionHref);
+        return;
+      }
+
       dispatch({ type: 'SUBMIT_SUCCESS' });
     } catch (err) {
       dispatch({ type: 'SET_ERROR', error: err instanceof Error ? err.message : 'An error occurred' });
