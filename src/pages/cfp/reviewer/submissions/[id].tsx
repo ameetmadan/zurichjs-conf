@@ -6,15 +6,17 @@
 import React, { useReducer, useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Bookmark, ChevronLeft, ChevronRight } from 'lucide-react';
 import { SEO } from '@/components/SEO';
 import { Heading } from '@/components/atoms';
 import { getNextReviewerSubmissionId } from '@/lib/cfp/reviewer-navigation';
 import { supabase } from '@/lib/supabase/client';
 import { useCfpReviewerSubmission, useSubmitReview } from '@/hooks/useCfp';
+import { useBookmarks } from '@/hooks/cfp';
 import { ReviewGuide } from '@/components/cfp/ReviewGuide';
 import { useEscapeKey, useSubmitShortcut } from '@/hooks/useKeyboardShortcuts';
 import {
+  ReviewerPill,
   TYPE_LABELS,
   ReviewScores,
   SpeakerInfo,
@@ -111,6 +113,7 @@ export default function ReviewerSubmission() {
 
   // Fetch submission data
   const { submission, reviewer, isLoading, error } = useCfpReviewerSubmission((id as string) ?? '');
+  const { isBookmarked, toggleBookmark } = useBookmarks(reviewer?.email);
 
   // Submit review mutation
   const submitReviewMutation = useSubmitReview();
@@ -294,12 +297,25 @@ export default function ReviewerSubmission() {
               {/* Header */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="px-3 py-1.5 bg-brand-primary/20 border border-brand-primary/30 text-brand-primary rounded-full text-sm font-medium whitespace-nowrap">
+                  <button
+                    type="button"
+                    onClick={() => toggleBookmark(submission.id)}
+                    className={`p-2 rounded-full border transition-colors cursor-pointer ${
+                      isBookmarked(submission.id)
+                        ? 'border-brand-primary/40 bg-brand-primary/15 text-brand-primary'
+                        : 'border-brand-gray-medium bg-brand-gray-dark text-brand-gray-light hover:text-white hover:border-brand-gray-light'
+                    }`}
+                    aria-label={isBookmarked(submission.id) ? 'Remove bookmark' : 'Bookmark talk'}
+                    title={isBookmarked(submission.id) ? 'Remove bookmark' : 'Bookmark talk'}
+                  >
+                    <Bookmark className={`w-4 h-4 ${isBookmarked(submission.id) ? 'fill-current' : ''}`} />
+                  </button>
+                  <ReviewerPill tone="yellow">
                     {TYPE_LABELS[submission.submission_type]}
-                  </span>
-                  <span className="px-3 py-1.5 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-full text-sm font-medium capitalize">
+                  </ReviewerPill>
+                  <ReviewerPill tone="purple" className="capitalize">
                     {submission.talk_level}
-                  </span>
+                  </ReviewerPill>
                 </div>
                 <Heading level="h1" className="text-xl sm:text-2xl font-bold text-white mb-4">
                   {submission.title}

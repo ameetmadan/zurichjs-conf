@@ -72,7 +72,7 @@ export function SubmissionDetails({ submission, isAnonymous, isSuperAdmin = fals
 
         {/* Tags */}
         {submission.tags && submission.tags.length > 0 && (
-          <div className="flex-1 min-w-0">
+          <div className="flex-1">
             <span className="text-brand-gray-medium text-xs block mb-1.5">Tags</span>
             <div className="flex flex-wrap gap-1.5">
               {submission.tags.map(tag => (
