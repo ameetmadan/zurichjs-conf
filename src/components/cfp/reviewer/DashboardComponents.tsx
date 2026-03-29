@@ -3,26 +3,64 @@
  * Reusable components for the reviewer dashboard
  */
 
+import { PropsWithChildren, useMemo, useState } from 'react';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react';
 import Link from 'next/link';
-import { Search, X, Filter, Check, Bookmark } from 'lucide-react';
+import { Search, X, Filter, Check, Bookmark, ChevronDown } from 'lucide-react';
 import { Heading, Select } from '@/components/atoms';
 import {
   TYPE_LABELS,
   TYPE_OPTIONS,
   LEVEL_OPTIONS,
+  STATUS_OPTIONS,
   SORT_OPTIONS,
   REVIEW_BASED_SORT_VALUES,
   ReviewFilterType,
 } from './types';
 
+type ReviewerPillTone = 'ghost' | 'dark' | 'yellow' | 'green' | 'red' | 'purple' | 'blue';
+
+interface ReviewerPillProps extends PropsWithChildren {
+  tone?: ReviewerPillTone;
+  borderHighlight?: boolean;
+  className?: string;
+}
+
+export function ReviewerPill({
+  tone = 'dark',
+  borderHighlight = false,
+  className = '',
+  children,
+}: ReviewerPillProps) {
+  const toneClasses: Record<ReviewerPillTone, string> = {
+    ghost: 'bg-transparent text-brand-gray-light max-sm:px-0!',
+    dark: 'bg-brand-black text-brand-gray-light',
+    yellow: 'bg-brand-primary/20 text-brand-primary',
+    green: 'bg-brand-green/20 text-brand-green',
+    red: 'bg-brand-red/20 text-brand-red',
+    purple: 'bg-purple-500/20 text-purple-300',
+    blue: 'bg-brand-blue/20 text-brand-blue'
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-1 text-xs font-medium whitespace-nowrap ${
+        borderHighlight ? 'border-brand-yellow-main' : 'border-transparent'
+      } ${toneClasses[tone]} ${className}`}
+    >
+      {children}
+    </span>
+  );
+}
+
 // Status Badge
 export function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    submitted: 'bg-blue-500/20 text-blue-300',
-    under_review: 'bg-purple-500/20 text-purple-300',
-    waitlisted: 'bg-orange-500/20 text-orange-300',
-    accepted: 'bg-green-500/20 text-green-300',
-    rejected: 'bg-red-500/20 text-red-300',
+    submitted: 'bg-brand-blue',
+    under_review: 'bg-brand-orange',
+    waitlisted: 'bg-brand-yellow-main',
+    accepted: 'bg-brand-green',
+    rejected: 'bg-brand-red',
   };
 
   const labels: Record<string, string> = {
@@ -34,9 +72,10 @@ export function StatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${styles[status] || 'bg-gray-500/20 text-gray-300'}`}>
+    <ReviewerPill tone="ghost">
+      <span className={`rounded-full size-1.5 block ${styles[status]}`} />
       {labels[status] || status}
-    </span>
+    </ReviewerPill>
   );
 }
 
@@ -92,6 +131,9 @@ interface FilterBarProps {
   reviewFilter: ReviewFilterType;
   typeFilter: string;
   levelFilter: string;
+  statusFilter: string;
+  tagFilters: string[];
+  availableTags: string[];
   sortBy: string;
   showFilters: boolean;
   hasActiveFilters: boolean;
@@ -100,9 +142,90 @@ interface FilterBarProps {
   onReviewFilterChange: (filter: ReviewFilterType) => void;
   onTypeFilterChange: (type: string) => void;
   onLevelFilterChange: (level: string) => void;
+  onStatusFilterChange: (status: string) => void;
+  onTagFiltersChange: (tags: string[]) => void;
   onSortChange: (sort: string) => void;
   onToggleFilters: () => void;
   onClearFilters: () => void;
+}
+
+interface TagMultiSelectProps {
+  label: string;
+  options: string[];
+  value: string[];
+  onChange: (value: string[]) => void;
+}
+
+function TagMultiSelect({ label, options, value, onChange }: TagMultiSelectProps) {
+  const [query, setQuery] = useState('');
+
+  const filteredOptions = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (!normalizedQuery) {
+      return options;
+    }
+
+    return options.filter((option) => option.toLowerCase().includes(normalizedQuery));
+  }, [options, query]);
+
+  return (
+    <div>
+      <label className="block text-xs font-medium mb-1.5 text-brand-gray-light">
+        {label}
+      </label>
+      <Combobox
+        value={value}
+        onChange={(nextValue: string[]) => {
+          onChange(nextValue);
+          setQuery('');
+        }}
+        multiple
+      >
+        <div className="relative">
+          <div className="flex w-full flex-wrap items-center gap-2 rounded-lg bg-brand-gray-darkest px-3 py-1.5 pr-10 text-sm text-white focus-within:ring-2 focus-within:ring-brand-primary">
+            {!!value.length && (<span className="bg-brand-yellow-main text-black grid place-items-center leading-none text-xs rounded-full size-4">{value.length}</span>)}
+
+            <ComboboxInput
+              className="min-w-[120px] flex-1 bg-transparent text-sm text-white placeholder:text-white !outline-0"
+              displayValue={() => ''}
+              onChange={(event) => setQuery(event.target.value)}
+              onBlur={() => setQuery('')}
+              placeholder={value.length > 0 ? 'Add another...' : 'Search or select tags...'}
+              aria-label="Filter by tags"
+            />
+          </div>
+
+          <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-3 text-brand-gray-medium">
+            <ChevronDown className="h-4 w-4" />
+          </ComboboxButton>
+
+          <ComboboxOptions className="absolute z-50 mt-2 max-h-60 w-full overflow-auto rounded-lg border border-brand-gray-medium bg-brand-gray-dark py-1 shadow-lg focus:outline-none hover">
+            {filteredOptions.length === 0 ? (
+              <div className="px-3 py-2 text-sm text-brand-gray-medium">
+                No matching tags
+              </div>
+            ) : (
+              filteredOptions.map((option) => {
+                const isSelected = value.includes(option);
+
+                return (
+                  <ComboboxOption
+                    key={option}
+                    value={option}
+                    className="group flex cursor-pointer items-center justify-between gap-3 px-3 py-2 text-sm text-brand-gray-light transition-colors data-[focus]:bg-brand-gray-medium data-[focus]:text-white"
+                  >
+                    <span className={isSelected ? 'font-medium text-white' : ''}>{option}</span>
+                    {isSelected && <Check className="h-4 w-4 text-brand-primary" />}
+                  </ComboboxOption>
+                );
+              })
+            )}
+          </ComboboxOptions>
+        </div>
+      </Combobox>
+    </div>
+  );
 }
 
 export function FilterBar({
@@ -110,6 +233,9 @@ export function FilterBar({
   reviewFilter,
   typeFilter,
   levelFilter,
+  statusFilter,
+  tagFilters,
+  availableTags,
   sortBy,
   showFilters,
   hasActiveFilters,
@@ -118,6 +244,8 @@ export function FilterBar({
   onReviewFilterChange,
   onTypeFilterChange,
   onLevelFilterChange,
+  onStatusFilterChange,
+  onTagFiltersChange,
   onSortChange,
   onToggleFilters,
   onClearFilters,
@@ -156,7 +284,7 @@ export function FilterBar({
           {(['all', 'pending', 'reviewed', 'bookmarked'] as const).map((f) => (
             <button
               key={f}
-              onClick={() => onReviewFilterChange(f)}
+              onClick={() => onReviewFilterChange(reviewFilter === f ? 'all' : f)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer inline-flex items-center gap-1.5 ${
                 reviewFilter === f
                   ? 'bg-brand-primary text-black'
@@ -184,10 +312,10 @@ export function FilterBar({
         </button>
       </div>
 
-      {/* Advanced Filters */}
+        {/* Advanced Filters */}
       {showFilters && (
         <div className="mt-4 pt-4 border-t border-brand-gray-medium">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-5 gap-4">
             <Select
               label="Type"
               value={typeFilter}
@@ -203,6 +331,20 @@ export function FilterBar({
               options={LEVEL_OPTIONS}
               variant="dark"
               size="sm"
+            />
+            <Select
+              label="Status"
+              value={statusFilter}
+              onChange={onStatusFilterChange}
+              options={STATUS_OPTIONS}
+              variant="dark"
+              size="sm"
+            />
+            <TagMultiSelect
+              label="Tags"
+              value={tagFilters}
+              onChange={onTagFiltersChange}
+              options={availableTags}
             />
             <Select
               label="Sort By"
@@ -247,65 +389,61 @@ interface SubmissionCardSubmission {
 interface SubmissionCardProps {
   submission: SubmissionCardSubmission;
   isAnonymous?: boolean;
+  activeTagFilters?: string[];
   /** Current dashboard search params to preserve when returning */
   dashboardParams?: string;
-  isBookmarked?: boolean;
-  onToggleBookmark?: (id: string) => void;
 }
 
-export function SubmissionCard({ submission, isAnonymous = false, dashboardParams, isBookmarked = false, onToggleBookmark }: SubmissionCardProps) {
+export function SubmissionCard({
+  submission,
+  isAnonymous = false,
+  activeTagFilters = [],
+  dashboardParams,
+}: SubmissionCardProps) {
   const href = dashboardParams
     ? `/cfp/reviewer/submissions/${submission.id}?returnTo=${encodeURIComponent(dashboardParams)}`
     : `/cfp/reviewer/submissions/${submission.id}`;
+  const hasActiveTagFilters = activeTagFilters.length > 0;
+  const displayTags = useMemo(() => {
+    const tags = submission.tags || [];
 
-  // Urgency border color based on review count
-  const urgencyBorder =
-    submission.stats.review_count === 0
-      ? 'border-l-4 border-l-red-500/50'
-      : submission.stats.review_count === 1
-        ? 'border-l-4 border-l-yellow-500/50'
-        : 'border-l-4 border-l-green-500/50';
+    if (!hasActiveTagFilters) {
+      return tags.slice(0, 5);
+    }
 
-  // Urgency dot color
-  const urgencyDot =
-    submission.stats.review_count === 0
-      ? 'bg-red-500'
-      : submission.stats.review_count === 1
-        ? 'bg-yellow-500'
-        : 'bg-green-500';
+    return [...tags]
+      .sort((a, b) => {
+        const aIsActive = activeTagFilters.includes(a.name);
+        const bIsActive = activeTagFilters.includes(b.name);
+
+        if (aIsActive === bIsActive) return 0;
+        return aIsActive ? -1 : 1;
+      })
+      .slice(0, 5);
+  }, [submission.tags, hasActiveTagFilters, activeTagFilters]);
+
+  const coverageLabel =
+    submission.stats.review_count <= 1
+      ? 'Low coverage'
+      : submission.stats.review_count === 2
+        ? 'Some coverage'
+        : 'Well covered';
 
   return (
     <Link
       href={href}
-      className={`block bg-brand-gray-dark rounded-xl p-4 sm:p-6 hover:bg-brand-gray-dark/70 border-2 border-transparent hover:border-brand-gray-medium transition-all ${urgencyBorder}`}
+      className={`block bg-brand-gray-dark rounded-xl p-4 sm:p-6 hover:bg-brand-gray-dark/70 border-2 border-transparent hover:border-brand-gray-medium transition-all duration-300`}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            {onToggleBookmark && (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onToggleBookmark(submission.id);
-                }}
-                className={`p-1 rounded transition-colors cursor-pointer ${
-                  isBookmarked
-                    ? 'text-brand-primary'
-                    : 'text-brand-gray-medium hover:text-brand-gray-light'
-                }`}
-                title={isBookmarked ? 'Remove bookmark' : 'Bookmark for later'}
-              >
-                <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
-              </button>
-            )}
             <StatusBadge status={submission.status} />
-            <span className="text-brand-gray-medium text-xs sm:text-sm">
+            <ReviewerPill tone="ghost">
               {TYPE_LABELS[submission.submission_type]}
-            </span>
-            <span className="text-brand-gray-medium text-xs sm:text-sm capitalize">
+            </ReviewerPill>
+            <ReviewerPill tone="ghost" className="capitalize">
               {submission.talk_level}
-            </span>
+            </ReviewerPill>
           </div>
           <h3 className="text-md sm:text-lg font-semibold text-white mb-2 line-clamp-2">
             {submission.title}
@@ -315,58 +453,38 @@ export function SubmissionCard({ submission, isAnonymous = false, dashboardParam
           </p>
           {submission.tags && submission.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {submission.tags.slice(0, 5).map((tag) => (
-                <span
+              {displayTags.map((tag) => (
+                <ReviewerPill
                   key={tag.id}
-                  className="px-2 py-0.5 bg-brand-gray-darkest text-brand-gray-light rounded text-xs"
+                  tone="dark"
+                  borderHighlight={hasActiveTagFilters && activeTagFilters.includes(tag.name)}
                 >
                   {tag.name}
-                </span>
+                </ReviewerPill>
               ))}
               {submission.tags.length > 5 && (
-                <span className="px-2 py-0.5 text-brand-gray-medium text-xs">
+                <ReviewerPill tone="ghost" className="text-brand-gray-medium">
                   +{submission.tags.length - 5} more
-                </span>
+                </ReviewerPill>
               )}
             </div>
           )}
         </div>
 
         <div className="flex-shrink-0 sm:text-right">
-          {submission.my_review ? (
-            <div className="mb-2">
-              <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm font-medium inline-flex items-center gap-1">
-                <Check className="w-3 h-3" />
-                Reviewed
-              </span>
-              <div className="text-sm text-brand-gray-light mt-1">
-                Score: {submission.my_review.score_overall}/4
-              </div>
+            <div className="flex flex-wrap sm:flex-col gap-1.5 items-center">
+                <ReviewerPill tone={submission.my_review ? 'green' : 'yellow'}>
+                  {submission.my_review ? 'Reviewed' : 'Needs Review'}
+                </ReviewerPill>
+                <ReviewerPill tone="ghost">
+                  {coverageLabel}
+                </ReviewerPill>
+                {!isAnonymous && (
+                  <div className="text-sm text-brand-gray-light">
+                    Score: {submission.my_review?.score_overall || 0}/4
+                  </div>
+                )}
             </div>
-          ) : (
-            <div className="mb-2 flex gap-1">
-              <span className="px-2 sm:px-3 py-1 bg-brand-primary/20 text-brand-primary rounded-full text-xs sm:text-sm font-medium">
-                Needs Review
-              </span>
-              <div className="text-xs sm:text-sm text-brand-gray-medium mt-1 ml-1 inline-flex items-center gap-1.5">
-                <span className={`w-2 h-2 rounded-full ${urgencyDot}`} />
-                {submission.stats.review_count} review{submission.stats.review_count !== 1 ? 's' : ''}
-              </div>
-            </div>
-          )}
-
-          {/* Review count visible to all (when reviewed), avg score hidden for anonymous */}
-          {submission.my_review && (
-            <div className="text-sm text-brand-gray-medium mt-2 inline-flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${urgencyDot}`} />
-              {submission.stats.review_count} review{submission.stats.review_count !== 1 ? 's' : ''}
-              {!isAnonymous && submission.stats.avg_overall && (
-                <span className="ml-2">
-                  Avg: {submission.stats.avg_overall.toFixed(1)}/4
-                </span>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </Link>

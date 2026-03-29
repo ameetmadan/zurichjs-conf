@@ -30,7 +30,7 @@ export default function ReviewerDashboard() {
   const searchParams = useSearchParams();
   const [authChecked, setAuthChecked] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
 
   // URL-driven filter state using nuqs
   const [reviewFilter, setReviewFilter] = useQueryState(
@@ -49,6 +49,14 @@ export default function ReviewerDashboard() {
   );
   const [levelFilter, setLevelFilter] = useQueryState(
     'level',
+    parseAsString.withDefault('')
+  );
+  const [statusFilter, setStatusFilter] = useQueryState(
+    'status',
+    parseAsString.withDefault('')
+  );
+  const [tagFilterParam, setTagFilterParam] = useQueryState(
+    'tags',
     parseAsString.withDefault('')
   );
   const [sortBy, setSortBy] = useQueryState(
@@ -105,10 +113,20 @@ export default function ReviewerDashboard() {
   const { reviewer, submissions, stats, isLoading, error } = useCfpReviewerDashboard(debouncedSearch);
 
   // Bookmarks
-  const { isBookmarked, toggleBookmark } = useBookmarks(reviewer?.email);
+  const { isBookmarked } = useBookmarks(reviewer?.email);
 
   // Determine if reviewer is anonymous (cannot see speaker identity or review stats)
   const isAnonymous = reviewer ? reviewer.role !== 'super_admin' && !reviewer.can_see_speaker_identity : true;
+  const tagFilters = useMemo(
+    () => tagFilterParam.split(',').map((tag) => tag.trim()).filter(Boolean),
+    [tagFilterParam]
+  );
+  const availableTags = useMemo(
+    () => Array.from(new Set(
+      submissions.flatMap((submission) => submission.tags?.map((tag) => tag.name) || [])
+    )).sort((a, b) => a.localeCompare(b)),
+    [submissions]
+  );
 
   // Filter and sort submissions
   const filteredSubmissions = useMemo(() => {
@@ -128,6 +146,17 @@ export default function ReviewerDashboard() {
 
     if (levelFilter) {
       result = result.filter((s) => s.talk_level === levelFilter);
+    }
+
+    if (statusFilter) {
+      result = result.filter((s) => s.status === statusFilter);
+    }
+
+    if (tagFilters.length > 0) {
+      result = result.filter((submission) => {
+        const submissionTags = submission.tags?.map((tag) => tag.name) || [];
+        return tagFilters.some((selectedTag) => submissionTags.includes(selectedTag));
+      });
     }
 
     result.sort((a, b) => {
@@ -152,7 +181,7 @@ export default function ReviewerDashboard() {
     });
 
     return result;
-  }, [submissions, reviewFilter, typeFilter, levelFilter, sortBy, isBookmarked]);
+  }, [submissions, reviewFilter, typeFilter, levelFilter, statusFilter, tagFilters, sortBy, isBookmarked]);
 
   // Pagination
   const totalPages = Math.ceil(filteredSubmissions.length / pageSize);
@@ -181,6 +210,17 @@ export default function ReviewerDashboard() {
     setCurrentPage(1);
   }, [setLevelFilter, setCurrentPage]);
 
+  const handleStatusFilterChange = useCallback((value: string) => {
+    setStatusFilter(value || null);
+    setCurrentPage(1);
+  }, [setStatusFilter, setCurrentPage]);
+
+  const handleTagFiltersChange = useCallback((value: string[]) => {
+    const nextValue = value.length > 0 ? value.join(',') : null;
+    setTagFilterParam(nextValue);
+    setCurrentPage(1);
+  }, [setTagFilterParam, setCurrentPage]);
+
   const handleSortChange = useCallback((value: string) => {
     setSortBy(value || null);
     setCurrentPage(1);
@@ -203,7 +243,7 @@ export default function ReviewerDashboard() {
     });
   }, [dashboardParams, filteredSubmissions]);
 
-  const hasActiveFilters = searchInput || typeFilter || levelFilter;
+  const hasActiveFilters = searchInput || typeFilter || levelFilter || statusFilter || tagFilters.length > 0;
 
   const clearAllFilters = async () => {
     setSearchInput('');
@@ -212,6 +252,8 @@ export default function ReviewerDashboard() {
       setSearchQuery(null),
       setTypeFilter(null),
       setLevelFilter(null),
+      setStatusFilter(null),
+      setTagFilterParam(null),
       setReviewFilter('all'),
       setCurrentPage(1),
     ]);
@@ -317,25 +359,30 @@ export default function ReviewerDashboard() {
 
         <FilterBar
           searchQuery={searchInput}
-            reviewFilter={reviewFilter}
-            typeFilter={typeFilter}
-            levelFilter={levelFilter}
-            sortBy={sortBy}
-            showFilters={showFilters}
-            hasActiveFilters={!!hasActiveFilters}
-            isAnonymous={isAnonymous}
-            onSearchChange={handleSearchChange}
-            onReviewFilterChange={handleReviewFilterChange}
-            onTypeFilterChange={handleTypeFilterChange}
-            onLevelFilterChange={handleLevelFilterChange}
-            onSortChange={handleSortChange}
-            onToggleFilters={() => setShowFilters(!showFilters)}
-            onClearFilters={clearAllFilters}
-          />
+          reviewFilter={reviewFilter}
+          typeFilter={typeFilter}
+          levelFilter={levelFilter}
+          statusFilter={statusFilter}
+          tagFilters={tagFilters}
+          availableTags={availableTags}
+          sortBy={sortBy}
+          showFilters={showFilters}
+          hasActiveFilters={!!hasActiveFilters}
+          isAnonymous={isAnonymous}
+          onSearchChange={handleSearchChange}
+          onReviewFilterChange={handleReviewFilterChange}
+          onTypeFilterChange={handleTypeFilterChange}
+          onLevelFilterChange={handleLevelFilterChange}
+          onStatusFilterChange={handleStatusFilterChange}
+          onTagFiltersChange={handleTagFiltersChange}
+          onSortChange={handleSortChange}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+          onClearFilters={clearAllFilters}
+        />
 
           {/* Results Summary */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="flex items-center flex-wrap gap-4">
+            <div className="flex items-baseline flex-wrap gap-4">
               <Heading level="h1" className="text-xl sm:text-2xl font-bold text-white">
                 Submissions
               </Heading>
@@ -360,9 +407,8 @@ export default function ReviewerDashboard() {
                   key={submission.id}
                   submission={submission}
                   isAnonymous={isAnonymous}
+                  activeTagFilters={tagFilters}
                   dashboardParams={dashboardParams}
-                  isBookmarked={isBookmarked(submission.id)}
-                  onToggleBookmark={toggleBookmark}
                 />
               ))}
             </div>

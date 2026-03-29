@@ -175,6 +175,15 @@ export const LEVEL_OPTIONS = [
   { value: 'advanced', label: 'Advanced' },
 ];
 
+export const STATUS_OPTIONS = [
+  { value: '', label: 'All Statuses' },
+  { value: 'submitted', label: 'Submitted' },
+  { value: 'under_review', label: 'In Review' },
+  { value: 'waitlisted', label: 'Waitlisted' },
+  { value: 'accepted', label: 'Accepted' },
+  { value: 'rejected', label: 'Rejected' },
+];
+
 export const SORT_OPTIONS = [
   { value: 'least_reviews', label: 'Least Reviews' },
   { value: 'newest', label: 'Newest First' },
@@ -198,5 +207,6 @@ export interface DashboardFilters {
   searchQuery: string;
   typeFilter: string;
   levelFilter: string;
+  statusFilter: string;
   sortBy: string;
 }
