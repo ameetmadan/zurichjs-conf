@@ -64,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const pdfProps: TicketInvoicePDFProps = {
       invoiceNumber: invoice.invoice_number,
       issueDate: new Date().toLocaleDateString('en-CH'),
-      paymentReference: invoice.stripe_session_id,
+      paymentReference: orderContext.primaryTicket.stripe_payment_intent_id ?? invoice.stripe_session_id,
       billing: {
         name: invoice.billing_name,
         email: invoice.billing_email,
