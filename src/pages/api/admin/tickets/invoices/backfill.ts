@@ -3,7 +3,9 @@
  * POST /api/admin/tickets/invoices/backfill
  *
  * Creates invoice records for all confirmed tickets that don't yet have one.
- * Processes tickets in batches and skips non-Stripe sessions (B2B, manual, etc.).
+ * Processes sessions SEQUENTIALLY in purchase-date order so that the
+ * deterministic trigger assigns numbers that reflect actual purchase sequence.
+ * Skips non-Stripe sessions (B2B, manual, etc.).
  * Safe to run multiple times — idempotent per stripe_session_id.
  *
  * Returns a summary of created, skipped, and failed invoices.
@@ -17,8 +19,6 @@ import type { Ticket } from '@/lib/types/database';
 import { logger } from '@/lib/logger';
 
 const log = logger.scope('Ticket Invoice Backfill');
-
-const BATCH_SIZE = 50;
 
 const SKIP_PREFIXES = ['b2b_invoice_', 'manual_', 'bank_transfer_', 'complimentary_'];
 
@@ -86,20 +86,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let skipped = 0;
     const failures: Array<{ ticketId: string; sessionId: string; error: string }> = [];
 
-    // Process in batches to avoid overwhelming the DB
-    for (let i = 0; i < toProcess.length; i += BATCH_SIZE) {
-      const batch = toProcess.slice(i, i + BATCH_SIZE);
-      await Promise.all(
-        batch.map(async (ticket) => {
-          try {
-            await createInvoiceForNewTicket(ticket);
-            created++;
-          } catch (err) {
-            const message = err instanceof Error ? err.message : 'Unknown error';
-            failures.push({ ticketId: ticket.id, sessionId: ticket.stripe_session_id, error: message });
-          }
-        })
-      );
+    // Process SEQUENTIALLY in purchase-date order.
+    // The invoice number trigger ranks each session by ticket created_at, so
+    // concurrent inserts would race on the COUNT query and could collide.
+    // Sequential processing guarantees each number is assigned in purchase order.
+    for (const ticket of toProcess) {
+      try {
+        await createInvoiceForNewTicket(ticket);
+        created++;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        failures.push({ ticketId: ticket.id, sessionId: ticket.stripe_session_id, error: message });
+      }
     }
 
     skipped = representatives.length - toProcess.length - (existingInvoices?.length ?? 0);
