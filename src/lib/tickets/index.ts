@@ -7,3 +7,13 @@ export type { CreateTicketParams, CreateTicketResult } from './createTicket';
 
 export { getTicketsByUserId, getTicketById, getTicketBySessionId } from './getTickets';
 export type { GetTicketsResult } from './getTickets';
+
+export {
+  resolveOrderContext,
+  createTicketInvoice,
+  getTicketInvoice,
+  getInvoiceBySessionId,
+  updateTicketInvoicePDF,
+  extractPurchaserInfo,
+  buildLineItems,
+} from './invoices';
