@@ -147,10 +147,12 @@ export async function getAdminSubmissions(
   }
 
   // Get review stats for all submissions (include created_at for last_reviewed_at)
+  // Note: Supabase defaults to 1000 rows max; override with explicit limit
   const { data: reviews } = await supabase
     .from('cfp_reviews')
     .select('submission_id, score_overall, created_at')
-    .in('submission_id', submissionIds);
+    .in('submission_id', submissionIds)
+    .limit(10000);
 
   // Get total active reviewers for coverage calculation
   const { count: totalReviewers } = await supabase
@@ -656,10 +658,12 @@ export async function getCfpInsights(): Promise<CfpInsights> {
   const [submissionsResult, reviewsResult, reviewersCountResult] = await Promise.all([
     supabase
       .from('cfp_submissions')
-      .select('id'),
+      .select('id')
+      .limit(10000),
     supabase
       .from('cfp_reviews')
-      .select('submission_id, score_overall, created_at'),
+      .select('submission_id, score_overall, created_at')
+      .limit(10000),
     supabase
       .from('cfp_reviewers')
       .select('*', { count: 'exact', head: true })
