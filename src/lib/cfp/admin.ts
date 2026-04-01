@@ -21,7 +21,6 @@ import type {
   CfpAdminReviewerWithActivity,
   CfpReviewerActivity,
   CfpInsights,
-  CfpAdminSubmissionStats,
 } from '../types/cfp-admin';
 import {
   computeSubmissionScoring,

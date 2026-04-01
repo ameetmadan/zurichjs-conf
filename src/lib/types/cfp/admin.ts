@@ -41,7 +41,13 @@ export interface CfpSubmissionFilters {
 export interface CfpSubmissionWithStats extends CfpSubmission {
   speaker: CfpSpeaker;
   tags: CfpTag[];
-  stats: CfpSubmissionStats;
+  stats: CfpSubmissionStats & {
+    total_reviewers: number;
+    coverage_ratio: number;
+    coverage_percent: number;
+    last_reviewed_at: string | null;
+    shortlist_status: string;
+  };
 }
 
 /**
