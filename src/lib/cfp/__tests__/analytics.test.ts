@@ -94,6 +94,49 @@ describe('buildContentInsights', () => {
     expect(keywordCounts.get('Vector Databases')).toBe(1);
     expect(keywordCounts.get('Embeddings')).toBe(1);
     expect(keywordCounts.get('LangChain.js')).toBe(1);
-    expect(keywordCounts.get('AI Agents')).toBeUndefined();
+    expect(keywordCounts.get('AI Agents')).toBe(1);
+  });
+
+  it('counts AI Agents variants under a single label', () => {
+    const submissions = [
+      {
+        id: 's1',
+        status: 'submitted',
+        title: 'Building AI Agents in the browser',
+        abstract: 'Agentic workflows with MCP',
+        additional_notes: null,
+        outline: null,
+        slides_url: null,
+        previous_recording_url: null,
+      },
+      {
+        id: 's2',
+        status: 'submitted',
+        title: 'Tooling',
+        abstract: 'Nothing special here',
+        additional_notes: 'Uses AI agent patterns and AI-Agents tags',
+        outline: null,
+        slides_url: null,
+        previous_recording_url: null,
+      },
+    ];
+
+    const tagJoins = [
+      { submission_id: 's1', tag_id: 't1' },
+      { submission_id: 's2', tag_id: 't2' },
+      { submission_id: 's2', tag_id: 't3' },
+    ];
+
+    const tagNameMap = new Map([
+      ['t1', 'ai agents'],
+      ['t2', 'AI-Agents'],
+      ['t3', 'AI agent'],
+    ]);
+
+    const result = buildContentInsights(submissions, tagJoins, tagNameMap);
+    const keywordCounts = new Map(result.aiKeywords.map(({ keyword, count }) => [keyword, count]));
+
+    expect(result.aiTopicCount).toBe(2);
+    expect(keywordCounts.get('AI Agents')).toBe(2);
   });
 });

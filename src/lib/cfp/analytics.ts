@@ -427,7 +427,7 @@ const AI_KEYWORDS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /\bvector databases?\b/i, label: 'Vector Databases' },
   { pattern: /\bvector\b/i, label: 'Embeddings' },
   { pattern: /\bembeddings?\b/i, label: 'Embeddings' },
-  { pattern: /\bai(?:[\s-]+)agents?\b/i, label: 'AI Agents' },
+  { pattern: /\bai(?:[\s-]+)s?\b/i, label: 'AI Agents' },
   { pattern: /\bai(?:[\s-]+)agent\b/i, label: 'AI Agents' },
   { pattern: /\bagent(?:ic|s)?\b/i, label: 'AI Agents' },
   { pattern: /\bcopilot\b/i, label: 'Copilot' },
@@ -441,6 +441,7 @@ const AI_KEYWORDS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /\bwebmcp\b/i, label: 'WebMCP' },
   { pattern: /\bspeech recognition\b/i, label: 'Speech Recognition' },
   { pattern: /\bvibe[\s-]+coding\b/i, label: 'Vibe Coding' },
+  { pattern: /\bagentic tooling\b/i, label: 'Agentic Tooling' },
   { pattern: /\bprompt engineering\b/i, label: 'Prompt Engineering' },
   { pattern: /\bfine.?tun/i, label: 'Fine-tuning' },
   { pattern: /\btransformer\b/i, label: 'Transformer' },
@@ -454,6 +455,7 @@ const AI_KEYWORDS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /\bvercel ai\b/i, label: 'Vercel AI SDK' },
   { pattern: /\bai sdk\b/i, label: 'AI SDK' },
   { pattern: /\bcode generation\b/i, label: 'Code Generation' },
+  { pattern: /\baccelerated engineering\b/i, label: 'Accelerated Engineering' },
 ];
 
 export function buildContentInsights(
