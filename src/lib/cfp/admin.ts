@@ -47,6 +47,40 @@ function createCfpServiceClient() {
 }
 
 /**
+ * Fetch all rows from a table by paginating with .range().
+ * PostgREST's max-rows config (default 1000) silently caps .limit(),
+ * so we page through in chunks to guarantee all rows are returned.
+ */
+async function fetchAllRows<T = Record<string, unknown>>(
+  supabase: ReturnType<typeof createCfpServiceClient>,
+  table: string,
+  select: string,
+  pageSize = 1000
+): Promise<{ data: T[]; error: unknown | null }> {
+  const allRows: T[] = [];
+  let offset = 0;
+
+   
+  while (true) {
+    const { data, error } = await supabase
+      .from(table)
+      .select(select)
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      return { data: allRows, error };
+    }
+    if (!data || data.length === 0) break;
+
+    allRows.push(...(data as T[]));
+    if (data.length < pageSize) break;
+    offset += pageSize;
+  }
+
+  return { data: allRows, error: null };
+}
+
+/**
  * Get submissions with server-side filtering, sorting, and pagination.
  *
  * DB-level filters: status, submission_type, talk_level
@@ -73,71 +107,85 @@ export async function getAdminSubmissions(
   } = filters;
 
   // Step 1: Fetch all submissions from DB (apply DB-level filters only)
-  // Note: Supabase defaults to 1000 rows max; override with explicit limit
-  let query = supabase
-    .from('cfp_submissions')
-    .select('*')
-    .limit(10000);
+  // Paginate with .range() to bypass PostgREST max-rows cap (default 1000)
+  const PAGE_SIZE = 1000;
+  const submissions: CfpSubmission[] = [];
+  let pageOffset = 0;
 
-  if (status) {
-    if (Array.isArray(status)) {
-      query = query.in('status', status);
-    } else {
-      query = query.eq('status', status);
+   
+  while (true) {
+    let query = supabase
+      .from('cfp_submissions')
+      .select('*')
+      .range(pageOffset, pageOffset + PAGE_SIZE - 1);
+
+    if (status) {
+      if (Array.isArray(status)) {
+        query = query.in('status', status);
+      } else {
+        query = query.eq('status', status);
+      }
     }
-  }
 
-  if (submission_type) {
-    if (Array.isArray(submission_type)) {
-      query = query.in('submission_type', submission_type);
-    } else {
-      query = query.eq('submission_type', submission_type);
+    if (submission_type) {
+      if (Array.isArray(submission_type)) {
+        query = query.in('submission_type', submission_type);
+      } else {
+        query = query.eq('submission_type', submission_type);
+      }
     }
-  }
 
-  if (talk_level) {
-    if (Array.isArray(talk_level)) {
-      query = query.in('talk_level', talk_level);
-    } else {
-      query = query.eq('talk_level', talk_level);
+    if (talk_level) {
+      if (Array.isArray(talk_level)) {
+        query = query.in('talk_level', talk_level);
+      } else {
+        query = query.eq('talk_level', talk_level);
+      }
     }
-  }
 
-  const { data: submissions, error } = await query;
+    const { data, error } = await query;
 
-  if (error || !submissions) {
-    console.error('[CFP Admin] Error fetching submissions:', error);
-    return { submissions: [], total: 0, totalUnfiltered: 0 };
+    if (error) {
+      console.error('[CFP Admin] Error fetching submissions:', error);
+      return { submissions: [], total: 0, totalUnfiltered: 0 };
+    }
+    if (!data || data.length === 0) break;
+
+    submissions.push(...(data as CfpSubmission[]));
+    if (data.length < PAGE_SIZE) break;
+    pageOffset += PAGE_SIZE;
   }
 
   // Step 2: Fetch related data in parallel
-  // Fetch ALL reviews and tags (no .in() filter) to avoid URL length limits
-  // with 1000+ submission IDs. We filter in-memory via Maps which is fast.
-  const speakerIds = [...new Set(submissions.map((s: { speaker_id: string }) => s.speaker_id))];
+  // Use paginated fetches (fetchAllRows) to bypass PostgREST max-rows cap.
+  // No .in() filters to avoid URL length limits with 1000+ IDs.
+  // We filter in-memory via Sets/Maps.
   const allSubmissionIds = new Set(submissions.map((s: { id: string }) => s.id));
+  const speakerIdSet = new Set(submissions.map((s: { speaker_id: string }) => s.speaker_id));
 
   const [speakersResult, tagJoinsResult, reviewsResult, reviewerCountResult] = await Promise.all([
-    supabase
-      .from('cfp_speakers')
-      .select('*')
-      .in('id', speakerIds),
-    supabase
-      .from('cfp_submission_tags')
-      .select('submission_id, tag_id')
-      .limit(10000),
-    supabase
-      .from('cfp_reviews')
-      .select('submission_id, score_overall, created_at')
-      .limit(10000),
+    fetchAllRows<CfpSpeaker>(supabase, 'cfp_speakers', '*'),
+    fetchAllRows<{ submission_id: string; tag_id: string }>(supabase, 'cfp_submission_tags', 'submission_id, tag_id'),
+    fetchAllRows<{ submission_id: string; score_overall: number | null; created_at: string }>(
+      supabase, 'cfp_reviews', 'submission_id, score_overall, created_at'
+    ),
     supabase
       .from('cfp_reviewers')
       .select('*', { count: 'exact', head: true })
       .eq('is_active', true),
   ]);
 
-  // Build speaker map
+  // Log errors from parallel queries for debugging
+  if (speakersResult.error) console.error('[CFP Admin] Error fetching speakers:', speakersResult.error);
+  if (tagJoinsResult.error) console.error('[CFP Admin] Error fetching tag joins:', tagJoinsResult.error);
+  if (reviewsResult.error) console.error('[CFP Admin] Error fetching reviews:', reviewsResult.error);
+  if (reviewerCountResult.error) console.error('[CFP Admin] Error fetching reviewer count:', reviewerCountResult.error);
+
+  // Build speaker map (filter to only speakers we need)
   const speakerMap: Record<string, CfpSpeaker> = Object.fromEntries(
-    (speakersResult.data || []).map((s: CfpSpeaker) => [s.id, s])
+    (speakersResult.data || [])
+      .filter((s: CfpSpeaker) => speakerIdSet.has(s.id))
+      .map((s: CfpSpeaker) => [s.id, s])
   );
 
   // Build tag map (filter tag joins to only our submissions)
@@ -419,10 +467,9 @@ export async function getCfpStats(): Promise<CfpStats> {
   // - Reviews: only fetch last 7 days for active_reviewers metric; use count for total
   // - Speakers & reviewers: count-only queries (head: true = no rows fetched)
   const [submissionsResult, totalReviewsResult, recentReviewsResult, speakersResult, reviewersResult] = await Promise.all([
-    supabase
-      .from('cfp_submissions')
-      .select('id, status, submission_type, talk_level, travel_assistance_required', { count: 'exact' })
-      .limit(10000),
+    fetchAllRows<{ id: string; status: CfpSubmissionStatus; submission_type: string; talk_level: string; travel_assistance_required: boolean }>(
+      supabase, 'cfp_submissions', 'id, status, submission_type, talk_level, travel_assistance_required'
+    ),
     supabase
       .from('cfp_reviews')
       .select('*', { count: 'exact', head: true }),
@@ -430,7 +477,7 @@ export async function getCfpStats(): Promise<CfpStats> {
       .from('cfp_reviews')
       .select('reviewer_id')
       .gte('created_at', sevenDaysAgoISO)
-      .limit(10000),
+      .range(0, 4999),
     supabase
       .from('cfp_speakers')
       .select('*', { count: 'exact', head: true }),
@@ -441,7 +488,7 @@ export async function getCfpStats(): Promise<CfpStats> {
   ]);
 
   const submissions = submissionsResult.data || [];
-  const totalSubmissionsCount = submissionsResult.count || submissions.length;
+  const totalSubmissionsCount = submissions.length;
   const totalReviews = totalReviewsResult.count || 0;
   const totalSpeakers = speakersResult.count || 0;
   const totalReviewers = reviewersResult.count || 0;
@@ -452,20 +499,12 @@ export async function getCfpStats(): Promise<CfpStats> {
   );
   const activeReviewers7d = recentReviewerIds.size;
 
-  const submissionList = submissions as Array<{
-    id: string;
-    status: CfpSubmissionStatus;
-    submission_type: string;
-    talk_level: string;
-    travel_assistance_required: boolean;
-  }>;
-
   const byStatus: Record<string, number> = {};
   const byType: Record<string, number> = {};
   const byLevel: Record<string, number> = {};
   let travelRequested = 0;
 
-  for (const s of submissionList) {
+  for (const s of submissions) {
     byStatus[s.status] = (byStatus[s.status] || 0) + 1;
     byType[s.submission_type] = (byType[s.submission_type] || 0) + 1;
     byLevel[s.talk_level] = (byLevel[s.talk_level] || 0) + 1;
@@ -497,18 +536,12 @@ export async function getCfpStats(): Promise<CfpStats> {
  */
 export async function getAdminReviewers(): Promise<CfpReviewer[]> {
   const supabase = createCfpServiceClient();
-
-  const { data, error } = await supabase
-    .from('cfp_reviewers')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(10000);
-
+  const { data, error } = await fetchAllRows<CfpReviewer>(supabase, 'cfp_reviewers', '*');
   if (error) {
     console.error('[CFP Admin] Error fetching reviewers:', error);
     return [];
   }
-  return (data || []) as CfpReviewer[];
+  return data;
 }
 
 /**
@@ -516,19 +549,12 @@ export async function getAdminReviewers(): Promise<CfpReviewer[]> {
  */
 export async function getAdminSpeakers(): Promise<CfpSpeaker[]> {
   const supabase = createCfpServiceClient();
-
-  const { data, error } = await supabase
-    .from('cfp_speakers')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(10000);
-
+  const { data, error } = await fetchAllRows<CfpSpeaker>(supabase, 'cfp_speakers', '*');
   if (error) {
     console.error('[CFP Admin] Error fetching speakers:', error);
     return [];
   }
-
-  return (data || []) as CfpSpeaker[];
+  return data;
 }
 
 /**
@@ -540,15 +566,12 @@ export async function getAdminSpeakersWithSubmissions(): Promise<
 > {
   const supabase = createCfpServiceClient();
 
-  // Fetch speakers and all submissions in parallel
-  // Note: Supabase defaults to 1000 rows max; override with explicit limit
+  // Fetch speakers and all submissions in parallel using paginated fetch
   const [speakersResult, submissionsResult] = await Promise.all([
-    supabase.from('cfp_speakers').select('*').order('created_at', { ascending: false }).limit(10000),
-    supabase
-      .from('cfp_submissions')
-      .select('id, title, status, submission_type, speaker_id')
-      .order('created_at', { ascending: false })
-      .limit(10000),
+    fetchAllRows<CfpSpeaker>(supabase, 'cfp_speakers', '*'),
+    fetchAllRows<{ id: string; title: string; status: string; submission_type: string; speaker_id: string }>(
+      supabase, 'cfp_submissions', 'id, title, status, submission_type, speaker_id'
+    ),
   ]);
 
   if (speakersResult.error) {
@@ -556,8 +579,8 @@ export async function getAdminSpeakersWithSubmissions(): Promise<
     return [];
   }
 
-  const speakers = (speakersResult.data || []) as CfpSpeaker[];
-  const submissions = submissionsResult.data || [];
+  const speakers = speakersResult.data;
+  const submissions = submissionsResult.data;
 
   // Group submissions by speaker_id for O(n) lookup
   const submissionsBySpeakerId = new Map<string, typeof submissions>();
@@ -586,20 +609,12 @@ export async function getAdminSpeakersWithSubmissions(): Promise<
  */
 export async function getAdminTags(): Promise<CfpTag[]> {
   const supabase = createCfpServiceClient();
-
-  const { data, error } = await supabase
-    .from('cfp_tags')
-    .select('*')
-    .order('is_suggested', { ascending: false })
-    .order('name', { ascending: true })
-    .limit(10000);
-
+  const { data, error } = await fetchAllRows<CfpTag>(supabase, 'cfp_tags', '*');
   if (error) {
     console.error('[CFP Admin] Error fetching tags:', error);
     return [];
   }
-
-  return (data || []) as CfpTag[];
+  return data;
 }
 
 /**
@@ -609,19 +624,12 @@ export async function getAdminTags(): Promise<CfpTag[]> {
 export async function getAdminReviewersWithActivity(): Promise<CfpAdminReviewerWithActivity[]> {
   const supabase = createCfpServiceClient();
 
-  // Get reviewers and reviews in parallel
-  // Note: Supabase defaults to 1000 rows max; override with explicit limit
+  // Get reviewers and reviews in parallel using paginated fetch
   const [reviewersResult, reviewsResult] = await Promise.all([
-    supabase
-      .from('cfp_reviewers')
-      .select('*')
-      .eq('is_active', true)
-      .order('created_at', { ascending: false })
-      .limit(10000),
-    supabase
-      .from('cfp_reviews')
-      .select('reviewer_id, score_overall, created_at')
-      .limit(10000),
+    fetchAllRows<CfpReviewer>(supabase, 'cfp_reviewers', '*'),
+    fetchAllRows<{ reviewer_id: string; score_overall: number | null; created_at: string }>(
+      supabase, 'cfp_reviews', 'reviewer_id, score_overall, created_at'
+    ),
   ]);
 
   if (reviewersResult.error) {
@@ -629,8 +637,9 @@ export async function getAdminReviewersWithActivity(): Promise<CfpAdminReviewerW
     return [];
   }
 
-  const reviewers = reviewersResult.data || [];
-  const reviews = reviewsResult.data || [];
+  // Filter to active reviewers in-memory (can't add .eq() to fetchAllRows)
+  const reviewers = reviewersResult.data.filter((r) => r.is_active);
+  const reviews = reviewsResult.data;
 
   // Calculate 7 days ago threshold
   const sevenDaysAgo = new Date();
@@ -649,7 +658,7 @@ export async function getAdminReviewersWithActivity(): Promise<CfpAdminReviewerW
 
   // Build enhanced reviewer data
   const result: CfpAdminReviewerWithActivity[] = reviewers.map((reviewer) => {
-    const reviewerReviews = reviewsByReviewer.get(reviewer.id as string) || [];
+    const reviewerReviews = reviewsByReviewer.get(reviewer.id) || [];
     const totalReviews = reviewerReviews.length;
     const reviewsLast7Days = reviewerReviews.filter(
       (r) => r.created_at >= sevenDaysAgoISO
@@ -659,7 +668,7 @@ export async function getAdminReviewersWithActivity(): Promise<CfpAdminReviewerW
     let lastActivityAt: string | null = null;
     for (const r of reviewerReviews) {
       if (!lastActivityAt || r.created_at > lastActivityAt) {
-        lastActivityAt = r.created_at as string;
+        lastActivityAt = r.created_at;
       }
     }
 
@@ -672,14 +681,14 @@ export async function getAdminReviewersWithActivity(): Promise<CfpAdminReviewerW
       : null;
 
     return {
-      id: reviewer.id as string,
-      email: reviewer.email as string,
-      name: reviewer.name as string | null,
-      role: reviewer.role as string,
-      is_active: reviewer.is_active as boolean,
-      can_see_speaker_identity: reviewer.can_see_speaker_identity as boolean,
-      accepted_at: reviewer.accepted_at as string | null,
-      created_at: reviewer.created_at as string,
+      id: reviewer.id,
+      email: reviewer.email,
+      name: reviewer.name,
+      role: reviewer.role,
+      is_active: reviewer.is_active,
+      can_see_speaker_identity: reviewer.can_see_speaker_identity,
+      accepted_at: reviewer.accepted_at,
+      created_at: reviewer.created_at,
       total_reviews: totalReviews,
       reviews_last_7_days: reviewsLast7Days,
       last_activity_at: lastActivityAt,
@@ -712,13 +721,12 @@ export async function getReviewerActivity(
   }
 
   // Get reviews for this reviewer
-  // Note: Supabase defaults to 1000 rows max; override with explicit limit
   let reviewsQuery = supabase
     .from('cfp_reviews')
     .select('id, submission_id, score_overall, private_notes, created_at', { count: 'exact' })
     .eq('reviewer_id', reviewerId)
     .order('created_at', { ascending: false })
-    .limit(10000);
+    .range(0, 4999);
 
   if (dateFilter) {
     reviewsQuery = reviewsQuery.gte('created_at', dateFilter);
@@ -761,24 +769,20 @@ export async function getReviewerActivity(
 export async function getCfpInsights(): Promise<CfpInsights> {
   const supabase = createCfpServiceClient();
 
-  // Get all submissions with their reviews in parallel
+  // Get all submissions with their reviews in parallel using paginated fetch
   const [submissionsResult, reviewsResult, reviewersCountResult] = await Promise.all([
-    supabase
-      .from('cfp_submissions')
-      .select('id')
-      .limit(10000),
-    supabase
-      .from('cfp_reviews')
-      .select('submission_id, score_overall, created_at')
-      .limit(10000),
+    fetchAllRows<{ id: string }>(supabase, 'cfp_submissions', 'id'),
+    fetchAllRows<{ submission_id: string; score_overall: number | null; created_at: string }>(
+      supabase, 'cfp_reviews', 'submission_id, score_overall, created_at'
+    ),
     supabase
       .from('cfp_reviewers')
       .select('*', { count: 'exact', head: true })
       .eq('is_active', true),
   ]);
 
-  const submissions = submissionsResult.data || [];
-  const reviews = reviewsResult.data || [];
+  const submissions = submissionsResult.data;
+  const reviews = reviewsResult.data;
   const totalReviewers = reviewersCountResult.count || 0;
 
   // Group reviews by submission
