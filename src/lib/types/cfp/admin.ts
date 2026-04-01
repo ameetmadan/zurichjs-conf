@@ -9,7 +9,6 @@ import type {
   CfpSubmissionStatus,
 } from './base';
 import type { CfpSpeaker, CfpTag, CfpSubmission } from './entities';
-import type { CfpSubmissionStats } from './reviews';
 import type {
   CfpSpeakerTravel,
   CfpSpeakerFlight,
@@ -41,7 +40,14 @@ export interface CfpSubmissionFilters {
 export interface CfpSubmissionWithStats extends CfpSubmission {
   speaker: CfpSpeaker;
   tags: CfpTag[];
-  stats: CfpSubmissionStats & {
+  stats: {
+    submission_id: string;
+    review_count: number;
+    avg_overall: number | null;
+    avg_relevance: number | null;
+    avg_technical_depth: number | null;
+    avg_clarity: number | null;
+    avg_diversity: number | null;
     total_reviewers: number;
     coverage_ratio: number;
     coverage_percent: number;
