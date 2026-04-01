@@ -27,10 +27,12 @@ export interface CfpSubmissionFilters {
   company_can_cover_travel?: boolean;
   tag_ids?: string[];
   search?: string;
-  sort_by?: 'created_at' | 'avg_score' | 'review_count' | 'title';
+  sort_by?: 'created_at' | 'avg_score' | 'review_count' | 'title' | 'coverage' | 'last_reviewed';
   sort_order?: 'asc' | 'desc';
   limit?: number;
   offset?: number;
+  min_review_count?: number;
+  shortlist_only?: boolean;
 }
 
 /**
