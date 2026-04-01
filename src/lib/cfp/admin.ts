@@ -110,9 +110,11 @@ export async function getAdminSubmissions(
     return { submissions: [], total: 0, totalUnfiltered: 0 };
   }
 
-  // Step 2: Fetch related data in parallel (speakers, tags, reviews, reviewer count)
-  const allSubmissionIds = submissions.map((s: { id: string }) => s.id);
+  // Step 2: Fetch related data in parallel
+  // Fetch ALL reviews and tags (no .in() filter) to avoid URL length limits
+  // with 1000+ submission IDs. We filter in-memory via Maps which is fast.
   const speakerIds = [...new Set(submissions.map((s: { speaker_id: string }) => s.speaker_id))];
+  const allSubmissionIds = new Set(submissions.map((s: { id: string }) => s.id));
 
   const [speakersResult, tagJoinsResult, reviewsResult, reviewerCountResult] = await Promise.all([
     supabase
@@ -122,12 +124,10 @@ export async function getAdminSubmissions(
     supabase
       .from('cfp_submission_tags')
       .select('submission_id, tag_id')
-      .in('submission_id', allSubmissionIds)
       .limit(10000),
     supabase
       .from('cfp_reviews')
       .select('submission_id, score_overall, created_at')
-      .in('submission_id', allSubmissionIds)
       .limit(10000),
     supabase
       .from('cfp_reviewers')
@@ -140,8 +140,10 @@ export async function getAdminSubmissions(
     (speakersResult.data || []).map((s: CfpSpeaker) => [s.id, s])
   );
 
-  // Build tag map
-  const tagJoins = tagJoinsResult.data || [];
+  // Build tag map (filter tag joins to only our submissions)
+  const tagJoins = (tagJoinsResult.data || []).filter(
+    (j: { submission_id: string }) => allSubmissionIds.has(j.submission_id)
+  );
   const tagIds = [...new Set(tagJoins.map((j: { tag_id: string }) => j.tag_id))];
   let tagMap: Record<string, CfpTag> = {};
   if (tagIds.length > 0) {
@@ -152,11 +154,12 @@ export async function getAdminSubmissions(
     tagMap = Object.fromEntries((tags || []).map((t: CfpTag) => [t.id, t]));
   }
 
-  // Build reviews-by-submission map
+  // Build reviews-by-submission map (filter to only our submissions)
   const totalReviewerCount = reviewerCountResult.count || 0;
   const reviewsBySubmission = new Map<string, ReviewInput[]>();
   for (const review of reviewsResult.data || []) {
     const submissionId = review.submission_id as string;
+    if (!allSubmissionIds.has(submissionId)) continue;
     if (!reviewsBySubmission.has(submissionId)) {
       reviewsBySubmission.set(submissionId, []);
     }
