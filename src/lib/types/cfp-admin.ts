@@ -5,7 +5,6 @@
 
 import type { ShortlistStatus } from '@/lib/cfp/scoring';
 import type { CfpDecisionStatus } from './cfp/decisions';
-import type { CfpSubmissionMetadata } from '@/lib/cfp/closure';
 
 // Re-export CfpStats from the canonical location
 export type { CfpStats } from './cfp/admin';
@@ -80,7 +79,6 @@ export interface CfpAdminSubmission {
   tags: Array<{ id: string; name: string }>;
   stats: CfpAdminSubmissionStats;
   decision_status?: CfpDecisionStatus;
-  metadata?: CfpSubmissionMetadata | null;
 }
 
 export interface CfpAdminSubmissionStats {

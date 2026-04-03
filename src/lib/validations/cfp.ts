@@ -404,15 +404,6 @@ export const updateSubmissionStatusSchema = z.object({
     'rejected',
     'withdrawn',
   ]),
-  reopen_until: z.string().datetime().nullable().optional(),
-}).superRefine((data, ctx) => {
-  if (data.reopen_until && data.status !== 'draft') {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ['reopen_until'],
-      message: 'reopen_until can only be set when status is draft',
-    });
-  }
 });
 
 export type UpdateSubmissionStatusFormData = z.infer<

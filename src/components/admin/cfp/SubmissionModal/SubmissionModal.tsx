@@ -30,7 +30,7 @@ import { CommunicationSection } from './CommunicationSection';
 export interface SubmissionModalProps {
   submission: CfpAdminSubmission;
   onClose: () => void;
-  onUpdateStatus: (status: string, reopenUntil?: string | null) => void;
+  onUpdateStatus: (status: string) => void;
   isUpdating: boolean;
   onDelete: () => void;
   isDeleting: boolean;
@@ -57,15 +57,6 @@ export function SubmissionModal({
   const [showDecisionModal, setShowDecisionModal] = useState(false);
   const [showScheduleEmailModal, setShowScheduleEmailModal] = useState(false);
   const [scheduleEmailType, setScheduleEmailType] = useState<'acceptance' | 'rejection'>('acceptance');
-  const [reopenUntilInput, setReopenUntilInput] = useState(() => {
-    const reopenUntil = submission.metadata?.reopen_until;
-    if (!reopenUntil) return '';
-
-    const date = new Date(reopenUntil);
-    if (Number.isNaN(date.getTime())) return '';
-    const localIso = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString();
-    return localIso.slice(0, 16);
-  });
   const [editForm, setEditForm] = useState({
     title: submission.title,
     abstract: submission.abstract,
@@ -437,8 +428,6 @@ export function SubmissionModal({
             currentStatus={submission.status}
             onUpdateStatus={onUpdateStatus}
             isUpdating={isUpdating}
-            reopenUntilInput={reopenUntilInput}
-            onReopenUntilInputChange={setReopenUntilInput}
           />
 
           {/* Danger Zone */}

@@ -162,15 +162,7 @@ export default function CfpAdminDashboard() {
 
   // Mutations
   const updateStatusMutation = useMutation({
-    mutationFn: ({
-      id,
-      status,
-      reopenUntil,
-    }: {
-      id: string;
-      status: string;
-      reopenUntil?: string | null;
-    }) => updateSubmissionStatus(id, status, reopenUntil),
+    mutationFn: ({ id, status }: { id: string; status: string }) => updateSubmissionStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cfp', 'submissions'] });
       queryClient.invalidateQueries({ queryKey: cfpQueryKeys.stats });
@@ -346,11 +338,7 @@ export default function CfpAdminDashboard() {
           <SubmissionModal
             submission={selectedSubmission}
             onClose={() => setSelectedSubmission(null)}
-            onUpdateStatus={(status, reopenUntil) => updateStatusMutation.mutate({
-              id: selectedSubmission.id,
-              status,
-              reopenUntil,
-            })}
+            onUpdateStatus={(status) => updateStatusMutation.mutate({ id: selectedSubmission.id, status })}
             isUpdating={updateStatusMutation.isPending}
             onDelete={() => deleteSubmissionMutation.mutate(selectedSubmission.id)}
             isDeleting={deleteSubmissionMutation.isPending}

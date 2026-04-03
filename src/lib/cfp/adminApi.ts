@@ -54,15 +54,11 @@ export async function fetchTags(): Promise<{ tags: CfpAdminTag[] }> {
   return res.json();
 }
 
-export async function updateSubmissionStatus(
-  id: string,
-  status: string,
-  reopenUntil?: string | null
-): Promise<void> {
+export async function updateSubmissionStatus(id: string, status: string): Promise<void> {
   const res = await fetch(`/api/admin/cfp/submissions/${id}/status`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status, reopen_until: reopenUntil ?? null }),
+    body: JSON.stringify({ status }),
   });
   if (!res.ok) throw new Error('Failed to update status');
 }

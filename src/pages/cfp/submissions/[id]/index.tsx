@@ -83,7 +83,7 @@ export default function SubmissionDetail({ submission, isSubmissionClosed }: Sub
   useEffect(() => {
     if (router.query.cfp_closed !== '1') return;
 
-    toast.warning('CFP is closed', 'This draft is read-only unless an organizer reopens it.');
+    toast.warning('CFP is closed', 'This draft is read-only and can no longer be submitted.');
     router.replace(`/cfp/submissions/${submission.id}`, undefined, { shallow: true });
   }, [router, submission.id, toast]);
 
@@ -296,7 +296,7 @@ export default function SubmissionDetail({ submission, isSubmissionClosed }: Sub
           {isSubmissionClosed && isDraft && (
             <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6">
               <p className="text-sm text-amber-200/90">
-                CFP is closed. This draft is read-only unless an organizer reopens it for edits.
+                CFP is closed. This draft is read-only and can no longer be submitted.
               </p>
             </div>
           )}

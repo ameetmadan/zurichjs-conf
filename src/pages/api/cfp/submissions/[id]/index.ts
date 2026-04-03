@@ -71,7 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!canSubmitOrEditSubmission(existingSubmission)) {
         return res.status(403).json({
           code: CFP_CLOSED_ERROR_CODE,
-          error: 'CFP is closed. Draft editing is disabled unless reopened by organizers.',
+          error: 'CFP is closed. Draft editing is disabled.',
         });
       }
 
@@ -114,7 +114,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!canSubmitOrEditSubmission(existingSubmission)) {
         return res.status(403).json({
           code: CFP_CLOSED_ERROR_CODE,
-          error: 'CFP is closed. Draft deletion is disabled unless reopened by organizers.',
+          error: 'CFP is closed. Draft deletion is disabled.',
         });
       }
 

@@ -17,24 +17,13 @@ describe('submission closure guards', () => {
     ).toBe(false);
   });
 
-  it('allows submit/edit after close when reopen window is active', () => {
+  it('blocks submit/edit after close even when metadata contains reopen_until', () => {
     const submission = {
       submitted_at: '2026-03-20T10:00:00.000Z',
       metadata: { reopen_until: '2026-04-10T12:00:00.000Z' },
     };
 
-    expect(canSubmitOrEditSubmission(submission, new Date('2026-04-10T11:00:00.000Z'))).toBe(true);
+    expect(canSubmitOrEditSubmission(submission, new Date('2026-04-10T11:00:00.000Z'))).toBe(false);
     expect(canSubmitOrEditSubmission(submission, new Date('2026-04-10T12:00:00.000Z'))).toBe(false);
-  });
-
-  it('never allows previously unsubmitted drafts after close, even with reopen window', () => {
-    const neverSubmittedDraft = {
-      submitted_at: null,
-      metadata: { reopen_until: '2026-04-10T12:00:00.000Z' },
-    };
-
-    expect(
-      canSubmitOrEditSubmission(neverSubmittedDraft, new Date('2026-04-10T11:00:00.000Z'))
-    ).toBe(false);
   });
 });
