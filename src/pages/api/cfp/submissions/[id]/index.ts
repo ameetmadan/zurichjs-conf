@@ -68,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (existingSubmission.speaker_id !== speaker.id) {
         return res.status(403).json({ error: 'Access denied' });
       }
-      if (!canSubmitOrEditSubmission(existingSubmission.metadata)) {
+      if (!canSubmitOrEditSubmission(existingSubmission)) {
         return res.status(403).json({
           code: CFP_CLOSED_ERROR_CODE,
           error: 'CFP is closed. Draft editing is disabled unless reopened by organizers.',
@@ -111,7 +111,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (existingSubmission.speaker_id !== speaker.id) {
         return res.status(403).json({ error: 'Access denied' });
       }
-      if (!canSubmitOrEditSubmission(existingSubmission.metadata)) {
+      if (!canSubmitOrEditSubmission(existingSubmission)) {
         return res.status(403).json({
           code: CFP_CLOSED_ERROR_CODE,
           error: 'CFP is closed. Draft deletion is disabled unless reopened by organizers.',

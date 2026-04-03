@@ -56,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    if (!canSubmitOrEditSubmission(submission.metadata)) {
+    if (!canSubmitOrEditSubmission(submission)) {
       return res.status(403).json({
         code: CFP_CLOSED_ERROR_CODE,
         error: 'CFP is closed. This submission cannot be submitted for review right now.',
