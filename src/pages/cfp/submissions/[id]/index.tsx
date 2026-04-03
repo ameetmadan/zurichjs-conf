@@ -3,7 +3,7 @@
  * View and manage a single submission
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { GetServerSideProps } from 'next';
@@ -13,10 +13,13 @@ import { Button, Heading } from '@/components/atoms';
 import { createSupabaseServerClient, getSpeakerByUserId } from '@/lib/cfp/auth';
 import { getSubmissionWithDetails, getSpeakerVisibleStatus, type SpeakerVisibleStatus } from '@/lib/cfp/submissions';
 import type { CfpSpeaker, CfpSubmissionWithDetails } from '@/lib/types/cfp';
+import { CFP_CLOSED_ERROR_CODE, isCfpClosedForSubmission } from '@/lib/cfp/closure';
+import { useToast } from '@/contexts/ToastContext';
 
 interface SubmissionDetailProps {
   speaker: CfpSpeaker;
   submission: CfpSubmissionWithDetails;
+  isSubmissionClosed: boolean;
 }
 
 const StatusBadge = ({ status }: { status: SpeakerVisibleStatus }) => {
@@ -51,8 +54,9 @@ const TYPE_LABELS: Record<string, string> = {
   workshop: 'Workshop',
 };
 
-export default function SubmissionDetail({ submission }: SubmissionDetailProps) {
+export default function SubmissionDetail({ submission, isSubmissionClosed }: SubmissionDetailProps) {
   const router = useRouter();
+  const toast = useToast();
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -69,12 +73,19 @@ export default function SubmissionDetail({ submission }: SubmissionDetailProps) 
   const visibleStatus = getSpeakerVisibleStatus(submission);
 
   const isDraft = visibleStatus === 'draft';
-  const canEdit = isDraft;
-  const canSubmit = isDraft;
+  const canEdit = isDraft && !isSubmissionClosed;
+  const canSubmit = isDraft && !isSubmissionClosed;
   const canWithdraw = visibleStatus === 'submitted';
-  const canDelete = isDraft;
+  const canDelete = isDraft && !isSubmissionClosed;
   const isAccepted = visibleStatus === 'accepted';
   const isRejected = visibleStatus === 'rejected';
+
+  useEffect(() => {
+    if (router.query.cfp_closed !== '1') return;
+
+    toast.warning('CFP is closed', 'This draft is read-only unless an organizer reopens it.');
+    router.replace(`/cfp/submissions/${submission.id}`, undefined, { shallow: true });
+  }, [router, submission.id, toast]);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -87,6 +98,9 @@ export default function SubmissionDetail({ submission }: SubmissionDetailProps) 
 
       if (!response.ok) {
         const data = await response.json();
+        if (data.code === CFP_CLOSED_ERROR_CODE) {
+          toast.warning('CFP is closed', data.error || 'CFP submissions are closed.');
+        }
         throw new Error(data.error || 'Failed to submit');
       }
 
@@ -278,6 +292,14 @@ export default function SubmissionDetail({ submission }: SubmissionDetailProps) 
               )}
             </div>
           </div>
+
+          {isSubmissionClosed && isDraft && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6">
+              <p className="text-sm text-amber-200/90">
+                CFP is closed. This draft is read-only unless an organizer reopens it for edits.
+              </p>
+            </div>
+          )}
 
           {/* Acceptance Section */}
           {isAccepted && (
@@ -655,10 +677,13 @@ export const getServerSideProps: GetServerSideProps<SubmissionDetailProps> = asy
     return { notFound: true };
   }
 
+  const isSubmissionClosed = isCfpClosedForSubmission(submission.metadata);
+
   return {
     props: {
       speaker,
       submission,
+      isSubmissionClosed,
     },
   };
 };

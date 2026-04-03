@@ -29,6 +29,7 @@ import {
   type ShortlistStatus,
   type ReviewInput,
 } from './scoring';
+import { buildSubmissionMetadataForStatusUpdate } from './admin-status';
 
 /**
  * Create untyped Supabase client for CFP tables
@@ -431,14 +432,33 @@ export async function getAdminSubmissionDetail(id: string): Promise<{
  */
 export async function updateSubmissionStatus(
   id: string,
-  status: CfpSubmissionStatus
+  status: CfpSubmissionStatus,
+  reopenUntil: string | null = null
 ): Promise<{ success: boolean; error: string | null }> {
   const supabase = createCfpServiceClient();
+
+  const { data: existingSubmission, error: existingError } = await supabase
+    .from('cfp_submissions')
+    .select('metadata')
+    .eq('id', id)
+    .single();
+
+  if (existingError) {
+    console.error('[CFP Admin] Error loading submission metadata:', existingError);
+    return { success: false, error: existingError.message };
+  }
+
+  const metadata = buildSubmissionMetadataForStatusUpdate(
+    existingSubmission?.metadata ?? null,
+    status,
+    reopenUntil
+  );
 
   const { error } = await supabase
     .from('cfp_submissions')
     .update({
       status,
+      metadata,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id);

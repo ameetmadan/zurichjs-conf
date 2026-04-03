@@ -14,6 +14,7 @@ import { createSupabaseServerClient, getSpeakerByUserId } from '@/lib/cfp/auth';
 import { getSubmissionWithDetails } from '@/lib/cfp/submissions';
 import { getSuggestedTags } from '@/lib/cfp/tags';
 import type { CfpSpeaker, CfpSubmissionWithDetails, CfpSubmissionType, CfpTalkLevel, CfpTag } from '@/lib/types/cfp';
+import { isCfpClosedForSubmission } from '@/lib/cfp/closure';
 
 interface EditSubmissionProps {
   speaker: CfpSpeaker;
@@ -245,6 +246,9 @@ export const getServerSideProps: GetServerSideProps<EditSubmissionProps> = async
   if (!submission) return { notFound: true };
   if (submission.speaker_id !== speaker.id) return { notFound: true };
   if (submission.status !== 'draft') return { redirect: { destination: `/cfp/submissions/${id}`, permanent: false } };
+  if (isCfpClosedForSubmission(submission.metadata)) {
+    return { redirect: { destination: `/cfp/submissions/${id}?cfp_closed=1`, permanent: false } };
+  }
   const suggestedTags = await getSuggestedTags();
   return { props: { speaker, submission, suggestedTags } };
 };

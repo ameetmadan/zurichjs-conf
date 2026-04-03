@@ -12,7 +12,7 @@ import { logger } from '@/lib/logger';
 const log = logger.scope('CFP Admin Status API');
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'PUT') {
+  if (req.method !== 'PUT' && req.method !== 'PATCH') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
@@ -38,13 +38,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { success, error } = await updateSubmissionStatus(id, result.data.status);
+    const { success, error } = await updateSubmissionStatus(
+      id,
+      result.data.status,
+      result.data.reopen_until ?? null
+    );
 
     if (!success) {
       return res.status(400).json({ error: error || 'Failed to update status' });
     }
 
-    log.info('Submission status updated', { submissionId: id, status: result.data.status });
+    log.info('Submission status updated', {
+      submissionId: id,
+      status: result.data.status,
+      reopenUntil: result.data.reopen_until ?? null,
+    });
     return res.status(200).json({ success: true });
   } catch (error) {
     log.error('Error updating submission status', error, { submissionId: id });

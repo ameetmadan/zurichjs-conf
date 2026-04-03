@@ -5,11 +5,14 @@
 
 import { Star, Check, Clock, X, Eye } from 'lucide-react';
 import { STATUS_ACTIONS } from '@/lib/types/cfp-admin';
+import { isCfpClosed } from '@/lib/cfp/closure';
 
 interface StatusActionsSectionProps {
   currentStatus: string;
-  onUpdateStatus: (status: string) => void;
+  onUpdateStatus: (status: string, reopenUntil?: string | null) => void;
   isUpdating: boolean;
+  reopenUntilInput: string;
+  onReopenUntilInputChange: (value: string) => void;
 }
 
 const PRIMARY_ACTIONS = [
@@ -45,7 +48,24 @@ const PRIMARY_ACTIONS = [
   },
 ];
 
-export function StatusActionsSection({ currentStatus, onUpdateStatus, isUpdating }: StatusActionsSectionProps) {
+export function StatusActionsSection({
+  currentStatus,
+  onUpdateStatus,
+  isUpdating,
+  reopenUntilInput,
+  onReopenUntilInputChange,
+}: StatusActionsSectionProps) {
+  const cfpClosed = isCfpClosed();
+
+  const handleReopenWithWindow = () => {
+    if (!reopenUntilInput) return;
+
+    const reopenDate = new Date(reopenUntilInput);
+    if (Number.isNaN(reopenDate.getTime())) return;
+
+    onUpdateStatus('draft', reopenDate.toISOString());
+  };
+
   return (
     <>
       {/* Primary Status Actions */}
@@ -77,29 +97,75 @@ export function StatusActionsSection({ currentStatus, onUpdateStatus, isUpdating
       {/* Secondary Actions */}
       <div className="border-t border-gray-200 pt-6">
         <h4 className="text-xs font-bold text-black uppercase tracking-wide mb-4">Other Actions</h4>
-        <div className="flex flex-wrap gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {currentStatus !== 'draft' && (
-            <div className="flex flex-col">
+            <div className="rounded-lg border border-gray-200 p-4 space-y-3">
+              <h5 className="text-sm font-semibold text-black">Reopen for Speaker Edits</h5>
+              <p className="text-xs text-gray-600">
+                Set a temporary edit window, then move this submission back to draft so the speaker can edit and re-submit.
+              </p>
+              <div>
+                <label htmlFor="reopen-until" className="text-xs text-gray-700 font-medium block mb-1">
+                  Reopen Until
+                </label>
+                <input
+                  id="reopen-until"
+                  type="datetime-local"
+                  value={reopenUntilInput}
+                  onChange={(e) => onReopenUntilInputChange(e.target.value)}
+                  className="px-2 py-1.5 text-sm border border-gray-300 rounded-md text-black w-full"
+                />
+              </div>
               <button
-                onClick={() => onUpdateStatus('draft')}
-                disabled={isUpdating}
-                className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-black font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                onClick={handleReopenWithWindow}
+                disabled={isUpdating || !reopenUntilInput}
+                className="w-full px-3 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                Revert to Draft
+                Revert to Draft + Reopen Window
               </button>
-              <p className="text-xs text-gray-500 mt-1 max-w-[200px]">{STATUS_ACTIONS.draft?.description}</p>
+              <p className="text-xs text-gray-500">
+                Recommended when CFP is closed.
+              </p>
+
+              {!cfpClosed && (
+                <div className="pt-3 mt-2 border-t border-gray-200">
+                  <button
+                    onClick={() => onUpdateStatus('draft', null)}
+                    disabled={isUpdating}
+                    className="w-full px-3 py-2 border border-gray-300 hover:bg-gray-50 text-black text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    Revert to Draft (No Reopen Window)
+                  </button>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {STATUS_ACTIONS.draft?.description}
+                  </p>
+                </div>
+              )}
+              {cfpClosed && (
+                <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-2">
+                  Plain draft revert is hidden while CFP is closed to avoid locking the speaker out.
+                </p>
+              )}
             </div>
           )}
           {currentStatus !== 'withdrawn' && (
-            <div className="flex flex-col">
+            <div className="rounded-lg border border-gray-200 p-4 space-y-3">
+              <h5 className="text-sm font-semibold text-black">Mark as Withdrawn</h5>
+              <p className="text-xs text-gray-600">{STATUS_ACTIONS.withdrawn?.description}</p>
               <button
                 onClick={() => onUpdateStatus('withdrawn')}
                 disabled={isUpdating}
-                className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-black font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full px-4 py-2 border border-gray-300 hover:bg-gray-50 text-black font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Mark as Withdrawn
               </button>
-              <p className="text-xs text-gray-500 mt-1 max-w-[200px]">{STATUS_ACTIONS.withdrawn?.description}</p>
+            </div>
+          )}
+          {currentStatus === 'draft' && (
+            <div className="rounded-lg border border-gray-200 p-4">
+              <p className="text-xs text-gray-600">
+                Submission is already in draft. Use the status buttons above to move it forward.
+              </p>
             </div>
           )}
         </div>

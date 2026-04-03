@@ -3,7 +3,7 @@
  * Protected page showing speaker's submissions and profile status
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { GetServerSideProps } from 'next';
@@ -11,13 +11,15 @@ import { createClient } from '@supabase/supabase-js';
 import { AlertCircle } from 'lucide-react';
 import { SEO } from '@/components/SEO';
 import { Button, Heading } from '@/components/atoms';
-import { createSupabaseServerClient, getSpeakerByUserId } from '@/lib/cfp/auth';
+import { createSupabaseServerClient, getOrCreateSpeaker, getSpeakerByUserId } from '@/lib/cfp/auth';
 import { isSpeakerProfileComplete, getMissingProfileFields } from '@/lib/cfp/auth-constants';
 import type { CfpSpeaker, CfpSubmission } from '@/lib/types/cfp';
 import { getSpeakerVisibleStatus, type SpeakerVisibleStatus } from '@/lib/cfp/submissions';
 import { SUBMISSION_LIMITS, getActiveSubmissions, canCreateSubmission } from '@/lib/cfp/config';
 import { supabase } from '@/lib/supabase/client';
 import { env } from '@/config/env';
+import { CFP_MEETUP_CFP_URL, isCfpClosed } from '@/lib/cfp/closure';
+import { useToast } from '@/contexts/ToastContext';
 
 interface DashboardProps {
   speaker: CfpSpeaker;
@@ -91,6 +93,8 @@ const SubmissionCard = ({ submission }: { submission: CfpSubmission }) => {
 
 export default function CfpDashboard({ speaker, submissions, isProfileComplete, missingFields }: DashboardProps) {
   const router = useRouter();
+  const toast = useToast();
+  const cfpClosed = isCfpClosed();
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -100,6 +104,16 @@ export default function CfpDashboard({ speaker, submissions, isProfileComplete, 
   const draftSubmissions = submissions.filter((s) => s.status === 'draft');
   const submittedSubmissions = submissions.filter((s) => s.status !== 'draft');
   const activeSubmissions = getActiveSubmissions(submissions);
+
+  useEffect(() => {
+    if (router.query.cfp_closed !== '1') return;
+
+    toast.warning(
+      'CFP is closed',
+      'New submissions are closed. You can still update your profile and track existing proposals.'
+    );
+    router.replace('/cfp/dashboard', undefined, { shallow: true });
+  }, [router, toast]);
 
   return (
     <>
@@ -205,7 +219,7 @@ export default function CfpDashboard({ speaker, submissions, isProfileComplete, 
           </div>
 
           {/* New Submission CTA */}
-          {canCreateSubmission(submissions) && isProfileComplete && (
+          {!cfpClosed && canCreateSubmission(submissions) && isProfileComplete && (
             <div className="bg-gradient-to-r from-brand-primary/10 to-brand-primary/5 rounded-xl p-6 mb-8 border border-brand-primary/20">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
@@ -222,6 +236,24 @@ export default function CfpDashboard({ speaker, submissions, isProfileComplete, 
                   </Button>
                 </Link>
               </div>
+            </div>
+          )}
+
+          {cfpClosed && (
+            <div className="bg-brand-gray-dark rounded-xl p-6 mb-8 border border-brand-gray-medium">
+              <h2 className="text-lg font-semibold text-white mb-1">CFP is closed.</h2>
+              <p className="text-brand-gray-light text-sm">
+                But we&apos;d be happy to host you at one of our meetups. CFP for meetup is here:{' '}
+                <a
+                  href={CFP_MEETUP_CFP_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-brand-primary underline"
+                >
+                  www.zurichjs.com/cfp
+                </a>
+                .
+              </p>
             </div>
           )}
 
@@ -275,7 +307,7 @@ export default function CfpDashboard({ speaker, submissions, isProfileComplete, 
                     ? "Ready to share your knowledge? Start by creating your first proposal."
                     : "Complete your profile first, then you can start submitting proposals."}
                 </p>
-                {isProfileComplete ? (
+                {isProfileComplete && !cfpClosed ? (
                   <Link href="/cfp/submit">
                     <Button variant="primary">Create Your First Proposal</Button>
                   </Link>
@@ -312,10 +344,16 @@ export const getServerSideProps: GetServerSideProps<DashboardProps> = async (ctx
   }
 
   // Get speaker profile
-  const speaker = await getSpeakerByUserId(session.user.id);
+  let speaker = await getSpeakerByUserId(session.user.id);
+
+  // Heal missing speaker records for authenticated users to avoid login/dashboard redirect loops.
+  if (!speaker && session.user.email) {
+    const createResult = await getOrCreateSpeaker(session.user.id, session.user.email);
+    speaker = createResult.speaker;
+  }
 
   if (!speaker) {
-    // If no speaker profile, redirect to complete it
+    // If we still can't resolve a speaker profile, return to login.
     return {
       redirect: {
         destination: '/cfp/login',
