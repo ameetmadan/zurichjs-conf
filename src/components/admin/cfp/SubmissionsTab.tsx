@@ -110,7 +110,7 @@ function MultiSelectFilterPopover({
                 key={option}
                 type="button"
                 onClick={() => toggleValue(option)}
-                className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm text-black hover:bg-gray-100 cursor-pointer"
+                className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm text-black hover:bg-gray-100 cursor-pointer capitalize"
               >
                 <span>{formatOption(option)}</span>
                 {checked ? <Check className="w-4 h-4 text-black" /> : <span className="w-4 h-4" />}
