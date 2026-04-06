@@ -21,6 +21,7 @@ import { publicSpeakersQueryOptions } from '@/lib/queries/speakers';
 import { ticketPricingQueryOptions } from '@/lib/queries/tickets';
 import { serverAnalytics } from '@/lib/analytics/server';
 import type { GetServerSideProps } from 'next';
+import Link from 'next/link';
 import React from "react";
 
 /**
@@ -107,7 +108,7 @@ export default function Home() {
           <SpeakersSection />
           <div className="flex flex-col items-center gap-3 px-4">
             <p className="text-brand-gray-medium text-md text-center mt-2">
-              More speaker announcements coming on April 22nd!
+                Check out the <Link href="/speakers" className="text-md text-brand-blue hover:text-brand-dark duration-300 ease-in-out">full lineup</Link>
             </p>
           </div>
         </div>
