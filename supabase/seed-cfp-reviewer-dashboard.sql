@@ -1159,13 +1159,66 @@ select
     seeded_scores.score_technical_depth,
     seeded_scores.score_clarity,
     seeded_scores.score_diversity,
-    ('Seeded private note for submission ' || submission_series::text) as private_notes,
-    ('Seeded speaker feedback for submission ' || submission_series::text) as feedback_to_speaker,
+    case
+        -- High-volume reviewers with sparse internal notes.
+        when reviewer_sort = 1 and submission_series % 20 = 0
+            then ('Sparse internal note for high-volume reviewer on submission ' || submission_series::text)
+        when reviewer_sort = 2 and submission_series % 12 = 0
+            then ('Occasional internal note from high-volume reviewer on submission ' || submission_series::text)
+        -- Lower-volume reviewers with consistent written notes.
+        when reviewer_sort >= 15 and submission_series % 2 = 0
+            then ('Detailed internal note from thoughtful reviewer on submission ' || submission_series::text)
+        -- Flat scorers still leave occasional notes, so their spread penalty is visible.
+        when reviewer_sort in (9, 10) and submission_series % 5 = 0
+            then ('Flat-score reviewer note for submission ' || submission_series::text)
+        -- Mid-pack reviewers write notes sometimes.
+        when reviewer_sort between 3 and 8 and (submission_series + reviewer_sort) % 3 = 0
+            then ('Seeded private note for submission ' || submission_series::text)
+        else null
+    end as private_notes,
+    case
+        -- High-volume reviewers rarely write speaker-facing feedback.
+        when reviewer_sort = 1 and submission_series % 30 = 0
+            then ('Short speaker feedback from high-volume reviewer for submission ' || submission_series::text)
+        when reviewer_sort = 2 and submission_series % 18 = 0
+            then ('Short speaker feedback from high-volume reviewer for submission ' || submission_series::text)
+        -- Lower-volume reviewers write speaker-facing feedback frequently.
+        when reviewer_sort >= 15
+            then ('Detailed speaker feedback from thoughtful reviewer for submission ' || submission_series::text)
+        -- Mid-pack reviewers write speaker-facing feedback occasionally.
+        when reviewer_sort between 3 and 8 and submission_series % 4 = 0
+            then ('Seeded speaker feedback for submission ' || submission_series::text)
+        else null
+    end as feedback_to_speaker,
     reviewed_at as created_at,
     reviewed_at as updated_at
 from generated_reviews
 cross join lateral (
     select case
+        -- High-volume reviewers have enough volume, but not always enough score variation.
+        when reviewer_sort = 1 then case when submission_series % 4 in (0, 1) then 3 else 4 end
+        when reviewer_sort = 2 then case when submission_series % 5 in (0, 1) then 2 else 3 end
+        -- Mid-volume reviewers use a moderate spread.
+        when reviewer_sort between 3 and 5 then case
+            when submission_series % 6 in (0, 1) then 2
+            when submission_series % 6 in (2, 3) then 3
+            else 4
+        end
+        when reviewer_sort between 6 and 8 then case when submission_series % 3 = 0 then 2 else 3 end
+        -- Deliberately flat reviewers demonstrate the rating-spread penalty.
+        when reviewer_sort = 9 then 4
+        when reviewer_sort = 10 then 1
+        -- Later reviewers have fewer reviews and a healthier but not maximal spread.
+        when reviewer_sort between 11 and 14 then case
+            when submission_series % 4 = 0 then 1
+            when submission_series % 4 in (1, 2) then 2
+            else 3
+        end
+        when reviewer_sort >= 15 then case
+            when submission_series % 5 in (0, 1) then 2
+            when submission_series % 5 in (2, 3) then 3
+            else 4
+        end
         when ((submission_series * 17 + reviewer_sort * 11) % 20) < 2 then 1
         when ((submission_series * 17 + reviewer_sort * 11) % 20) < 7 then 2
         when ((submission_series * 17 + reviewer_sort * 11) % 20) < 15 then 3

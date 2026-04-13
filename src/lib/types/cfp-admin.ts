@@ -114,6 +114,15 @@ export interface CfpAdminReviewerWithActivity extends CfpAdminReviewer {
   reviews_last_7_days: number;
   last_activity_at: string | null;
   avg_score_given: number | null;
+  feedback_written_count: number;
+  feedback_written_percent: number;
+  rating_spread: number | null;
+  category_rating_spread: number | null;
+  contribution_score: number;
+  contribution_volume_score: number;
+  contribution_feedback_score: number;
+  contribution_rating_spread_score: number;
+  contribution_category_rating_spread_score: number;
 }
 
 export interface CfpReviewerActivity {
@@ -121,7 +130,12 @@ export interface CfpReviewerActivity {
   submission_id: string;
   submission_title: string;
   score_overall: number | null;
+  score_relevance: number | null;
+  score_technical_depth: number | null;
+  score_clarity: number | null;
+  score_diversity: number | null;
   private_notes: string | null;
+  feedback_to_speaker: string | null;
   created_at: string;
 }
 
