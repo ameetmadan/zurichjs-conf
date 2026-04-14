@@ -10,7 +10,7 @@ import { colors, spacing, typography, radii } from '../design/tokens';
 import type { CfpAcceptanceEmailData } from '@/lib/types/cfp/decisions';
 
 function getSubmissionTypeLabel(type: string, workshopDurationHours?: number | null): string {
-  if (type === 'lightning') return 'Lightning Talk (10 min)';
+  if (type === 'lightning') return 'Lightning Talk (15 min)';
   if (type === 'standard') return 'Standard Talk (30 min)';
   if (type === 'workshop') {
     return workshopDurationHours ? `Workshop (${workshopDurationHours}h)` : 'Workshop';
