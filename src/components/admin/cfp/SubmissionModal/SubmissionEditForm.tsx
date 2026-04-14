@@ -60,9 +60,9 @@ export function SubmissionEditForm({
             onChange={(e) => setEditForm({ ...editForm, submission_type: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
           >
-            <option value="lightning">Lightning (10 min)</option>
+            <option value="lightning">Lightning (15 min)</option>
             <option value="standard">Standard (30 min)</option>
-            <option value="workshop">Workshop (90+ min)</option>
+            <option value="workshop">Workshop (2-8h)</option>
           </select>
         </div>
         <div>
