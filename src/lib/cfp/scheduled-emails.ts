@@ -80,6 +80,7 @@ interface SubmissionForEmail {
   title: string;
   submission_type: 'lightning' | 'standard' | 'workshop';
   decision_status: string | null;
+  workshop_duration_hours: number | null;
   speaker: {
     id: string;
     first_name: string;
@@ -101,6 +102,7 @@ async function getSubmissionForEmail(submissionId: string): Promise<SubmissionFo
       title,
       submission_type,
       decision_status,
+      workshop_duration_hours,
       speaker:cfp_speakers(
         id,
         first_name,
@@ -124,6 +126,7 @@ async function getSubmissionForEmail(submissionId: string): Promise<SubmissionFo
     title: data.title,
     submission_type: data.submission_type,
     decision_status: data.decision_status,
+    workshop_duration_hours: data.workshop_duration_hours ?? null,
     speaker: speakerData || null,
   } as SubmissionForEmail;
 }
