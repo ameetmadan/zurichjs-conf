@@ -29,7 +29,7 @@ export default function WorkshopDetailPage({ session }: WorkshopDetailPageProps)
           </Heading>
           {/* TODO(feature/speakers-grid): Replace this placeholder workshop detail hero with the final content and media layout. */}
           <p className="mt-6 max-w-3xl text-lg leading-8 text-brand-gray-light">
-            This detail page is intentionally a placeholder for now while we finish the workshop detail design and content.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
         </ShapedSection>
 

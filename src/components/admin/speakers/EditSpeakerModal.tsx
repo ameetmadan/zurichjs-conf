@@ -7,6 +7,8 @@ import React, { useState } from 'react';
 import { X, User } from 'lucide-react';
 import type { SpeakerWithSessions } from './types';
 
+type SpeakerImageField = 'profile_image_url' | 'portrait_foreground_url' | 'portrait_background_url';
+
 interface EditSpeakerModalProps {
   speaker: SpeakerWithSessions;
   onClose: () => void;
@@ -27,19 +29,29 @@ export function EditSpeakerModal({ speaker, onClose, onUpdated }: EditSpeakerMod
     mastodon_handle: speaker.mastodon_handle || '',
   });
   const [profileImageUrl, setProfileImageUrl] = useState(speaker.profile_image_url);
+  const [portraitForegroundUrl, setPortraitForegroundUrl] = useState(speaker.portrait_foreground_url);
+  const [portraitBackgroundUrl, setPortraitBackgroundUrl] = useState(speaker.portrait_background_url);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [uploadingField, setUploadingField] = useState<SpeakerImageField | null>(null);
   const [error, setError] = useState('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const portraitForegroundInputRef = React.useRef<HTMLInputElement>(null);
+  const portraitBackgroundInputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    imageField: SpeakerImageField,
+    onUploaded: (url: string) => void
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setIsUploading(true);
+    setUploadingField(imageField);
+    setError('');
     try {
       const uploadFormData = new FormData();
       uploadFormData.append('image', file);
+      uploadFormData.append('imageField', imageField);
 
       const res = await fetch(`/api/admin/cfp/speakers/${speaker.id}/image`, {
         method: 'POST',
@@ -48,14 +60,15 @@ export function EditSpeakerModal({ speaker, onClose, onUpdated }: EditSpeakerMod
 
       const data = await res.json();
       if (res.ok) {
-        setProfileImageUrl(data.imageUrl);
+        onUploaded(data.imageUrl);
       } else {
         setError(data.error || 'Failed to upload image');
       }
     } catch {
       setError('Failed to upload image');
     } finally {
-      setIsUploading(false);
+      setUploadingField(null);
+      e.target.value = '';
     }
   };
 
@@ -68,7 +81,12 @@ export function EditSpeakerModal({ speaker, onClose, onUpdated }: EditSpeakerMod
       const res = await fetch(`/api/admin/cfp/speakers/${speaker.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, profile_image_url: profileImageUrl }),
+        body: JSON.stringify({
+          ...formData,
+          profile_image_url: profileImageUrl,
+          portrait_foreground_url: portraitForegroundUrl,
+          portrait_background_url: portraitBackgroundUrl,
+        }),
       });
 
       if (!res.ok) {
@@ -99,24 +117,99 @@ export function EditSpeakerModal({ speaker, onClose, onUpdated }: EditSpeakerMod
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>
           )}
 
-          {/* Profile Image */}
-          <div className="flex items-center gap-4">
-            {profileImageUrl ? (
-              <img src={profileImageUrl} alt="Profile" className="w-20 h-20 rounded-full object-cover" />
-            ) : (
-              <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
-                <User className="w-10 h-10 text-gray-400" />
+          <div className="border-b border-gray-200 pb-4">
+            <h4 className="text-sm font-semibold text-black mb-3">Speaker Images</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-gray-600">Profile photo</p>
+                <div className="flex items-center gap-3">
+                  {profileImageUrl ? (
+                    <img src={profileImageUrl} alt="Profile" className="w-16 h-16 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
+                      <User className="w-8 h-8 text-gray-400" />
+                    </div>
+                  )}
+                  <div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, 'profile_image_url', setProfileImageUrl)}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingField !== null}
+                      className="text-sm text-[#b8a820] hover:underline cursor-pointer disabled:opacity-50"
+                    >
+                      {uploadingField === 'profile_image_url' ? 'Uploading...' : 'Change photo'}
+                    </button>
+                  </div>
+                </div>
               </div>
-            )}
-            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-              className="text-sm text-[#b8a820] hover:underline cursor-pointer disabled:opacity-50"
-            >
-              {isUploading ? 'Uploading...' : 'Change photo'}
-            </button>
+
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-gray-600">Portrait foreground</p>
+                <div className="flex items-center gap-3">
+                  {portraitForegroundUrl ? (
+                    <img src={portraitForegroundUrl} alt="Portrait foreground" className="w-16 h-16 rounded-lg object-cover bg-gray-100" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
+                      <User className="w-8 h-8 text-gray-400" />
+                    </div>
+                  )}
+                  <div>
+                    <input
+                      ref={portraitForegroundInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, 'portrait_foreground_url', setPortraitForegroundUrl)}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => portraitForegroundInputRef.current?.click()}
+                      disabled={uploadingField !== null}
+                      className="text-sm text-[#b8a820] hover:underline cursor-pointer disabled:opacity-50"
+                    >
+                      {uploadingField === 'portrait_foreground_url' ? 'Uploading...' : 'Upload'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-gray-600">Portrait background</p>
+                <div className="flex items-center gap-3">
+                  {portraitBackgroundUrl ? (
+                    <img src={portraitBackgroundUrl} alt="Portrait background" className="w-16 h-16 rounded-lg object-cover" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
+                      <span className="text-xs text-gray-500">None</span>
+                    </div>
+                  )}
+                  <div>
+                    <input
+                      ref={portraitBackgroundInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, 'portrait_background_url', setPortraitBackgroundUrl)}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => portraitBackgroundInputRef.current?.click()}
+                      disabled={uploadingField !== null}
+                      className="text-sm text-[#b8a820] hover:underline cursor-pointer disabled:opacity-50"
+                    >
+                      {uploadingField === 'portrait_background_url' ? 'Uploading...' : 'Upload'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

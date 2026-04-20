@@ -253,6 +253,8 @@ insert into public.cfp_speakers (
     bio,
     profile_image_url,
     header_image_url,
+    portrait_foreground_url,
+    portrait_background_url,
     is_visible,
     is_featured
 )
@@ -265,6 +267,8 @@ values
         'Engineer',
         'Example Labs',
         'Alex builds AI tooling for JavaScript teams and likes talks that stay grounded in production reality.',
+        '/images/meetups/nico.jpg',
+        '/images/meetups/cloudflare.png',
         '/images/meetups/nico.jpg',
         '/images/meetups/cloudflare.png',
         true,
@@ -280,6 +284,8 @@ values
         'Sam helps product teams ship large frontend apps and enjoys sharing practical lessons from framework adoption.',
         '/images/meetups/jens.png',
         '/images/meetups/june-workshop.png',
+        '/images/meetups/jens.png',
+        '/images/meetups/june-workshop.png',
         true,
         true
     ),
@@ -293,6 +299,8 @@ values
         'Maya works with growing frontend teams on architecture, migration strategy, and developer experience.',
         '/images/meetups/ginetta.png',
         '/images/meetups/july-group.png',
+        null,
+        '/images/meetups/july-group.png',
         true,
         false
     ),
@@ -304,6 +312,8 @@ values
         'Staff Engineer',
         'State Systems',
         'Leo likes modeling hard product problems with clear system boundaries and resilient client-side patterns.',
+        null,
+        null,
         null,
         null,
         true,
@@ -319,6 +329,8 @@ values
         'Nina focuses on refactors, contracts, and helping teams move fast without losing confidence.',
         '/images/meetups/bogdan.png',
         '/images/meetups/may.png',
+        '/images/meetups/bogdan.png',
+        null,
         true,
         false
     ),
@@ -330,6 +342,8 @@ values
         'Principal Engineer',
         'Edge Cache Co',
         'Omar spends most of his time on caching, performance, and the messy details between browser and edge.',
+        null,
+        '/images/meetups/june.png',
         null,
         '/images/meetups/june.png',
         true,
@@ -344,6 +358,8 @@ on conflict (id) do update set
     bio = excluded.bio,
     profile_image_url = excluded.profile_image_url,
     header_image_url = excluded.header_image_url,
+    portrait_foreground_url = excluded.portrait_foreground_url,
+    portrait_background_url = excluded.portrait_background_url,
     is_visible = excluded.is_visible,
     is_featured = excluded.is_featured;
 

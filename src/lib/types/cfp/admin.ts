@@ -126,6 +126,8 @@ export interface AdminCreateSpeakerRequest {
   mastodon_handle?: string;
   profile_image_url?: string;
   header_image_url?: string;
+  portrait_foreground_url?: string;
+  portrait_background_url?: string;
   is_visible?: boolean;
 }
 

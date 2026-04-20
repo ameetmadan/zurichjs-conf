@@ -87,6 +87,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'mastodon_handle',
         'profile_image_url',
         'header_image_url',
+        'portrait_foreground_url',
+        'portrait_background_url',
         'is_visible',
         'is_featured',
       ];

@@ -16,6 +16,12 @@ import type {
   AdminCreateSessionRequest,
 } from '@/lib/types/cfp';
 
+export type SpeakerImageField =
+  | 'profile_image_url'
+  | 'header_image_url'
+  | 'portrait_foreground_url'
+  | 'portrait_background_url';
+
 /**
  * Create an untyped service role client for CFP tables
  * The CFP tables are not in the generated types yet
@@ -161,7 +167,7 @@ export async function uploadSpeakerImage(
   file: Buffer,
   fileName: string,
   contentType: string,
-  imageField: 'profile_image_url' | 'header_image_url' = 'profile_image_url'
+  imageField: SpeakerImageField = 'profile_image_url'
 ): Promise<{ url: string | null; error?: string }> {
   const supabase = createCfpServiceClient();
 
@@ -222,6 +228,8 @@ export async function getVisibleSpeakersWithSessions(): Promise<PublicSpeaker[]>
       bio,
       profile_image_url,
       header_image_url,
+      portrait_foreground_url,
+      portrait_background_url,
       is_featured,
       linkedin_url,
       github_url,
@@ -338,6 +346,8 @@ export async function getVisibleSpeakersWithSessions(): Promise<PublicSpeaker[]>
       bio: speaker.bio,
       profile_image_url: speaker.profile_image_url,
       header_image_url: speaker.header_image_url,
+      portrait_foreground_url: speaker.portrait_foreground_url,
+      portrait_background_url: speaker.portrait_background_url,
       is_featured: speaker.is_featured ?? false,
       socials: {
         linkedin_url: speaker.linkedin_url,
@@ -409,6 +419,8 @@ export async function createSpeaker(
     mastodon_handle: data.mastodon_handle || null,
     profile_image_url: data.profile_image_url || null,
     header_image_url: data.header_image_url || null,
+    portrait_foreground_url: data.portrait_foreground_url || null,
+    portrait_background_url: data.portrait_background_url || null,
     is_visible: data.is_visible ?? false,
   };
 

@@ -40,6 +40,8 @@ export interface CfpDatabaseSchema {
           mastodon_handle: string | null;
           profile_image_url: string | null;
           header_image_url: string | null;
+          portrait_foreground_url: string | null;
+          portrait_background_url: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -59,6 +61,8 @@ export interface CfpDatabaseSchema {
           mastodon_handle?: string | null;
           profile_image_url?: string | null;
           header_image_url?: string | null;
+          portrait_foreground_url?: string | null;
+          portrait_background_url?: string | null;
         };
         Update: Partial<CfpDatabaseSchema['public']['Tables']['cfp_speakers']['Insert']>;
       };

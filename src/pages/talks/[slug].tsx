@@ -29,7 +29,7 @@ export default function TalkDetailPage({ session }: TalkDetailPageProps) {
           </Heading>
           {/* TODO(feature/speakers-grid): Replace this placeholder talk detail hero with the final content and media layout. */}
           <p className="mt-6 max-w-3xl text-lg leading-8 text-brand-gray-light">
-            This detail page is intentionally a placeholder for now while we finish the talks detail design and content.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
         </ShapedSection>
 
@@ -48,10 +48,10 @@ export default function TalkDetailPage({ session }: TalkDetailPageProps) {
               Keep Exploring
             </Kicker>
             <Heading level="h2" variant="dark" className="text-lg sm:text-2xl font-bold leading-tight">
-              Discover more of the lineup while this talk page is still a placeholder
+              Discover more of the lineup
             </Heading>
             <p className="mt-6 max-w-2xl text-base leading-8 text-brand-gray-light">
-              You can already browse the full talks overview and the speakers lineup while the final detail page treatment is still being built.
+              Browse the full talks overview and meet the speakers joining us at ZurichJS Conf.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button variant="primary" asChild href="/talks">

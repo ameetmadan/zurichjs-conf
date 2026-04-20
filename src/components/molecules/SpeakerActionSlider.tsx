@@ -46,7 +46,7 @@ export function SpeakerActionSlider({ children, className = '' }: PropsWithChild
 
   return (
     <section
-      className="relative overflow-hidden pb-10"
+      className="relative pb-10"
       aria-label="Speaker call to action"
     >
       <AnimatePresence mode="wait">

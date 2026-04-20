@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import { SEO } from '@/components/SEO';
-import { Button, Heading, Kicker } from '@/components/atoms';
+import { Button, Heading, SocialIcon } from '@/components/atoms';
 import { DayTabs, SpeakerActionSlider } from '@/components/molecules';
 import { SectionContainer, ShapedSection, SiteFooter } from '@/components/organisms';
 import { SessionCard } from '@/components/scheduling';
@@ -10,7 +10,7 @@ import { analytics } from '@/lib/analytics';
 import { shareNatively } from '@/lib/native-share';
 import { fetchPublicSpeakers } from '@/lib/queries/speakers';
 import type { PublicSession, PublicSpeaker } from '@/lib/types/cfp';
-import { Share2 } from 'lucide-react';
+import { AtSign, Github, Share2 } from 'lucide-react';
 
 type SessionTabId = 'talks' | 'workshops';
 
@@ -28,6 +28,22 @@ interface SessionTab {
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://conf.zurichjs.com';
 
+type SpeakerSocialLink = {
+    kind: 'linkedin' | 'github' | 'x' | 'bluesky' | 'mastodon';
+    href: string;
+    label: string;
+};
+
+interface SpeakerHeroDetailsProps {
+    speaker: PublicSpeaker;
+    fullName: string;
+    role: string;
+    socialLinks: SpeakerSocialLink[];
+    avatarUrl?: string | null;
+    showAvatar?: boolean;
+    className?: string;
+}
+
 function sortSessions(sessions: PublicSession[]) {
     return [...sessions].sort((left, right) => {
         const leftDate = `${left.schedule?.date ?? '9999-12-31'}T${left.schedule?.start_time ?? '23:59:59'}`;
@@ -41,9 +57,149 @@ function sortSessions(sessions: PublicSession[]) {
     });
 }
 
+function getSpeakerSocialLinks(speaker: PublicSpeaker): SpeakerSocialLink[] {
+    const links: SpeakerSocialLink[] = [];
+
+    if (speaker.socials.linkedin_url) {
+        const linkedinUrl = speaker.socials.linkedin_url.trim();
+        links.push({
+            kind: 'linkedin',
+            href: linkedinUrl.startsWith('http') ? linkedinUrl : `https://linkedin.com/in/${linkedinUrl.replace(/^@/, '')}`,
+            label: 'LinkedIn',
+        });
+    }
+
+    if (speaker.socials.github_url) {
+        const githubUrl = speaker.socials.github_url.trim();
+        links.push({
+            kind: 'github',
+            href: githubUrl.startsWith('http') ? githubUrl : `https://github.com/${githubUrl.replace(/^@/, '')}`,
+            label: 'GitHub',
+        });
+    }
+
+    if (speaker.socials.twitter_handle) {
+        links.push({
+            kind: 'x',
+            href: `https://x.com/${speaker.socials.twitter_handle.replace(/^@/, '')}`,
+            label: 'X',
+        });
+    }
+
+    if (speaker.socials.bluesky_handle) {
+        links.push({
+            kind: 'bluesky',
+            href: `https://bsky.app/profile/${speaker.socials.bluesky_handle.replace(/^@/, '')}`,
+            label: 'Bluesky',
+        });
+    }
+
+    if (speaker.socials.mastodon_handle) {
+        const mastodonHandle = speaker.socials.mastodon_handle.replace(/^@/, '');
+        const [user, host] = mastodonHandle.split('@');
+        const href = mastodonHandle.startsWith('http')
+            ? mastodonHandle
+            : user && host
+                ? `https://${host}/@${user}`
+                : `https://mastodon.social/@${mastodonHandle}`;
+
+        links.push({ kind: 'mastodon', href, label: 'Mastodon' });
+    }
+
+    return links;
+}
+
+function SpeakerHeroDetails({
+    speaker,
+    fullName,
+    role,
+    socialLinks,
+    avatarUrl,
+    showAvatar = false,
+    className = '',
+}: SpeakerHeroDetailsProps) {
+    return (
+        <div className={`flex flex-col items-start gap-5 text-left text-brand-black md:items-end md:text-right ${className}`}>
+            {showAvatar ? (
+                avatarUrl ? (
+                    <div className="size-24 overflow-hidden rounded-full bg-brand-gray-dark">
+                        <Image
+                            src={avatarUrl}
+                            alt={fullName}
+                            width={144}
+                            height={144}
+                            priority
+                            className="h-full w-full object-cover"
+                            sizes="96px"
+                        />
+                    </div>
+                ) : (
+                    <div className="flex size-24 items-center justify-center rounded-full bg-brand-black text-2xl font-bold text-brand-white">
+                        {speaker.first_name[0]}
+                        {speaker.last_name[0]}
+                    </div>
+                )
+            ) : null}
+
+            <div className="flex flex-col gap-3">
+                <Heading level="h1" variant="light" className="text-2xl font-bold leading-none lg:text-3xl">
+                    {fullName}
+                </Heading>
+                {speaker.job_title ? (
+                    <p className="text-2xl font-bold leading-tight">{speaker.job_title}</p>
+                ) : null}
+                {speaker.company ? (
+                    <p className="text-lg leading-tight">@{speaker.company}</p>
+                ) : null}
+                {!speaker.job_title && role ? (
+                    <p className="text-xl font-bold leading-tight">{role}</p>
+                ) : null}
+            </div>
+
+            {socialLinks.length > 0 ? (
+                <div className="flex min-h-6 flex-wrap items-center justify-start gap-2 md:justify-end">
+                    {socialLinks.map((link) => {
+                        if (link.kind === 'linkedin' || link.kind === 'x' || link.kind === 'bluesky') {
+                            return (
+                                <SocialIcon
+                                    key={link.kind}
+                                    kind={link.kind}
+                                    href={link.href}
+                                    label={`${fullName} on ${link.label}`}
+                                    tone="dark"
+                                    className="h-6 w-6"
+                                />
+                            );
+                        }
+
+                        const Icon = link.kind === 'github' ? Github : AtSign;
+
+                        return (
+                            <a
+                                key={link.kind}
+                                href={link.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`${fullName} on ${link.label}`}
+                                className="inline-flex h-6 w-6 items-center justify-center rounded-md text-brand-black transition-colors hover:text-brand-black/70 focus:outline-none focus:ring-2 focus:ring-black/20"
+                            >
+                                <Icon className="h-5 w-5" aria-hidden="true" />
+                            </a>
+                        );
+                    })}
+                </div>
+            ) : null}
+        </div>
+    );
+}
+
 export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
     const fullName = [speaker.first_name, speaker.last_name].filter(Boolean).join(' ');
     const role = [speaker.job_title, speaker.company].filter(Boolean).join(' @ ');
+    const heroBackgroundUrl = speaker.portrait_background_url;
+    const heroForegroundUrl = heroBackgroundUrl ? speaker.portrait_foreground_url || speaker.profile_image_url : null;
+    const avatarUrl = speaker.profile_image_url;
+    const socialLinks = getSpeakerSocialLinks(speaker);
     const talks = sortSessions(speaker.sessions.filter((session) => session.type !== 'workshop'));
     const workshops = sortSessions(speaker.sessions.filter((session) => session.type === 'workshop'));
     const sessionTabs: SessionTab[] = [
@@ -94,36 +250,85 @@ export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
             />
 
             <main className="min-h-screen bg-brand-white">
-                <ShapedSection shape="straight" variant="dark" dropTop dropBottom>
-                    <div className="flex gap-8">
-                        <div className="justify-self-start lg:justify-self-end">
-                            <div className="relative size-40 overflow-hidden rounded-[2rem] border border-brand-gray-dark bg-brand-gray-darkest shadow-[0_30px_80px_rgba(0,0,0,0.35)] sm:size-48">
-                                {speaker.profile_image_url ? (
-                                    <Image src={speaker.profile_image_url} alt={fullName} fill className="object-cover" sizes="12rem" />
+                <section className="relative isolate overflow-hidden bg-brand-yellow-main">
+                    <div className="absolute inset-0" aria-hidden="true">
+                        {heroBackgroundUrl ? (
+                            <div className="absolute inset-y-0 left-0 hidden md:block md:w-[58%]">
+                                <Image
+                                    src={heroBackgroundUrl}
+                                    alt=""
+                                    fill
+                                    className="object-cover"
+                                    sizes="58vw"
+                                />
+                                <div className="absolute inset-0 bg-brand-white/20" />
+                            </div>
+                        ) : (
+                            <div className="absolute inset-y-0 left-0 hidden bg-brand-gray-darkest md:block md:w-[58%]" />
+                        )}
+                        <div className="absolute inset-y-0 right-0 hidden bg-brand-yellow-main md:block md:w-[64%] md:[clip-path:polygon(28%_0,100%_0,100%_100%,0_100%)]" />
+                    </div>
+
+                    <SectionContainer className="relative py-14 md:py-0 md:pt-20 mt-20">
+                        <div className="mx-auto max-w-screen-lg md:hidden">
+                            <SpeakerHeroDetails
+                                speaker={speaker}
+                                fullName={fullName}
+                                role={role}
+                                socialLinks={socialLinks}
+                                avatarUrl={avatarUrl}
+                                showAvatar
+                            />
+                        </div>
+
+                        <div className="mx-auto hidden max-w-screen-lg items-end gap-6 md:grid md:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)] lg:gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+                            <div className="relative flex h-[480px] max-h-[480px] items-end justify-start py-10 md:-ml-8 lg:ml-0">
+                                {heroForegroundUrl ? (
+                                    <>
+                                        <div className="pointer-events-none absolute left-[48%] top-[16%] z-0 h-28 w-[390px] -translate-x-1/2" aria-hidden="true">
+                                            <span className="absolute left-[4%] top-0 block h-8 w-[82%] -rotate-8 rounded-full bg-brand-yellow-main" />
+                                            <span className="absolute left-[18%] top-10 block h-8 w-[78%] -rotate-8 rounded-full bg-brand-blue" />
+                                            <span className="absolute left-[0%] top-20 block h-8 w-[90%] -rotate-8 rounded-full bg-brand-white" />
+                                        </div>
+                                        <Image
+                                            src={heroForegroundUrl}
+                                            alt={fullName}
+                                            fill
+                                            priority
+                                            className="z-10 object-contain object-bottom"
+                                            sizes="420px"
+                                        />
+                                    </>
+                                ) : avatarUrl ? (
+                                    <div className="size-64 overflow-hidden rounded-full border-4 border-brand-yellow-main bg-brand-gray-dark shadow-[0_24px_70px_rgba(0,0,0,0.32)]">
+                                        <Image
+                                            src={avatarUrl}
+                                            alt={fullName}
+                                            width={320}
+                                            height={320}
+                                            priority
+                                            className="h-full w-full object-cover"
+                                            sizes="256px"
+                                        />
+                                    </div>
                                 ) : (
-                                    <div className="flex h-full items-center justify-center text-4xl font-bold text-brand-white">
+                                    <div className="flex size-64 items-center justify-center rounded-full border-4 border-brand-yellow-main bg-brand-black text-4xl font-bold text-brand-white">
                                         {speaker.first_name[0]}
                                         {speaker.last_name[0]}
                                     </div>
                                 )}
                             </div>
-                        </div>
-                        <div className="max-w-screen-lg">
-                            <Kicker variant="dark" className="mb-4">
-                                Speaker Detail
-                            </Kicker>
-                            <Heading level="h1" variant="dark" className="text-3xl font-bold leading-none">
-                                {fullName}
-                            </Heading>
-                            {role ? <p className="mt-5 max-w-2xl text-lg text-brand-gray-light">{role}</p> : null}
-                            {/* TODO(feature/speakers-grid): Replace this temporary hero copy once the public speaker detail page content is designed. */}
-                            <p className="mt-5 max-w-2xl text-sm leading-7 text-brand-gray-light">
-                                The full hero treatment is still coming. For now, the session details and calls to action are in place so we can keep building the page from the inside out.
-                            </p>
-                        </div>
 
-                    </div>
-                </ShapedSection>
+                            <SpeakerHeroDetails
+                                speaker={speaker}
+                                fullName={fullName}
+                                role={role}
+                                socialLinks={socialLinks}
+                                className="justify-self-auto py-5"
+                            />
+                        </div>
+                    </SectionContainer>
+                </section>
 
                 <SectionContainer className="py-16 md:py-20">
                     <div className="mx-auto max-w-screen-lg">
