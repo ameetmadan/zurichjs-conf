@@ -4,7 +4,7 @@ export { EventCard } from './EventCard';
 export { BreakCard } from './BreakCard';
 export { PlaceholderCard } from './PlaceholderCard';
 export { ProgramScheduleItemCard } from './ProgramScheduleItemCard';
-export { SessionDetailHero, SessionDetailInfo, SessionSpeakerBlock } from './SessionDetailHero';
+export { SessionDetailHero } from './SessionDetailHero';
 
 export type { ScheduleCardProps } from './ScheduleCard';
 export type { SessionCardProps } from './SessionCard';

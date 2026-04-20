@@ -2,7 +2,7 @@ import type { GetServerSideProps } from 'next';
 import { SEO } from '@/components/SEO';
 import { Button, Heading, Kicker } from '@/components/atoms';
 import { ShapedSection, SiteFooter } from '@/components/organisms';
-import { SessionDetailHero, SessionDetailInfo, SessionSpeakerBlock, type SessionDetailSpeaker } from '@/components/scheduling';
+import { SessionCard, SessionDetailHero, type SessionDetailSpeaker } from '@/components/scheduling';
 import { fetchPublicSpeakers } from '@/lib/queries/speakers';
 import type { PublicSession } from '@/lib/types/cfp';
 
@@ -26,11 +26,18 @@ export default function TalkDetailPage({ session, speaker }: TalkDetailPageProps
 
         <ShapedSection shape="straight" variant="light" dropTop dropBottom>
           <div className="mx-auto max-w-screen-lg">
-            <p className="text-base leading-8 text-brand-gray-darkest sm:text-lg">
-              {session.abstract}
-            </p>
-            <SessionDetailInfo session={session} />
-            <SessionSpeakerBlock speaker={speaker} label="Speaker" />
+            <SessionCard
+              session={session}
+              speaker={{
+                name: speaker.name,
+                role: speaker.role,
+                imageUrl: speaker.avatarUrl,
+                slug: speaker.slug,
+              }}
+              showDuration
+              actionMode="detail"
+              className="rounded-none border-0 bg-transparent p-0"
+            />
           </div>
         </ShapedSection>
 

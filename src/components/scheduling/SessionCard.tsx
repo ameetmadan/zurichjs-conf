@@ -1,14 +1,18 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { BellPlus, CalendarPlus, Share2 } from 'lucide-react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Button } from '@/components/atoms';
-import { analytics } from '@/lib/analytics';
-import { addPublicConferenceToCalendar, addPublicEngineeringDayToCalendar } from '@/lib/calendar/public-events';
-import { addPublicSessionToCalendar, getPublicSessionGoogleCalendarUrl } from '@/lib/calendar/public-session';
-import { shareNatively } from '@/lib/native-share';
 import type { PublicSession } from '@/lib/types/cfp';
 import { cn } from '@/lib/utils';
 import { ScheduleCard } from './ScheduleCard';
+import {
+  addConferenceReminder,
+  addSessionOrEngineeringDayToCalendar,
+  getCurrentSessionDetailUrl,
+  shareSession,
+  type SessionCalendarProvider,
+} from './session-actions';
 import { formatDuration, formatTimeRange } from './utils';
 
 export interface SessionCardProps {
@@ -17,6 +21,7 @@ export interface SessionCardProps {
     name: string;
     role?: string | null;
     imageUrl?: string | null;
+    slug?: string | null;
   };
   expandable?: boolean;
   defaultOpen?: boolean;
@@ -24,6 +29,7 @@ export interface SessionCardProps {
   className?: string;
   id?: string;
   showDuration?: boolean;
+  actionMode?: 'schedule' | 'detail';
 }
 
 const LEVEL_LABELS: Record<PublicSession['level'], string> = {
@@ -41,74 +47,24 @@ export function SessionCard({
   className,
   id,
   showDuration = false,
+  actionMode = 'schedule',
 }: SessionCardProps) {
   const resolvedId = id ?? `session-${session.id}`;
   const timeRange = formatTimeRange(session.schedule?.start_time, session.schedule?.duration_minutes);
   const durationLabel = formatDuration(session.schedule?.duration_minutes);
   const isWorkshop = session.type === 'workshop';
-  const speakerDetailUrl =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}${window.location.pathname}`
-      : undefined;
-  const hasSessionCalendar = Boolean(getPublicSessionGoogleCalendarUrl(session, { speakerDetailUrl }));
+  const speakerDetailUrl = getCurrentSessionDetailUrl();
 
-  const getSessionShareUrl = () => {
-    if (typeof window === 'undefined') {
-      return null;
-    }
-
-    const url = new URL(window.location.href);
-    url.hash = resolvedId;
-    return url.toString();
-  };
-
-  const trackCalendarSelection = (calendar: 'google' | 'outlook' | 'ics', entryType: 'session' | 'conference_day') => {
-    try {
-      analytics.getInstance().capture('speaker_calendar_added', {
-        calendar_provider: calendar,
-        entry_type: entryType,
-        session_id: session.id,
-        session_title: session.title,
-        session_type: session.type,
-      });
-    } catch {
-      // Ignore analytics failures.
-    }
-  };
-
-  const handleCardCalendar = (calendar: 'google' | 'outlook' | 'ics') => {
-    if (hasSessionCalendar) {
-      const added = addPublicSessionToCalendar(session, calendar, { speakerDetailUrl });
-      if (added) {
-        trackCalendarSelection(calendar, 'session');
-      }
-      return;
-    }
-
-    if (calendar === 'google') {
-      const added = addPublicEngineeringDayToCalendar();
-      if (added) {
-        trackCalendarSelection(calendar, 'conference_day');
-      }
-    }
+  const handleCardCalendar = (calendar: SessionCalendarProvider) => {
+    addSessionOrEngineeringDayToCalendar(session, calendar, speakerDetailUrl);
   };
 
   const handleBottomReminder = () => {
-    addPublicConferenceToCalendar();
+    addConferenceReminder();
   };
 
   const handleShare = async () => {
-    const shareUrl = getSessionShareUrl();
-
-    if (!shareUrl) {
-      return;
-    }
-
-    await shareNatively({
-      title: session.title,
-      text: session.abstract,
-      url: shareUrl,
-    });
+    await shareSession(session, resolvedId);
   };
 
   const header = (
@@ -138,32 +94,59 @@ export function SessionCard({
     </>
   );
 
+  const speakerContent = speaker ? (
+    <>
+      {speaker.imageUrl ? (
+        <div className="relative size-11 overflow-hidden rounded-full">
+          <Image src={speaker.imageUrl} alt={speaker.name} fill className="object-cover" sizes="44px" />
+        </div>
+      ) : (
+        <div className="flex size-11 items-center justify-center rounded-full bg-brand-black text-sm font-bold text-brand-white">
+          {speaker.name.charAt(0)}
+        </div>
+      )}
+
+      <div>
+        <p className="text-sm font-semibold text-brand-black">{speaker.name}</p>
+        {speaker.role ? <p className="text-xs text-brand-gray-medium">{speaker.role}</p> : null}
+      </div>
+    </>
+  ) : null;
+
   const panel = (
     <>
       <p className="text-sm leading-7 text-brand-gray-darkest">{session.abstract}</p>
 
       {speaker ? (
-        <div className="mt-5 flex items-center gap-3">
-          {speaker.imageUrl ? (
-            <div className="relative size-11 overflow-hidden rounded-full">
-              <Image src={speaker.imageUrl} alt={speaker.name} fill className="object-cover" sizes="44px" />
-            </div>
-          ) : (
-            <div className="flex size-11 items-center justify-center rounded-full bg-brand-black text-sm font-bold text-brand-white">
-              {speaker.name.charAt(0)}
-            </div>
-          )}
-
-          <div>
-            <p className="text-sm font-semibold text-brand-black">{speaker.name}</p>
-            {speaker.role ? <p className="text-xs text-brand-gray-medium">{speaker.role}</p> : null}
-          </div>
-        </div>
+        speaker.slug ? (
+          <Link
+            href={`/speakers/${speaker.slug}`}
+            className="mt-5 flex w-fit items-center gap-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-blue"
+          >
+            {speakerContent}
+          </Link>
+        ) : (
+          <div className="mt-5 flex items-center gap-3">{speakerContent}</div>
+        )
       ) : null}
     </>
   );
 
-  const footer = expandable ? (
+  const footer = actionMode === 'detail' ? (
+    <div className="flex flex-col gap-4 border-t border-brand-gray-lightest pt-6 md:flex-row md:items-center md:gap-6">
+      {isWorkshop ? (
+        <Button variant="ghost" onClick={handleBottomReminder} forceDark>
+          <BellPlus className="size-6" />
+          Add a reminder
+        </Button>
+      ) : null}
+
+      <Button variant="ghost" onClick={handleShare} forceDark>
+        <Share2 className="size-6" />
+        Share with...
+      </Button>
+    </div>
+  ) : expandable ? (
     <div className="flex flex-col-reverse gap-4 md:flex-row md:items-center md:justify-between">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
         <Button variant="ghost" size="sm" onClick={handleBottomReminder} forceDark>
@@ -207,7 +190,7 @@ export function SessionCard({
     </div>
   ) : null;
 
-  const trailing = !expandable ? (
+  const trailing = !expandable && (actionMode !== 'detail' || !isWorkshop) ? (
     <Menu as="div" className="relative self-start">
       <MenuButton className="inline-flex items-center gap-2 text-base font-bold text-brand-gray-medium transition-colors hover:text-brand-black cursor-pointer">
         <CalendarPlus className="size-4" />

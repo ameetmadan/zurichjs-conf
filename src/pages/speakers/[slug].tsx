@@ -142,17 +142,17 @@ function SpeakerHeroDetails({
             ) : null}
 
             <div className="flex flex-col gap-3">
-                <Heading level="h1" variant="light" className="text-2xl font-bold leading-none lg:text-3xl">
+                <Heading level="h1" variant="light" className="text-xl md:text-2xl font-bold leading-none">
                     {fullName}
                 </Heading>
                 {speaker.job_title ? (
-                    <p className="text-2xl font-bold leading-tight">{speaker.job_title}</p>
+                    <p className="text-lg md:text-xl font-bold leading-tight">{speaker.job_title}</p>
                 ) : null}
                 {speaker.company ? (
                     <p className="text-lg leading-tight">@{speaker.company}</p>
                 ) : null}
                 {!speaker.job_title && role ? (
-                    <p className="text-xl font-bold leading-tight">{role}</p>
+                    <p className="text-lg md:text-xl font-bold leading-tight">{role}</p>
                 ) : null}
             </div>
 
@@ -269,7 +269,7 @@ export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
                         <div className="absolute inset-y-0 right-0 hidden bg-brand-yellow-main md:block md:w-[64%] md:[clip-path:polygon(28%_0,100%_0,100%_100%,0_100%)]" />
                     </div>
 
-                    <SectionContainer className="relative py-14 md:py-0 md:pt-20 mt-20">
+                    <SectionContainer className="relative py-14 md:py-0 md:pt-20 max-md:mt-20">
                         <div className="mx-auto max-w-screen-lg md:hidden">
                             <SpeakerHeroDetails
                                 speaker={speaker}
