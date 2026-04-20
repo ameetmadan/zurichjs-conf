@@ -18,6 +18,7 @@ export default function TalkDetailPage({ session, speaker }: TalkDetailPageProps
         title={session.title}
         description={`Talk details for ${session.title}.`}
         canonical={`/talks/${session.slug}`}
+        ogImage={`/api/og/talks/${session.slug}`}
         keywords={`zurichjs talk, ${session.title}`}
       />
 

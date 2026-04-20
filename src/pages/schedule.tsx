@@ -29,6 +29,7 @@ export default function SchedulePage({ items }: SchedulePageProps) {
         title="Schedule"
         description="Explore the ZurichJS Conf 2026 public schedule."
         canonical="/schedule"
+        ogImage="/api/og/schedule"
         keywords="zurichjs schedule, conference schedule, workshop schedule, talk schedule"
       />
 

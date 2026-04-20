@@ -29,6 +29,7 @@ export default function WorkshopsPage({ items }: WorkshopsPageProps) {
         title="Workshops"
         description="Explore ZurichJS Conf 2026 workshops."
         canonical="/workshops"
+        ogImage="/api/og/workshops"
         keywords="zurichjs workshops, engineering day workshops, zurichjs conf workshops"
       />
 

@@ -119,7 +119,7 @@ function SpeakerHeroDetails({
     className = '',
 }: SpeakerHeroDetailsProps) {
     return (
-        <div className={`flex flex-col items-start gap-5 text-left text-brand-black md:items-end md:text-right ${className}`}>
+        <div className={`flex flex-col items-start gap-5 text-left text-brand-black md:items-end md:text-right ${socialLinks.length === 0 ? 'pb-6 md:pb-8' : ''} ${className}`}>
             {showAvatar ? (
                 avatarUrl ? (
                     <div className="size-24 overflow-hidden rounded-full bg-brand-gray-dark">
@@ -196,8 +196,9 @@ function SpeakerHeroDetails({
 export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
     const fullName = [speaker.first_name, speaker.last_name].filter(Boolean).join(' ');
     const role = [speaker.job_title, speaker.company].filter(Boolean).join(' @ ');
-    const heroBackgroundUrl = speaker.portrait_background_url;
-    const heroForegroundUrl = heroBackgroundUrl ? speaker.portrait_foreground_url || speaker.profile_image_url : null;
+    const hasSplitPortraitHero = Boolean(speaker.portrait_foreground_url);
+    const heroBackgroundUrl = hasSplitPortraitHero ? speaker.portrait_background_url : null;
+    const heroForegroundUrl = hasSplitPortraitHero ? speaker.portrait_foreground_url : null;
     const avatarUrl = speaker.profile_image_url;
     const socialLinks = getSpeakerSocialLinks(speaker);
     const talks = sortSessions(speaker.sessions.filter((session) => session.type !== 'workshop'));
@@ -246,22 +247,29 @@ export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
                 title={fullName}
                 description={speaker.bio || `${fullName} at ZurichJS Conf 2026.`}
                 canonical={`/speakers/${speaker.slug}`}
+                ogImage={`/api/og/speakers/${speaker.slug}`}
                 keywords={`zurichjs conf speaker, ${fullName}`}
             />
 
             <main className="min-h-screen bg-brand-white">
                 <section className="relative isolate overflow-hidden bg-brand-yellow-main">
                     <div className="absolute inset-0" aria-hidden="true">
-                        {heroBackgroundUrl ? (
+                        {hasSplitPortraitHero ? (
                             <div className="absolute inset-y-0 left-0 hidden md:block md:w-[58%]">
-                                <Image
-                                    src={heroBackgroundUrl}
-                                    alt=""
-                                    fill
-                                    className="object-cover"
-                                    sizes="58vw"
-                                />
-                                <div className="absolute inset-0 bg-brand-white/20" />
+                                {heroBackgroundUrl ? (
+                                    <>
+                                        <Image
+                                            src={heroBackgroundUrl}
+                                            alt=""
+                                            fill
+                                            className="object-cover"
+                                            sizes="58vw"
+                                        />
+                                        <div className="absolute inset-0 bg-brand-white/20" />
+                                    </>
+                                ) : (
+                                    <div className="h-full w-full bg-brand-white" />
+                                )}
                             </div>
                         ) : (
                             <div className="absolute inset-y-0 left-0 hidden bg-brand-gray-darkest md:block md:w-[58%]" />

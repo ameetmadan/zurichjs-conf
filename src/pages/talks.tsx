@@ -24,6 +24,7 @@ export default function TalksPage({ items }: TalksPageProps) {
         title="Talks"
         description="Explore ZurichJS Conf 2026 talks."
         canonical="/talks"
+        ogImage="/api/og/talks"
         keywords="zurichjs talks, conference talks, zurichjs conf talks"
       />
 

@@ -18,6 +18,7 @@ export default function WorkshopDetailPage({ session, speaker }: WorkshopDetailP
         title={session.title}
         description={`Workshop details for ${session.title}.`}
         canonical={`/workshops/${session.slug}`}
+        ogImage={`/api/og/workshops/${session.slug}`}
         keywords={`zurichjs workshop, ${session.title}`}
       />
 
