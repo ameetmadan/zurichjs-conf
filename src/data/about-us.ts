@@ -129,12 +129,17 @@ export const aboutPageData: AboutPageData = {
         name: "Bogdan Mihai Ilie",
         role: "Full-Stack/Frontend Engineer, Advocate, Community builder",
       },
+      {
+        imageSrc: "/images/team/colin.png",
+        imageAlt: "Colin Schwarz",
+        name: "Colin Schwarz",
+        role: "Senior Software Engineer",
+      },
     ],
     volunteersTitle: "And our amazing volunteers",
     volunteersDescription:
       "None of this would be possible without our incredible volunteers who dedicate their time and energy to make this conference a success.",
     volunteers: [
-      "Colin Schwarz",
       "Aleksej Dix",
       "Aldous Waites",
       "Hugo Sousa",
