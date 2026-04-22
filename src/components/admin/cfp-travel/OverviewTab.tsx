@@ -60,7 +60,7 @@ export function OverviewTab({ stats, isLoading, onNavigate }: OverviewTabProps) 
         <div className="flex flex-wrap gap-3">
           <button
             onClick={() => onNavigate('reimbursements')}
-            className="px-4 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-medium rounded-lg transition-colors"
           >
             Review Pending Reimbursements ({stats.pending_reimbursements})
           </button>

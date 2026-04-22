@@ -29,7 +29,7 @@ function SpeakerAvatar({ speaker, size = 'md' }: { speaker: CfpAdminSpeaker; siz
   }
 
   return (
-    <div className={`${sizeClasses} rounded-full bg-[#F1E271] flex items-center justify-center shrink-0`}>
+    <div className={`${sizeClasses} rounded-full bg-brand-primary flex items-center justify-center shrink-0`}>
       <span className="font-medium text-black">{initials}</span>
     </div>
   );
@@ -213,12 +213,12 @@ export function SpeakersTab({ speakers, isLoading, onSelectSubmission }: Speaker
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search speakers by name, email, or company..."
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-black placeholder-gray-500 focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-black placeholder-gray-500 focus:ring-2 focus:ring-brand-primary focus:outline-none"
           />
           <select
             value={profileFilter}
             onChange={(e) => setProfileFilter(e.target.value as 'all' | 'complete' | 'incomplete')}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+            className="px-4 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
           >
             <option value="all">All Profiles</option>
             <option value="complete">Complete</option>
@@ -227,7 +227,7 @@ export function SpeakersTab({ speakers, isLoading, onSelectSubmission }: Speaker
           <select
             value={visibilityFilter}
             onChange={(e) => setVisibilityFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+            className="px-4 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
           >
             <option value="all">All Visibility</option>
             <option value="visible">Visible</option>
@@ -236,7 +236,7 @@ export function SpeakersTab({ speakers, isLoading, onSelectSubmission }: Speaker
           <select
             value={featuredFilter}
             onChange={(e) => setFeaturedFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+            className="px-4 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
           >
             <option value="all">All Featured</option>
             <option value="featured">Featured</option>
@@ -244,7 +244,7 @@ export function SpeakersTab({ speakers, isLoading, onSelectSubmission }: Speaker
           </select>
           <button
             onClick={() => setShowAddSpeaker(true)}
-            className="px-4 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-2 shrink-0"
+            className="px-4 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-2 shrink-0"
           >
             <Plus className="w-4 h-4" />
             Add Speaker
@@ -309,7 +309,7 @@ export function SpeakersTab({ speakers, isLoading, onSelectSubmission }: Speaker
                       onClick={() => toggleFeaturedMutation.mutate({ id: s.id, isFeatured: !s.is_featured })}
                       disabled={toggleFeaturedMutation.isPending}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-                        s.is_featured ? 'bg-[#F1E271]' : 'bg-gray-300'
+                        s.is_featured ? 'bg-brand-primary' : 'bg-gray-300'
                       }`}
                     >
                       <span
@@ -327,7 +327,7 @@ export function SpeakersTab({ speakers, isLoading, onSelectSubmission }: Speaker
                   </div>
                   <button
                     onClick={() => setSelectedSpeaker(s)}
-                    className="px-3 py-1.5 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-medium text-xs rounded-lg transition-all cursor-pointer shrink-0 whitespace-nowrap"
+                    className="px-3 py-1.5 bg-brand-primary hover:bg-[#e8d95e] text-black font-medium text-xs rounded-lg transition-all cursor-pointer shrink-0 whitespace-nowrap"
                   >
                     View / Edit
                   </button>
@@ -425,7 +425,7 @@ export function SpeakersTab({ speakers, isLoading, onSelectSubmission }: Speaker
                         onClick={() => toggleFeaturedMutation.mutate({ id: s.id, isFeatured: !s.is_featured })}
                         disabled={toggleFeaturedMutation.isPending}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-                          s.is_featured ? 'bg-[#F1E271]' : 'bg-gray-300'
+                          s.is_featured ? 'bg-brand-primary' : 'bg-gray-300'
                         }`}
                         title={s.is_featured ? 'Featured speaker' : 'Not featured'}
                       >
@@ -442,7 +442,7 @@ export function SpeakersTab({ speakers, isLoading, onSelectSubmission }: Speaker
                     <td className="px-4 py-4">
                       <button
                         onClick={() => setSelectedSpeaker(s)}
-                        className="px-3 py-1.5 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-medium text-sm rounded-lg transition-all cursor-pointer"
+                        className="px-3 py-1.5 bg-brand-primary hover:bg-[#e8d95e] text-black font-medium text-sm rounded-lg transition-all cursor-pointer"
                       >
                         View / Edit
                       </button>

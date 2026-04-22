@@ -68,7 +68,7 @@ export function Pagination({
       text: 'text-gray-600',
       textMuted: 'text-gray-400',
       button: 'border border-gray-300 hover:bg-gray-50 text-gray-700',
-      buttonActive: 'bg-[#F1E271] text-black border-transparent',
+      buttonActive: 'bg-brand-primary text-black border-transparent',
       buttonDisabled: 'opacity-50 cursor-not-allowed',
     },
     dark: {

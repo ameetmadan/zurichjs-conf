@@ -10,6 +10,7 @@ import type {
   CfpTshirtSize,
   CfpAssistanceType,
   CfpTravelOption,
+  CfpSpeakerRole,
 } from './base';
 import type { CfpReview } from './reviews';
 
@@ -32,7 +33,10 @@ export interface CfpSpeaker {
   twitter_handle: string | null;
   bluesky_handle: string | null;
   mastodon_handle: string | null;
-  profile_image_url: string | null;
+  profile_image_url?: string | null;
+  header_image_url?: string | null;
+  portrait_foreground_url?: string | null;
+  portrait_background_url?: string | null;
   tshirt_size: CfpTshirtSize | null;
   travel_option: CfpTravelOption | null; // Which travel arrangement: employer_covers, self_managed, need_assistance
   travel_assistance_required: boolean | null; // Whether speaker needs travel/accommodation covered
@@ -40,7 +44,10 @@ export interface CfpSpeaker {
   departure_airport: string | null; // Closest airport IATA code for travel planning
   special_requirements: string | null; // Accessibility needs, dietary restrictions, etc.
   company_interested_in_sponsoring: boolean | null;
+  is_admin_managed: boolean;
   is_visible: boolean;
+  is_featured: boolean;
+  speaker_role: CfpSpeakerRole;
   created_at: string;
   updated_at: string;
 }

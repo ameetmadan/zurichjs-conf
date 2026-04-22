@@ -627,6 +627,9 @@ export type Database = {
           linkedin_url: string | null
           mastodon_handle: string | null
           profile_image_url: string | null
+          header_image_url: string | null
+          portrait_foreground_url: string | null
+          portrait_background_url: string | null
           special_requirements: string | null
           travel_assistance_required: boolean | null
           tshirt_size: string | null
@@ -655,6 +658,9 @@ export type Database = {
           linkedin_url?: string | null
           mastodon_handle?: string | null
           profile_image_url?: string | null
+          header_image_url?: string | null
+          portrait_foreground_url?: string | null
+          portrait_background_url?: string | null
           special_requirements?: string | null
           travel_assistance_required?: boolean | null
           tshirt_size?: string | null
@@ -683,6 +689,9 @@ export type Database = {
           linkedin_url?: string | null
           mastodon_handle?: string | null
           profile_image_url?: string | null
+          header_image_url?: string | null
+          portrait_foreground_url?: string | null
+          portrait_background_url?: string | null
           special_requirements?: string | null
           travel_assistance_required?: boolean | null
           tshirt_size?: string | null

@@ -73,7 +73,7 @@ export function ReassignModal({ ticket, onClose, onSuccess, showToast }: Reassig
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent transition-all"
+              className="block w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all"
               placeholder="email@example.com"
             />
           </div>
@@ -84,7 +84,7 @@ export function ReassignModal({ ticket, onClose, onSuccess, showToast }: Reassig
               required
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="block w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent transition-all"
+              className="block w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all"
               placeholder="John"
             />
           </div>
@@ -95,7 +95,7 @@ export function ReassignModal({ ticket, onClose, onSuccess, showToast }: Reassig
               required
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="block w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent transition-all"
+              className="block w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all"
               placeholder="Doe"
             />
           </div>
@@ -110,7 +110,7 @@ export function ReassignModal({ ticket, onClose, onSuccess, showToast }: Reassig
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-[#F1E271] text-black px-4 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium hover:bg-[#e8d95e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1E271] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+              className="flex-1 bg-brand-primary text-black px-4 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium hover:bg-[#e8d95e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
             >
               {loading ? 'Reassigning...' : 'Reassign Ticket'}
             </button>

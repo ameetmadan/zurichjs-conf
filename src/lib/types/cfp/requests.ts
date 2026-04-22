@@ -4,9 +4,11 @@
  */
 
 import type {
+  CfpSubmissionType,
   CfpTalkLevel,
   CfpTshirtSize,
   CfpAssistanceType,
+  CfpSpeakerRole,
   CfpFlightDirection,
   CfpReimbursementType,
   CfpReviewerRole,
@@ -46,13 +48,19 @@ export interface UpdateCfpSpeakerRequest {
   bluesky_handle?: string;
   mastodon_handle?: string;
   profile_image_url?: string;
+  header_image_url?: string;
+  portrait_foreground_url?: string;
+  portrait_background_url?: string;
   tshirt_size?: CfpTshirtSize | null;
   travel_option?: string | null;
   travel_assistance_required?: boolean | null;
   assistance_type?: CfpAssistanceType;
   departure_airport?: string | null;
   company_interested_in_sponsoring?: boolean | null;
+  is_admin_managed?: boolean;
   is_visible?: boolean;
+  is_featured?: boolean;
+  speaker_role?: CfpSpeakerRole;
 }
 
 /**
@@ -61,7 +69,7 @@ export interface UpdateCfpSpeakerRequest {
 export interface CreateTalkSubmissionRequest {
   title: string;
   abstract: string;
-  submission_type: 'lightning' | 'standard';
+  submission_type: 'lightning' | 'standard' | 'panel';
   talk_level: CfpTalkLevel;
   tags: string[];
   additional_notes?: string;
@@ -113,6 +121,7 @@ export type CreateCfpSubmissionRequest =
 export interface UpdateCfpSubmissionRequest {
   title?: string;
   abstract?: string;
+  submission_type?: CfpSubmissionType;
   talk_level?: CfpTalkLevel;
   tags?: string[];
   additional_notes?: string;

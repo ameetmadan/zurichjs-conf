@@ -216,7 +216,7 @@ export function SubmissionModal({
         <div className="p-4 sm:p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white sticky top-0 z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-[#F1E271] rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-brand-primary rounded-lg flex items-center justify-center">
                 <FileText className="w-5 h-5 text-black" />
               </div>
               <div>
@@ -303,7 +303,7 @@ export function SubmissionModal({
                     <p className="text-xs text-black font-semibold mb-2">Tags</p>
                     <div className="flex flex-wrap gap-1.5">
                       {submission.tags.map((tag) => (
-                        <span key={tag.id} className="px-2 py-0.5 bg-[#F1E271] rounded text-xs text-black font-medium">
+                        <span key={tag.id} className="px-2 py-0.5 bg-brand-primary rounded text-xs text-black font-medium">
                           {tag.name}
                         </span>
                       ))}

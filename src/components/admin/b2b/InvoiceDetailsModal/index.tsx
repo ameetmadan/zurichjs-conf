@@ -54,7 +54,7 @@ export function InvoiceDetailsModal({ invoice, onClose, onUpdate }: InvoiceDetai
                 onClick={() => setActiveSection(section)}
                 className={`px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer whitespace-nowrap flex-shrink-0 ${
                   activeSection === section
-                    ? 'bg-[#F1E271] text-black'
+                    ? 'bg-brand-primary text-black'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >

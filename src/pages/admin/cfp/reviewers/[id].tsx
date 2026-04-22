@@ -167,7 +167,7 @@ export default function ReviewerDetailPage() {
               </div>
               <div className="rounded-lg bg-black px-4 py-3 text-center">
                 <div className="text-xs font-semibold text-gray-300">Rating</div>
-                <div className="text-3xl font-bold text-[#F1E271]">{formatScore(reviewerInfo.contribution_score)}</div>
+                <div className="text-3xl font-bold text-brand-primary">{formatScore(reviewerInfo.contribution_score)}</div>
               </div>
             </div>
 
@@ -214,7 +214,7 @@ export default function ReviewerDetailPage() {
                     setDateRange(e.target.value as DateRange);
                     setCurrentPage(1);
                   }}
-                  className="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                  className="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                 >
                   <option value="7d">Last 7 days</option>
                   <option value="30d">Last 30 days</option>
@@ -247,7 +247,7 @@ export default function ReviewerDetailPage() {
                             href={`/cfp/reviewer/submissions/${activity.submission_id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="shrink-0 inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white p-2 text-gray-700 hover:bg-gray-100 hover:text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                            className="shrink-0 inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white p-2 text-gray-700 hover:bg-gray-100 hover:text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                             aria-label={`Open ${activity.submission_title} in reviewer view (opens in new tab)`}
                           >
                             <ExternalLink className="w-4 h-4" aria-hidden="true" />
@@ -330,7 +330,7 @@ export default function ReviewerDetailPage() {
                                 href={`/cfp/reviewer/submissions/${activity.submission_id}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white p-1.5 text-gray-700 hover:bg-gray-100 hover:text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                                className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white p-1.5 text-gray-700 hover:bg-gray-100 hover:text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                                 aria-label={`Open ${activity.submission_title} in reviewer view (opens in new tab)`}
                               >
                                 <ExternalLink className="w-4 h-4" aria-hidden="true" />

@@ -168,6 +168,7 @@ export const organizationSchema = {
     "https://www.linkedin.com/company/zurichjs",
     "https://www.instagram.com/zurich.js",
     "https://twitter.com/zurichjs",
+    "https://bsky.app/profile/zurichjs.com",
   ],
   contactPoint: {
     "@type": "ContactPoint",

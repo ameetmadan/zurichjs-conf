@@ -12,12 +12,78 @@ import { useCart } from '@/contexts/CartContext';
 import { createTicketDataFromStripe } from '@/data/tickets';
 import { motion } from 'framer-motion';
 import {SectionContainer} from "@/components/organisms/SectionContainer";
+import { Heading, Kicker } from '@/components/atoms';
 
 export interface TicketsSectionWithStripeProps {
   /**
    * Additional CSS classes
    */
   className?: string;
+}
+
+function TicketPriceCardSkeleton({ featured = false }: { featured?: boolean }) {
+  return (
+    <article
+      className="flex-1 flex flex-col max-w-screen-xs relative bg-brand-black rounded-4xl p-6"
+      aria-hidden="true"
+      style={{ boxShadow: featured ? '5px 7px 15px rgba(0,0,0,0.4)' : undefined }}
+    >
+      <div className="flex flex-col gap-6 h-full animate-pulse">
+        <div className="flex items-center justify-between gap-6">
+          <div className="h-7 w-32 rounded-full bg-brand-white/80" />
+          {featured && <div className="h-6 w-16 rounded-full bg-brand-primary/80" />}
+        </div>
+        <div className="space-y-2">
+          <div className="h-3 w-full rounded-full bg-brand-gray-lightest/25" />
+          <div className="h-3 w-4/5 rounded-full bg-brand-gray-lightest/25" />
+        </div>
+        <div className="space-y-2">
+          <div className="h-10 w-40 rounded-full bg-brand-white/85" />
+          <div className="h-3 w-20 rounded-full bg-brand-gray-lightest/30" />
+        </div>
+        <div className="flex-1 space-y-3">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="flex items-center gap-3">
+              <div className="h-5 w-5 rounded-full bg-brand-primary/70" />
+              <div className="h-3 flex-1 rounded-full bg-brand-gray-lightest/25" />
+            </div>
+          ))}
+        </div>
+        <div className="h-11 w-full rounded-full bg-brand-primary/85" />
+      </div>
+    </article>
+  );
+}
+
+function TicketCardsSkeleton({ className = '' }: { className?: string }) {
+  return (
+    <div className={`relative flex flex-col gap-10 ${className}`} aria-labelledby="tickets-heading">
+      <motion.div
+        className="flex flex-col gap-2.5 items-center text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <Kicker variant="light">TICKETS</Kicker>
+        <Heading
+          level="h2"
+          variant="light"
+          className="text-xl text-balance leading-none"
+        >
+          Tickets
+        </Heading>
+        <div className="mt-2 h-4 w-64 max-w-[80vw] rounded-full bg-black/15 animate-pulse" aria-hidden="true" />
+      </motion.div>
+
+      <div className="flex flex-col gap-12">
+        <div className="flex flex-col items-stretch lg:flex-row gap-8 xl:gap-12 lg:items-center justify-center max-w-7xl mx-auto">
+          <TicketPriceCardSkeleton />
+          <TicketPriceCardSkeleton featured />
+          <TicketPriceCardSkeleton />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /**
@@ -56,29 +122,8 @@ export const TicketsSectionWithStripe: React.FC<TicketsSectionWithStripeProps> =
   // By checking plans.length === 0, we avoid hydration mismatch
   if (isLoading && plans.length === 0) {
     return (
-      <SectionContainer
-        className={`relative ${className}`}
-        aria-labelledby="tickets-heading"
-      >
-        <div className="relative z-20 container mx-auto px-4 md:px-6 lg:px-8">
-          <div className="text-center">
-            <motion.div
-              className="inline-block"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="flex items-center justify-center gap-3">
-                <div
-                  className="w-6 h-6 border-4 border-black border-t-transparent rounded-full animate-spin"
-                  role="status"
-                  aria-label="Loading ticket prices"
-                />
-                <p className="text-lg font-bold text-black">Loading ticket prices...</p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
+      <SectionContainer className={`relative ${className}`} aria-labelledby="tickets-heading">
+        <TicketCardsSkeleton />
       </SectionContainer>
     );
   }
@@ -195,4 +240,3 @@ export const TicketsSectionWithStripe: React.FC<TicketsSectionWithStripeProps> =
     </>
   );
 };
-

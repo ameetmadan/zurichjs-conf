@@ -40,7 +40,7 @@ export function SubmissionEditForm({
           type="text"
           value={editForm.title}
           onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
         />
       </div>
       <div>
@@ -49,7 +49,7 @@ export function SubmissionEditForm({
           value={editForm.abstract}
           onChange={(e) => setEditForm({ ...editForm, abstract: e.target.value })}
           rows={6}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none resize-none"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none resize-none"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -58,7 +58,7 @@ export function SubmissionEditForm({
           <select
             value={editForm.submission_type}
             onChange={(e) => setEditForm({ ...editForm, submission_type: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
           >
             <option value="lightning">Lightning (15 min)</option>
             <option value="standard">Standard (30 min)</option>
@@ -70,7 +70,7 @@ export function SubmissionEditForm({
           <select
             value={editForm.talk_level}
             onChange={(e) => setEditForm({ ...editForm, talk_level: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
           >
             <option value="beginner">Beginner</option>
             <option value="intermediate">Intermediate</option>
@@ -99,7 +99,7 @@ export function SubmissionEditForm({
                   })
                 }
                 placeholder="e.g., 3"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
             <div>
@@ -116,7 +116,7 @@ export function SubmissionEditForm({
                   })
                 }
                 placeholder="e.g., 30"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
           </div>
@@ -128,7 +128,7 @@ export function SubmissionEditForm({
                 onChange={(e) =>
                   setEditForm({ ...editForm, workshop_expected_compensation: e.target.value || null })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               >
                 <option value="">Not specified</option>
                 <option value="none">No compensation needed</option>
@@ -150,7 +150,7 @@ export function SubmissionEditForm({
                   })
                 }
                 placeholder="e.g., 500"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
           </div>
@@ -163,7 +163,7 @@ export function SubmissionEditForm({
               }
               rows={2}
               placeholder="Equipment, software, room setup, etc."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none resize-none"
             />
           </div>
         </div>
@@ -173,7 +173,7 @@ export function SubmissionEditForm({
         <button
           onClick={onSave}
           disabled={isEditing}
-          className="px-4 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer flex items-center gap-2"
+          className="px-4 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer flex items-center gap-2"
         >
           {isEditing && <Loader2 className="h-4 w-4 animate-spin" />}
           Save Changes

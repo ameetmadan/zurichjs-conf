@@ -49,7 +49,7 @@ export function CoverageBar({ percent, reviewCount, totalReviewers }: { percent:
 // Filter chip component
 export function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#F1E271] text-black text-xs font-medium rounded-full">
+    <span className="inline-flex items-center gap-1 px-2 py-1 bg-brand-primary text-black text-xs font-medium rounded-full">
       {label}
       <button
         onClick={onRemove}

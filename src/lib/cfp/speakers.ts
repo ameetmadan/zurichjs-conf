@@ -5,15 +5,23 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { env } from '@/config/env';
+import { getPublicScheduleRowMapBySubmissionId } from '@/lib/program/schedule';
 import type {
   CfpSpeaker,
   CfpSubmission,
   UpdateCfpSpeakerRequest,
   PublicSpeaker,
   PublicSession,
+  PublicSessionSpeaker,
   AdminCreateSpeakerRequest,
   AdminCreateSessionRequest,
 } from '@/lib/types/cfp';
+
+export type SpeakerImageField =
+  | 'profile_image_url'
+  | 'header_image_url'
+  | 'portrait_foreground_url'
+  | 'portrait_background_url';
 
 /**
  * Create an untyped service role client for CFP tables
@@ -118,7 +126,7 @@ export async function getAcceptedSpeakers(): Promise<CfpSpeaker[]> {
     .from('cfp_speakers')
     .select(`
       *,
-      cfp_submissions!inner (
+      cfp_submissions!cfp_submissions_speaker_id_fkey!inner (
         id,
         status
       )
@@ -131,6 +139,21 @@ export async function getAcceptedSpeakers(): Promise<CfpSpeaker[]> {
   }
 
   return (data || []) as CfpSpeaker[];
+}
+
+export async function getAcceptedSpeakerCount(): Promise<number> {
+  const supabase = createCfpServiceClient();
+  const { data, error } = await supabase
+    .from('cfp_submissions')
+    .select('speaker_id')
+    .eq('status', 'accepted');
+
+  if (error) {
+    console.error('[CFP Speakers] Error fetching accepted speaker count:', error.message);
+    return 0;
+  }
+
+  return new Set((data || []).map((submission: { speaker_id: string }) => submission.speaker_id)).size;
 }
 
 /**
@@ -159,7 +182,8 @@ export async function uploadSpeakerImage(
   speakerId: string,
   file: Buffer,
   fileName: string,
-  contentType: string
+  contentType: string,
+  imageField: SpeakerImageField = 'profile_image_url'
 ): Promise<{ url: string | null; error?: string }> {
   const supabase = createCfpServiceClient();
 
@@ -187,7 +211,7 @@ export async function uploadSpeakerImage(
   // Update speaker profile with new image URL (including cache buster)
   const { error: updateError } = await supabase
     .from('cfp_speakers')
-    .update({ profile_image_url: cacheBustedUrl })
+    .update({ [imageField]: cacheBustedUrl })
     .eq('id', speakerId);
 
   if (updateError) {
@@ -199,31 +223,21 @@ export async function uploadSpeakerImage(
 }
 
 /**
- * Get visible and featured speakers for public display
- * Returns speakers with is_visible=true AND is_featured=true
- * Includes their accepted sessions if any
+ * Get visible speakers for public display
+ * Returns speakers with is_visible=true and their accepted sessions
+ * Featured speakers are ordered first in the result
  */
 export async function getVisibleSpeakersWithSessions(): Promise<PublicSpeaker[]> {
   const supabase = createCfpServiceClient();
+  const sessionSlugCounts = new Map<string, number>();
+  const scheduleRowMap = await getPublicScheduleRowMapBySubmissionId();
 
-  // Fetch visible AND featured speakers with their submissions
+  // Fetch visible speakers with their submissions and tags
   const { data, error } = await supabase
     .from('cfp_speakers')
     .select(`
-      id,
-      first_name,
-      last_name,
-      job_title,
-      company,
-      bio,
-      profile_image_url,
-      is_featured,
-      linkedin_url,
-      github_url,
-      twitter_handle,
-      bluesky_handle,
-      mastodon_handle,
-      cfp_submissions (
+      *,
+      cfp_submissions!cfp_submissions_speaker_id_fkey (
         id,
         title,
         abstract,
@@ -233,11 +247,14 @@ export async function getVisibleSpeakersWithSessions(): Promise<PublicSpeaker[]>
         scheduled_date,
         scheduled_start_time,
         scheduled_duration_minutes,
-        room
+        room,
+        tags:cfp_submission_tags(
+          tag:cfp_tags(name)
+        )
       )
     `)
     .eq('is_visible', true)
-    .eq('is_featured', true)
+    .order('is_featured', { ascending: false })
     .order('first_name', { ascending: true });
 
   if (error) {
@@ -257,41 +274,73 @@ export async function getVisibleSpeakersWithSessions(): Promise<PublicSpeaker[]>
     scheduled_start_time: string | null;
     scheduled_duration_minutes: number | null;
     room: string | null;
+    tags?: Array<{
+      tag: Array<{
+        name: string;
+      }> | null;
+    }>;
   }
 
-  // Transform to public format
-  const publicSpeakers: PublicSpeaker[] = [];
+  interface ParticipantRow {
+    submission_id: string;
+    speaker_id: string;
+    role: string | null;
+  }
 
-  for (const speaker of data || []) {
-    // Get accepted sessions (may be empty)
-    const acceptedSessions = (speaker.cfp_submissions || [])
-      .filter((s: SubmissionData) => s.status === 'accepted')
-      .map((s: SubmissionData): PublicSession => ({
-        id: s.id,
-        title: s.title,
-        abstract: s.abstract,
-        type: s.submission_type as PublicSession['type'],
-        level: s.talk_level as PublicSession['level'],
-        schedule: s.scheduled_date || s.scheduled_start_time
-          ? {
-              date: s.scheduled_date,
-              start_time: s.scheduled_start_time,
-              duration_minutes: s.scheduled_duration_minutes,
-              room: s.room,
-            }
-          : null,
-      }));
+  const visibleSpeakerRows = data || [];
+  const visibleSpeakerIdSet = new Set(visibleSpeakerRows.map((speaker) => speaker.id));
+  const { data: participantRows, error: participantError } = await supabase
+    .from('cfp_submission_speakers')
+    .select('submission_id, speaker_id, role');
 
-    // Include all visible+featured speakers regardless of sessions
-    publicSpeakers.push({
+  if (participantError) {
+    console.error('[CFP Speakers] Error fetching submission speakers:', participantError.message);
+  }
+
+  const participantsBySubmissionId = new Map<string, ParticipantRow[]>();
+  for (const participant of (participantRows || []) as ParticipantRow[]) {
+    if (!participantsBySubmissionId.has(participant.submission_id)) {
+      participantsBySubmissionId.set(participant.submission_id, []);
+    }
+    participantsBySubmissionId.get(participant.submission_id)!.push(participant);
+  }
+
+  const slugCounts = new Map<string, number>();
+  const publicSpeakersById = new Map<string, PublicSpeaker>();
+  const speakerPreviewsById = new Map<string, PublicSessionSpeaker>();
+
+  for (const speaker of visibleSpeakerRows) {
+    const baseSlug = `${speaker.first_name} ${speaker.last_name}`
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || speaker.id;
+
+    const existingSlugCount = slugCounts.get(baseSlug) ?? 0;
+    slugCounts.set(baseSlug, existingSlugCount + 1);
+    const slug = existingSlugCount === 0 ? baseSlug : `${baseSlug}-${speaker.id.split('-')[0]}`;
+
+    speakerPreviewsById.set(speaker.id, {
+      name: [speaker.first_name, speaker.last_name].filter(Boolean).join(' '),
+      role: [speaker.job_title, speaker.company].filter(Boolean).join(' @ ') || null,
+      imageUrl: speaker.profile_image_url,
+      slug,
+    });
+
+    publicSpeakersById.set(speaker.id, {
       id: speaker.id,
+      slug,
       first_name: speaker.first_name,
       last_name: speaker.last_name,
       job_title: speaker.job_title,
       company: speaker.company,
       bio: speaker.bio,
       profile_image_url: speaker.profile_image_url,
+      header_image_url: null,
+      portrait_foreground_url: speaker.portrait_foreground_url,
+      portrait_background_url: speaker.portrait_background_url,
       is_featured: speaker.is_featured ?? false,
+      speaker_role: 'speaker_role' in speaker ? speaker.speaker_role ?? 'speaker' : 'speaker',
       socials: {
         linkedin_url: speaker.linkedin_url,
         github_url: speaker.github_url,
@@ -299,11 +348,109 @@ export async function getVisibleSpeakersWithSessions(): Promise<PublicSpeaker[]>
         bluesky_handle: speaker.bluesky_handle,
         mastodon_handle: speaker.mastodon_handle,
       },
-      sessions: acceptedSessions,
+      assigned_session_kinds: {
+        talks: false,
+        workshops: false,
+      },
+      sessions: [],
     });
   }
 
-  return publicSpeakers;
+  for (const speaker of visibleSpeakerRows) {
+    for (const s of (speaker.cfp_submissions || []).filter((entry: SubmissionData) => entry.status === 'accepted')) {
+      const participantIds = [
+        speaker.id,
+        ...(participantsBySubmissionId.get(s.id) || [])
+          .map((participant) => participant.speaker_id)
+          .filter((speakerId) => visibleSpeakerIdSet.has(speakerId)),
+      ];
+      const uniqueParticipantIds = Array.from(new Set(participantIds));
+
+      for (const participantId of uniqueParticipantIds) {
+        const publicSpeaker = publicSpeakersById.get(participantId);
+        if (!publicSpeaker) {
+          continue;
+        }
+
+        if (s.submission_type === 'workshop') {
+          publicSpeaker.assigned_session_kinds.workshops = true;
+        } else if (s.submission_type === 'standard' || s.submission_type === 'lightning') {
+          publicSpeaker.assigned_session_kinds.talks = true;
+        }
+      }
+
+      const scheduleRow = scheduleRowMap.get(s.id);
+      if (!scheduleRow) {
+        continue;
+      }
+
+      const publicSessionSpeakers = uniqueParticipantIds
+        .map((speakerId): PublicSessionSpeaker | null => {
+          const preview = speakerPreviewsById.get(speakerId);
+          if (!preview) {
+            return null;
+          }
+
+          const participantRole = participantsBySubmissionId
+            .get(s.id)
+            ?.find((participant) => participant.speaker_id === speakerId)?.role ?? (speakerId === speaker.id ? 'speaker' : null);
+
+          return {
+            ...preview,
+            participantRole,
+          };
+        })
+        .filter((preview): preview is PublicSessionSpeaker => Boolean(preview));
+
+        const baseSlug = s.title
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '') || s.id;
+        const existingSessionSlugCount = sessionSlugCounts.get(baseSlug) ?? 0;
+
+        sessionSlugCounts.set(baseSlug, existingSessionSlugCount + 1);
+
+      const publicSession: PublicSession = {
+          id: s.id,
+          slug: existingSessionSlugCount === 0 ? baseSlug : `${baseSlug}-${s.id.split('-')[0]}`,
+          title: s.title,
+          abstract: s.abstract,
+          tags: (s.tags || [])
+            .flatMap((entry: NonNullable<SubmissionData['tags']>[number]) => entry.tag || [])
+            .map((tag: { name: string }) => tag.name?.trim())
+            .filter((tag: string | undefined): tag is string => Boolean(tag)),
+          type: s.submission_type as PublicSession['type'],
+          level: s.talk_level as PublicSession['level'],
+          speakers: publicSessionSpeakers,
+          schedule: {
+            date: scheduleRow.date ?? null,
+            start_time: scheduleRow.start_time ?? null,
+            duration_minutes: scheduleRow.duration_minutes ?? null,
+            room: scheduleRow.room ?? null,
+          },
+        };
+
+      for (const participantId of uniqueParticipantIds) {
+        publicSpeakersById.get(participantId)?.sessions.push(publicSession);
+      }
+    }
+  }
+
+  for (const speaker of publicSpeakersById.values()) {
+    speaker.sessions.sort((left, right) => {
+      const leftDate = `${left.schedule?.date ?? '9999-12-31'}T${left.schedule?.start_time ?? '23:59:59'}`;
+      const rightDate = `${right.schedule?.date ?? '9999-12-31'}T${right.schedule?.start_time ?? '23:59:59'}`;
+
+      if (leftDate !== rightDate) {
+        return leftDate.localeCompare(rightDate);
+      }
+
+      return left.title.localeCompare(right.title);
+    });
+  }
+
+  return Array.from(publicSpeakersById.values());
 }
 
 /**
@@ -361,6 +508,11 @@ export async function createSpeaker(
     bluesky_handle: data.bluesky_handle || null,
     mastodon_handle: data.mastodon_handle || null,
     profile_image_url: data.profile_image_url || null,
+    header_image_url: data.header_image_url || null,
+    portrait_foreground_url: data.portrait_foreground_url || null,
+    portrait_background_url: data.portrait_background_url || null,
+    speaker_role: data.speaker_role || 'speaker',
+    is_admin_managed: true,
     is_visible: data.is_visible ?? false,
   };
 
@@ -428,6 +580,25 @@ export async function createSession(
   if (error) {
     console.error('[CFP Speakers] Error creating session:', error.message);
     return { submission: null, error: error.message };
+  }
+
+  if (data.participant_speaker_ids && data.participant_speaker_ids.length > 0) {
+    const participantRows = Array.from(new Set(data.participant_speaker_ids.filter((id) => id !== data.speaker_id))).map((speakerId) => ({
+      submission_id: submission.id,
+      speaker_id: speakerId,
+      role: data.submission_type === 'panel' ? 'panelist' : 'speaker',
+    }));
+
+    if (participantRows.length > 0) {
+      const { error: participantError } = await supabase
+        .from('cfp_submission_speakers')
+        .insert(participantRows);
+
+      if (participantError) {
+        console.error('[CFP Speakers] Error linking session speakers:', participantError.message);
+        return { submission: null, error: participantError.message };
+      }
+    }
   }
 
   // Handle tags if provided

@@ -85,7 +85,7 @@ export function AdminModal({
       >
         {/* Header */}
         {showHeader && (
-          <div className="bg-[#F1E271] px-4 py-3 shrink-0 sm:rounded-t-xl">
+          <div className="bg-brand-primary px-4 py-3 shrink-0 sm:rounded-t-xl">
             <div className="flex items-start justify-between">
               <div className="min-w-0 flex-1 pr-2">
                 <h3 id="modal-title" className="text-base sm:text-lg font-bold text-black truncate">
@@ -164,7 +164,7 @@ export function AdminModalFooter({
   const confirmClasses =
     variant === 'danger'
       ? 'bg-red-600 hover:bg-red-700 text-white'
-      : 'bg-[#F1E271] hover:bg-[#E5D665] text-black';
+      : 'bg-brand-primary hover:bg-[#E5D665] text-black';
 
   return (
     <div className="flex justify-end gap-3">

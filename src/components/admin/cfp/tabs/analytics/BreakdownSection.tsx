@@ -67,7 +67,7 @@ export function BreakdownSection({ byType, byLevel }: BreakdownSectionProps) {
                   {/* Mini bar */}
                   <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#F1E271] rounded-full"
+                      className="h-full bg-brand-primary rounded-full"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -106,7 +106,7 @@ export function BreakdownSection({ byType, byLevel }: BreakdownSectionProps) {
                   </div>
                   <div className="mt-2 h-1.5 bg-white/50 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#F1E271] rounded-full"
+                      className="h-full bg-brand-primary rounded-full"
                       style={{ width: `${pct}%` }}
                     />
                   </div>

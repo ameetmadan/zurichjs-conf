@@ -53,7 +53,7 @@ export function SpeakerInfoSection({ speaker }: SpeakerInfoSectionProps) {
               className="w-24 h-24 rounded-xl object-cover border-2 border-gray-200"
             />
           ) : (
-            <div className="w-24 h-24 rounded-xl bg-[#F1E271] flex items-center justify-center border-2 border-gray-200">
+            <div className="w-24 h-24 rounded-xl bg-brand-primary flex items-center justify-center border-2 border-gray-200">
               <span className="text-3xl font-bold text-black">
                 {speaker.first_name?.[0]}
                 {speaker.last_name?.[0]}

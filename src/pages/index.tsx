@@ -22,6 +22,7 @@ import { ticketPricingQueryOptions } from '@/lib/queries/tickets';
 import { serverAnalytics } from '@/lib/analytics/server';
 import type { GetServerSideProps } from 'next';
 import React from "react";
+import {Button} from "@/components/atoms";
 
 /**
  * Page props passed through _app.tsx for hydration
@@ -107,7 +108,9 @@ export default function Home() {
           <SpeakersSection />
           <div className="flex flex-col items-center gap-3 px-4">
             <p className="text-brand-gray-medium text-md text-center mt-2">
-              More speaker announcements coming on April 22nd!
+                <Button href="/speakers" size="xs" variant="black" asChild>
+                    Check out the full lineup
+                </Button>
             </p>
           </div>
         </div>
@@ -178,7 +181,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async () =>
   const results = await Promise.allSettled([
     optionalQuery(publicSponsorsQueryOptions),
     optionalQuery(communityPartnersQueryOptions),
-    optionalQuery(publicSpeakersQueryOptions),
+    optionalQuery(publicSpeakersQueryOptions({ featured: true })),
     optionalQuery(ticketPricingQueryOptions),
   ]);
 

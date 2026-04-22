@@ -12,7 +12,7 @@ export interface NavBarProps {
 
 const navLinks = [
   { label: "About", href: "/about" },
-  { label: "Call for Papers", href: "/cfp" },
+  { label: "Speakers", href: "/speakers" },
   { label: "Become a Sponsor", href: "/sponsorship" },
 ];
 

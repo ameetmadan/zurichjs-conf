@@ -116,7 +116,7 @@ export function AddPartnershipModal({
       {/* Modal - full width on mobile, slides up from bottom */}
       <div className="relative w-full sm:max-w-lg sm:mx-4 bg-white sm:rounded-xl text-black shadow-xl flex flex-col max-h-[100dvh] sm:max-h-[85vh]">
         {/* Header - sticky */}
-        <div className="bg-[#F1E271] px-4 py-3 flex items-center justify-between shrink-0 sm:rounded-t-xl">
+        <div className="bg-brand-primary px-4 py-3 flex items-center justify-between shrink-0 sm:rounded-t-xl">
           <h3 className="text-base font-bold text-black">Add New Partnership</h3>
           <button
             onClick={onClose}
@@ -145,7 +145,7 @@ export function AddPartnershipModal({
                     onClick={() => handleChange('type', type.value)}
                     className={`flex flex-col p-3 rounded-lg border-2 text-left transition-all cursor-pointer ${
                       formData.type === type.value
-                        ? 'border-[#F1E271] bg-[#F1E271]/10'
+                        ? 'border-brand-primary bg-brand-primary/10'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -177,7 +177,7 @@ export function AddPartnershipModal({
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 placeholder="e.g., React Zurich Meetup"
-                className={`w-full px-3 py-2.5 border rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-base ${
+                className={`w-full px-3 py-2.5 border rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-base ${
                   errors.name ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -202,7 +202,7 @@ export function AddPartnershipModal({
                   value={formData.contact_name}
                   onChange={(e) => handleChange('contact_name', e.target.value)}
                   placeholder="John Doe"
-                  className={`w-full px-3 py-2.5 border rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-base ${
+                  className={`w-full px-3 py-2.5 border rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-base ${
                     errors.contact_name ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -223,7 +223,7 @@ export function AddPartnershipModal({
                   value={formData.contact_email}
                   onChange={(e) => handleChange('contact_email', e.target.value)}
                   placeholder="john@example.com"
-                  className={`w-full px-3 py-2.5 border rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-base ${
+                  className={`w-full px-3 py-2.5 border rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-base ${
                     errors.contact_email ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -245,7 +245,7 @@ export function AddPartnershipModal({
                   value={formData.contact_phone}
                   onChange={(e) => handleChange('contact_phone', e.target.value)}
                   placeholder="+41 79 123 4567"
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-base"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-base"
                 />
               </div>
             </div>
@@ -266,7 +266,7 @@ export function AddPartnershipModal({
                       value={formData.company_name}
                       onChange={(e) => handleChange('company_name', e.target.value)}
                       placeholder="Acme Inc."
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-base"
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-base"
                     />
                   </div>
                   <div>
@@ -279,7 +279,7 @@ export function AddPartnershipModal({
                       value={formData.company_website}
                       onChange={(e) => handleChange('company_website', e.target.value)}
                       placeholder="https://example.com"
-                      className={`w-full px-3 py-2.5 border rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-base ${
+                      className={`w-full px-3 py-2.5 border rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-base ${
                         errors.company_website ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -304,7 +304,7 @@ export function AddPartnershipModal({
                 onChange={(e) => handleChange('notes', e.target.value)}
                 placeholder="Agreement details, special arrangements, follow-up tasks..."
                 rows={3}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-base resize-none"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-black placeholder-gray-400 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-base resize-none"
               />
               <p className="text-xs text-gray-500 mt-1">Internal notes about this partnership</p>
             </div>
@@ -324,7 +324,7 @@ export function AddPartnershipModal({
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="w-full sm:w-auto px-4 py-2.5 bg-[#F1E271] text-black font-medium rounded-lg hover:bg-[#E5D665] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2.5 bg-brand-primary text-black font-medium rounded-lg hover:bg-[#E5D665] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isSubmitting ? 'Creating...' : 'Create Partnership'}
           </button>

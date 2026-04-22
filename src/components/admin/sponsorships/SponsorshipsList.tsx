@@ -138,7 +138,7 @@ export function SponsorshipsList({ deals, isLoading, onSelectDeal }: Sponsorship
                       e.stopPropagation();
                       onSelectDeal(deal.id);
                     }}
-                    className="px-3 py-1.5 text-sm font-medium text-black bg-[#F1E271] hover:bg-[#e6d766] rounded-lg transition-colors flex items-center gap-1.5"
+                    className="px-3 py-1.5 text-sm font-medium text-black bg-brand-primary hover:bg-[#e6d766] rounded-lg transition-colors flex items-center gap-1.5"
                   >
                     <Eye className="h-4 w-4" />
                     View

@@ -167,7 +167,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
                   className="w-12 h-12 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-12 h-12 bg-[#F1E271] rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-brand-primary rounded-full flex items-center justify-center">
                   <User className="w-6 h-6 text-black" />
                 </div>
               )}
@@ -211,7 +211,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
             <button
               onClick={() => setIsEditing(!isEditing)}
               className={`px-4 py-2 rounded-lg font-medium text-sm transition-all cursor-pointer ${
-                isEditing ? 'bg-gray-200 text-black' : 'bg-[#F1E271] hover:bg-[#e8d95e] text-black'
+                isEditing ? 'bg-gray-200 text-black' : 'bg-brand-primary hover:bg-[#e8d95e] text-black'
               }`}
             >
               {isEditing ? 'Cancel Edit' : 'Edit Profile'}
@@ -285,7 +285,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
                       type="text"
                       value={formData.first_name}
                       onChange={(e) => handleChange('first_name', e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                     />
                   </div>
                   <div>
@@ -294,7 +294,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
                       type="text"
                       value={formData.last_name}
                       onChange={(e) => handleChange('last_name', e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                     />
                   </div>
                   <div>
@@ -303,7 +303,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
                       type="text"
                       value={formData.job_title}
                       onChange={(e) => handleChange('job_title', e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                     />
                   </div>
                   <div>
@@ -312,7 +312,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
                       type="text"
                       value={formData.company}
                       onChange={(e) => handleChange('company', e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                     />
                   </div>
                 </div>
@@ -325,7 +325,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
                   value={formData.bio}
                   onChange={(e) => handleChange('bio', e.target.value)}
                   rows={4}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                   placeholder="Speaker biography..."
                 />
               </div>
@@ -341,7 +341,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
                       value={formData.linkedin_url}
                       onChange={(e) => handleChange('linkedin_url', e.target.value)}
                       placeholder="https://linkedin.com/in/..."
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                     />
                   </div>
                   <div>
@@ -351,7 +351,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
                       value={formData.github_url}
                       onChange={(e) => handleChange('github_url', e.target.value)}
                       placeholder="https://github.com/..."
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                     />
                   </div>
                   <div>
@@ -361,7 +361,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
                       value={formData.twitter_handle}
                       onChange={(e) => handleChange('twitter_handle', e.target.value)}
                       placeholder="@username"
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                     />
                   </div>
                   <div>
@@ -371,7 +371,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
                       value={formData.bluesky_handle}
                       onChange={(e) => handleChange('bluesky_handle', e.target.value)}
                       placeholder="@user.bsky.social"
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                     />
                   </div>
                 </div>
@@ -437,7 +437,7 @@ export function SpeakerModal({ speaker, onClose, onUpdated, onDeleted, isDeletin
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="w-full sm:w-auto px-6 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-medium rounded-lg disabled:opacity-50 transition-all cursor-pointer"
+                className="w-full sm:w-auto px-6 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-medium rounded-lg disabled:opacity-50 transition-all cursor-pointer"
               >
                 {isSaving ? 'Saving...' : 'Save Changes'}
               </button>

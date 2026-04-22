@@ -119,7 +119,7 @@ export function PartnershipDetailModal({
       {/* Modal */}
       <div className="relative w-full sm:max-w-4xl sm:mx-4 bg-white sm:rounded-xl text-black shadow-xl flex flex-col max-h-[100dvh] sm:max-h-[85vh]">
         {/* Header */}
-        <div className="bg-[#F1E271] px-4 py-3 shrink-0 sm:rounded-t-xl">
+        <div className="bg-brand-primary px-4 py-3 shrink-0 sm:rounded-t-xl">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1 pr-2">
               <h3 className="text-base sm:text-lg font-bold text-black truncate">{partnership.name}</h3>
@@ -150,7 +150,7 @@ export function PartnershipDetailModal({
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-3 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap flex-shrink-0 ${
                   activeTab === tab.id
-                    ? 'border-[#F1E271] text-black'
+                    ? 'border-brand-primary text-black'
                     : 'border-transparent text-black hover:text-black'
                 }`}
               >
@@ -339,7 +339,7 @@ function OverviewTab({
                 <select
                   value={editData.status}
                   onChange={(e) => setEditData({ ...editData, status: e.target.value as PartnershipStatus })}
-                  className="mt-1 w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271]"
+                  className="mt-1 w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-brand-primary focus:border-brand-primary"
                 >
                   <option value="active">Active</option>
                   <option value="pending">Pending</option>
@@ -364,7 +364,7 @@ function OverviewTab({
                   value={editData.company_website}
                   onChange={(e) => setEditData({ ...editData, company_website: e.target.value })}
                   placeholder="https://example.com"
-                  className="mt-1 w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271]"
+                  className="mt-1 w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-brand-primary focus:border-brand-primary"
                 />
               ) : partnership.company_website ? (
                 <dd className="text-sm">
@@ -454,7 +454,7 @@ function TrackingTab({
           </div>
           <button
             onClick={onCopyUrl}
-            className="px-4 py-2 bg-[#F1E271] text-black font-medium rounded-lg hover:bg-[#E5D665] flex items-center justify-center gap-2 cursor-pointer shrink-0"
+            className="px-4 py-2 bg-brand-primary text-black font-medium rounded-lg hover:bg-[#E5D665] flex items-center justify-center gap-2 cursor-pointer shrink-0"
           >
             {copiedUrl ? (
               <>

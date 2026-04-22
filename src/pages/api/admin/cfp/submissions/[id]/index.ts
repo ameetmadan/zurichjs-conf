@@ -132,10 +132,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         workshop_compensation_amount,
         workshop_special_requirements,
         workshop_max_participants,
+        participant_speaker_ids,
       } = req.body;
 
       // Validate required fields if provided
-      if (submission_type && !['lightning', 'standard', 'workshop'].includes(submission_type)) {
+      if (submission_type && !['lightning', 'standard', 'workshop', 'panel'].includes(submission_type)) {
         return res.status(400).json({ error: 'Invalid submission type' });
       }
       if (talk_level && !['beginner', 'intermediate', 'advanced'].includes(talk_level)) {
@@ -167,20 +168,61 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         updateData.workshop_max_participants = null;
       }
 
-      if (Object.keys(updateData).length === 0) {
+      const hasParticipantUpdate = Array.isArray(participant_speaker_ids);
+      if (Object.keys(updateData).length === 0 && !hasParticipantUpdate) {
         return res.status(400).json({ error: 'No fields to update' });
       }
 
-      const { data, error } = await supabase
-        .from('cfp_submissions')
-        .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
+      const { data, error } = Object.keys(updateData).length > 0
+        ? await supabase
+          .from('cfp_submissions')
+          .update(updateData)
+          .eq('id', id)
+          .select()
+          .single()
+        : await supabase
+          .from('cfp_submissions')
+          .select('*')
+          .eq('id', id)
+          .single();
 
       if (error) {
         log.error('Error updating submission', error, { submissionId: id });
         return res.status(500).json({ error: 'Failed to update submission' });
+      }
+
+      if (hasParticipantUpdate) {
+        const uniqueParticipantIds = Array.from(new Set(
+          participant_speaker_ids.filter((speakerId: unknown): speakerId is string =>
+            typeof speakerId === 'string' && speakerId !== data.speaker_id
+          )
+        ));
+        const participantRole = data.submission_type === 'panel' ? 'panelist' : 'speaker';
+
+        const { error: deleteParticipantsError } = await supabase
+          .from('cfp_submission_speakers')
+          .delete()
+          .eq('submission_id', id);
+
+        if (deleteParticipantsError) {
+          log.error('Error clearing submission speakers', deleteParticipantsError, { submissionId: id });
+          return res.status(500).json({ error: 'Failed to update panel speakers' });
+        }
+
+        if (uniqueParticipantIds.length > 0) {
+          const { error: insertParticipantsError } = await supabase
+            .from('cfp_submission_speakers')
+            .insert(uniqueParticipantIds.map((speakerId) => ({
+              submission_id: id,
+              speaker_id: speakerId,
+              role: participantRole,
+            })));
+
+          if (insertParticipantsError) {
+            log.error('Error saving submission speakers', insertParticipantsError, { submissionId: id });
+            return res.status(500).json({ error: 'Failed to update panel speakers' });
+          }
+        }
       }
 
       log.info('Submission updated', { submissionId: id });

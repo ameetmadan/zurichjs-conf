@@ -92,7 +92,7 @@ interface SelectedProductBadgeProps {
 
 function SelectedProductBadge({ product, onRemove }: SelectedProductBadgeProps) {
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#F1E271]/20 border border-[#F1E271] rounded-md text-sm">
+    <span className="inline-flex items-center gap-1 px-2 py-1 bg-brand-primary/20 border border-brand-primary rounded-md text-sm">
       <span className="truncate max-w-[150px]">{product.name}</span>
       <button
         type="button"
@@ -100,7 +100,7 @@ function SelectedProductBadge({ product, onRemove }: SelectedProductBadgeProps) 
           e.stopPropagation();
           onRemove();
         }}
-        className="p-0.5 hover:bg-[#F1E271]/30 rounded cursor-pointer"
+        className="p-0.5 hover:bg-brand-primary/30 rounded cursor-pointer"
       >
         <X className="w-3 h-3" />
       </button>
@@ -138,7 +138,7 @@ function ProductListItem({
       <div
         className={`flex items-center justify-center w-5 h-5 rounded border ${
           isSelected
-            ? 'bg-[#F1E271] border-[#F1E271]'
+            ? 'bg-brand-primary border-brand-primary'
             : 'border-gray-300 bg-white'
         }`}
       >
@@ -250,7 +250,7 @@ export function ProductMultiSelect({
           className={`w-full bg-white text-black placeholder-gray-500 border rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 transition-all ${
             error
               ? 'border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:ring-[#F1E271] focus:border-[#F1E271]'
+              : 'border-gray-300 focus:ring-brand-primary focus:border-brand-primary'
           } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         />
       </div>

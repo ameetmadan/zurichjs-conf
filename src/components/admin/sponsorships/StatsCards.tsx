@@ -78,9 +78,9 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         ? `+${formatRevenue(stats.revenueByCurrency.CHF.pending)} pending`
         : undefined,
       icon: DollarSign,
-      iconBg: 'bg-[#F1E271]/20',
+      iconBg: 'bg-brand-primary/20',
       iconColor: 'text-[#B8A830]',
-      borderColor: 'border-[#F1E271]/30',
+      borderColor: 'border-brand-primary/30',
     },
     {
       label: 'Public Logos',
