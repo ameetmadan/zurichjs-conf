@@ -76,7 +76,7 @@ export function SendEmailModal({
 
         <div className="relative inline-block w-full max-w-lg mx-0 sm:mx-4 bg-white rounded-lg text-left overflow-hidden shadow-xl transform my-2 sm:my-8 text-black max-h-[95vh] sm:max-h-[90vh] flex flex-col">
           {/* Header */}
-          <div className="bg-[#F1E271] px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between flex-shrink-0">
+          <div className="bg-brand-primary px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <Mail className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
               <h3 className="text-base sm:text-lg font-bold text-black truncate">Send Partnership Package</h3>
@@ -105,7 +105,7 @@ export function SendEmailModal({
                     onChange={(e) =>
                       setOptions((prev) => ({ ...prev, include_coupons: e.target.checked }))
                     }
-                    className="rounded text-[#F1E271] focus:ring-[#F1E271] flex-shrink-0"
+                    className="rounded text-brand-primary focus:ring-brand-primary flex-shrink-0"
                   />
                   <Ticket className="h-4 w-4 sm:h-5 sm:w-5 text-black flex-shrink-0" />
                   <div className="min-w-0">
@@ -121,7 +121,7 @@ export function SendEmailModal({
                     onChange={(e) =>
                       setOptions((prev) => ({ ...prev, include_vouchers: e.target.checked }))
                     }
-                    className="rounded text-[#F1E271] focus:ring-[#F1E271] flex-shrink-0"
+                    className="rounded text-brand-primary focus:ring-brand-primary flex-shrink-0"
                   />
                   <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-black flex-shrink-0" />
                   <div className="min-w-0">
@@ -137,7 +137,7 @@ export function SendEmailModal({
                     onChange={(e) =>
                       setOptions((prev) => ({ ...prev, include_logo: e.target.checked }))
                     }
-                    className="rounded text-[#F1E271] focus:ring-[#F1E271] flex-shrink-0"
+                    className="rounded text-brand-primary focus:ring-brand-primary flex-shrink-0"
                   />
                   <ImageIcon className="h-4 w-4 sm:h-5 sm:w-5 text-black flex-shrink-0" />
                   <div className="min-w-0">
@@ -160,7 +160,7 @@ export function SendEmailModal({
                 }
                 placeholder="Add a personalized message..."
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-sm"
               />
             </div>
 
@@ -175,7 +175,7 @@ export function SendEmailModal({
               <button
                 onClick={handleSend}
                 disabled={isSubmitting}
-                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-[#F1E271] text-black font-medium rounded-lg hover:bg-[#E5D665] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-brand-primary text-black font-medium rounded-lg hover:bg-[#E5D665] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Mail className="h-4 w-4" />
                 {isSubmitting ? 'Sending...' : 'Send Email'}

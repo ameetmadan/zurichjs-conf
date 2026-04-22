@@ -100,7 +100,7 @@ function MultiSelectFilterPopover({
       <PopoverButton className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-black hover:bg-gray-50 cursor-pointer">
         <span>{label}</span>
         {selected.length > 0 && (
-          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#F1E271] px-1 text-xs font-semibold text-black">
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-primary px-1 text-xs font-semibold text-black">
             {selected.length}
           </span>
         )}
@@ -209,7 +209,7 @@ export function SubmissionsTab({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder='Search topic content...'
-              className="w-full lg:w-80 px-3 py-2 rounded-lg border border-gray-300 bg-white text-black placeholder-gray-500 focus:ring-2 focus:ring-[#F1E271] focus:outline-none text-sm"
+              className="w-full lg:w-80 px-3 py-2 rounded-lg border border-gray-300 bg-white text-black placeholder-gray-500 focus:ring-2 focus:ring-brand-primary focus:outline-none text-sm"
             />
 
             <MultiSelectFilterPopover
@@ -237,7 +237,7 @@ export function SubmissionsTab({
               <PopoverButton className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-black hover:bg-gray-50 cursor-pointer">
                 <span>Coverage</span>
                 {(coverageMin || coverageMax) && (
-                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#F1E271] px-1 text-xs font-semibold text-black">
+                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-primary px-1 text-xs font-semibold text-black">
                     1
                   </span>
                 )}
@@ -257,7 +257,7 @@ export function SubmissionsTab({
                       value={coverageMin}
                       onChange={(e) => setCoverageMin(e.target.value)}
                       placeholder="Min"
-                      className="w-20 px-2 py-1.5 rounded-md border border-gray-300 text-sm text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                      className="w-20 px-2 py-1.5 rounded-md border border-gray-300 text-sm text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                     />
                     <span className="text-gray-500 text-sm">to</span>
                     <input
@@ -267,7 +267,7 @@ export function SubmissionsTab({
                       value={coverageMax}
                       onChange={(e) => setCoverageMax(e.target.value)}
                       placeholder="Max"
-                      className="w-20 px-2 py-1.5 rounded-md border border-gray-300 text-sm text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                      className="w-20 px-2 py-1.5 rounded-md border border-gray-300 text-sm text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
                     />
                   </div>
                 </div>
@@ -386,7 +386,7 @@ function MobileSubmissionsList({
             type="checkbox"
             checked={selectedIds.size === submissions.length && submissions.length > 0}
             onChange={toggleSelectAll}
-            className="w-4 h-4 rounded border-gray-300 text-[#F1E271] cursor-pointer"
+            className="w-4 h-4 rounded border-gray-300 text-brand-primary cursor-pointer"
           />
           <span className="text-sm text-gray-600">Select all on page</span>
         </div>
@@ -403,7 +403,7 @@ function MobileSubmissionsList({
               type="checkbox"
               checked={selectedIds.has(s.id)}
               onChange={() => toggleSelection(s.id)}
-              className="w-4 h-4 mt-0.5 rounded border-gray-300 text-[#F1E271] cursor-pointer flex-shrink-0"
+              className="w-4 h-4 mt-0.5 rounded border-gray-300 text-brand-primary cursor-pointer flex-shrink-0"
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2 mb-2">
@@ -459,7 +459,7 @@ function MobileSubmissionsList({
               )}
               <button
                 onClick={() => onSelectSubmission(s)}
-                className="px-4 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-medium text-xs rounded-lg cursor-pointer transition-colors flex-shrink-0 ml-auto"
+                className="px-4 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-medium text-xs rounded-lg cursor-pointer transition-colors flex-shrink-0 ml-auto"
               >
                 Manage
               </button>
@@ -502,7 +502,7 @@ function DesktopSubmissionsTable({
                 type="checkbox"
                 checked={selectedIds.size === submissions.length && submissions.length > 0}
                 onChange={toggleSelectAll}
-                className="w-4 h-4 rounded border-gray-300 text-[#F1E271] cursor-pointer"
+                className="w-4 h-4 rounded border-gray-300 text-brand-primary cursor-pointer"
               />
             </th>
             <th className="px-2 py-3">
@@ -578,7 +578,7 @@ function DesktopSubmissionsTable({
                   type="checkbox"
                   checked={selectedIds.has(s.id)}
                   onChange={() => toggleSelection(s.id)}
-                  className="w-4 h-4 rounded border-gray-300 text-[#F1E271] cursor-pointer"
+                  className="w-4 h-4 rounded border-gray-300 text-brand-primary cursor-pointer"
                 />
               </td>
               <td className="px-2 py-3">
@@ -638,7 +638,7 @@ function DesktopSubmissionsTable({
               <td className="px-2 py-3">
                 <button
                   onClick={() => onSelectSubmission(s)}
-                  className="inline-flex items-center justify-center px-3 py-1.5 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-medium text-xs rounded-lg cursor-pointer transition-colors whitespace-nowrap"
+                  className="inline-flex items-center justify-center px-3 py-1.5 bg-brand-primary hover:bg-[#e8d95e] text-black font-medium text-xs rounded-lg cursor-pointer transition-colors whitespace-nowrap"
                 >
                   Manage
                 </button>

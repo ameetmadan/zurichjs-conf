@@ -20,6 +20,7 @@ export interface Speaker {
   header_image_url: string | null;
   portrait_foreground_url: string | null;
   portrait_background_url: string | null;
+  is_admin_managed: boolean;
   is_visible: boolean;
   is_featured: boolean;
   speaker_role: 'speaker' | 'mc';

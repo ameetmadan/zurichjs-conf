@@ -43,7 +43,7 @@ export function TabNavigation({ activeTab, setActiveTab }: TabNavigationProps) {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`px-6 py-2.5 rounded-md font-medium text-sm transition-all cursor-pointer ${
-                activeTab === tab.key ? 'bg-[#F1E271] text-black shadow-sm' : 'text-black hover:bg-gray-50'
+                activeTab === tab.key ? 'bg-brand-primary text-black shadow-sm' : 'text-black hover:bg-gray-50'
               }`}
             >
               {tab.label}

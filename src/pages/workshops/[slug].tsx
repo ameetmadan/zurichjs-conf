@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from 'next';
+import Link from 'next/link';
 import { SEO } from '@/components/SEO';
 import { Button, Heading, Kicker } from '@/components/atoms';
 import { ShapedSection, SiteFooter } from '@/components/organisms';
@@ -6,6 +7,7 @@ import { SessionCard, SessionDetailHero, type SessionDetailSpeaker } from '@/com
 import { WorkshopPurchasePanel } from '@/components/workshops/WorkshopPurchasePanel';
 import { fetchPublicSpeakers } from '@/lib/queries/speakers';
 import type { PublicSession } from '@/lib/types/cfp';
+import { ChevronLeft } from 'lucide-react';
 
 interface WorkshopDetailPageProps {
   session: PublicSession;
@@ -28,6 +30,13 @@ export default function WorkshopDetailPage({ session, speaker }: WorkshopDetailP
 
         <ShapedSection shape="straight" variant="light" dropTop dropBottom>
           <div className="mx-auto max-w-screen-lg space-y-10">
+            <Link
+              href="/workshops"
+              className="inline-flex items-center gap-1 text-xs font-medium text-brand-gray-medium transition-colors hover:text-brand-black"
+            >
+              <ChevronLeft className="size-3.5" aria-hidden="true" />
+              All workshops
+            </Link>
             <SessionCard
               session={session}
               speaker={{

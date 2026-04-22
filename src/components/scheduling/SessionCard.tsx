@@ -133,7 +133,6 @@ export function SessionCard({
       <div>
         <p className="text-sm font-semibold text-brand-black">{entry.name}</p>
         {entry.role ? <p className="text-xs text-brand-gray-medium">{entry.role}</p> : null}
-        {entry.participantRole && isPanel ? <p className="text-xs font-semibold capitalize text-brand-blue">{entry.participantRole}</p> : null}
       </div>
     </>
   );

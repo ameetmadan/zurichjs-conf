@@ -3,15 +3,23 @@
  * Create a new confirmed speaker
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { X, Plus } from 'lucide-react';
+import type { SpeakerWithSessions } from './types';
 
 interface AddSpeakerModalProps {
   onClose: () => void;
   onCreated: () => void;
 }
 
+type AddMode = 'existing' | 'new';
+type SpeakerRole = 'speaker' | 'mc';
+
 export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
+  const [mode, setMode] = useState<AddMode>('existing');
+  const [speakers, setSpeakers] = useState<SpeakerWithSessions[]>([]);
+  const [selectedSpeakerId, setSelectedSpeakerId] = useState('');
+  const [selectedRole, setSelectedRole] = useState<SpeakerRole>('speaker');
   const [formData, setFormData] = useState({
     email: '',
     first_name: '',
@@ -19,14 +27,85 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
     job_title: '',
     company: '',
     bio: '',
-    speaker_role: 'speaker' as 'speaker' | 'mc',
-    is_visible: true,
+    speaker_role: 'speaker' as SpeakerRole,
+    is_visible: false,
   });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingSpeakers, setIsLoadingSpeakers] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadSpeakers = async () => {
+      setIsLoadingSpeakers(true);
+      try {
+        const res = await fetch('/api/admin/cfp/speakers', { cache: 'no-store' });
+        if (!res.ok) {
+          throw new Error('Failed to load CFP speakers');
+        }
+
+        const data = await res.json();
+        if (isMounted) {
+          setSpeakers(data.speakers ?? []);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : 'Failed to load CFP speakers');
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingSpeakers(false);
+        }
+      }
+    };
+
+    loadSpeakers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const speakerOptions = useMemo(() => {
+    return speakers.filter((speaker) => {
+      const hasAcceptedSession = speaker.submissions?.some((submission) => submission.status === 'accepted') ?? false;
+      return !speaker.is_admin_managed && !speaker.is_visible && !hasAcceptedSession;
+    }).sort((left, right) => {
+      const leftName = `${left.first_name} ${left.last_name}`.trim().toLowerCase();
+      const rightName = `${right.first_name} ${right.last_name}`.trim().toLowerCase();
+
+      return leftName.localeCompare(rightName);
+    });
+  }, [speakers]);
+
+  const selectedSpeaker = speakers.find((speaker) => speaker.id === selectedSpeakerId) ?? null;
+  const hasChanges = mode === 'existing'
+    ? Boolean(selectedSpeakerId) || selectedRole !== 'speaker'
+    : Boolean(
+        formData.email ||
+        formData.first_name ||
+        formData.last_name ||
+        formData.job_title ||
+        formData.company ||
+        formData.bio ||
+        formData.speaker_role !== 'speaker' ||
+        selectedImage
+      );
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !hasChanges && !isSubmitting) {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [hasChanges, isSubmitting, onClose]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,10 +126,34 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
     setError('');
 
     try {
+      if (mode === 'existing') {
+        if (!selectedSpeakerId) {
+          throw new Error('Choose a CFP speaker first');
+        }
+
+        const res = await fetch(`/api/admin/cfp/speakers/${selectedSpeakerId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            speaker_role: selectedRole,
+            is_admin_managed: true,
+            is_visible: false,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Failed to update speaker');
+        }
+
+        onCreated();
+        return;
+      }
+
       const res = await fetch('/api/admin/cfp/speakers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, is_visible: false }),
       });
 
       if (!res.ok) {
@@ -81,7 +184,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-xl font-bold text-black">Add Speaker</h3>
+          <h3 className="text-xl font-bold text-black">Include Speaker</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
             <X className="w-5 h-5 text-black" />
           </button>
@@ -92,6 +195,74 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>
           )}
 
+          <div>
+            <label className="block text-sm font-medium text-black mb-2">Include method</label>
+            <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1">
+              {([
+                ['existing', 'Choose CFP speaker'],
+                ['new', 'Create new speaker'],
+              ] as const).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => {
+                    setMode(value);
+                    setError('');
+                  }}
+                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors cursor-pointer ${
+                    mode === value
+                      ? 'bg-brand-primary text-black'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-black'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {mode === 'existing' ? (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-black mb-1">Choose speaker</label>
+                <select
+                  required
+                  value={selectedSpeakerId}
+                  onChange={(e) => setSelectedSpeakerId(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                >
+                  <option value="">{isLoadingSpeakers ? 'Loading speakers...' : 'Select a CFP speaker'}</option>
+                  {speakerOptions.map((speaker) => (
+                    <option key={speaker.id} value={speaker.id}>
+                      {[speaker.first_name, speaker.last_name].filter(Boolean).join(' ')}
+                      {speaker.email ? ` · ${speaker.email}` : ''}
+                    </option>
+                  ))}
+                </select>
+                {!isLoadingSpeakers && speakerOptions.length === 0 ? (
+                  <p className="mt-2 text-sm text-gray-500">No available CFP speakers to include.</p>
+                ) : null}
+                {selectedSpeaker ? (
+                  <p className="mt-2 text-sm text-gray-500">
+                    This keeps {selectedSpeaker.first_name}&apos;s CFP account, submissions, profile, and travel data attached.
+                  </p>
+                ) : null}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-medium text-black">Role</label>
+                <select
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value as SpeakerRole)}
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                >
+                  <option value="speaker">Speaker</option>
+                  <option value="mc">MC</option>
+                </select>
+              </div>
+            </>
+          ) : (
+            <>
           {/* Image Upload */}
           <div className="flex items-center gap-4">
             {imagePreview ? (
@@ -121,7 +292,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                 required
                 value={formData.first_name}
                 onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
             <div>
@@ -131,7 +302,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                 required
                 value={formData.last_name}
                 onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
           </div>
@@ -143,7 +314,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
             />
           </div>
 
@@ -154,7 +325,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                 type="text"
                 value={formData.job_title}
                 onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
             <div>
@@ -163,7 +334,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                 type="text"
                 value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
           </div>
@@ -174,7 +345,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
               rows={3}
               value={formData.bio}
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
             />
           </div>
 
@@ -183,25 +354,14 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
             <select
               value={formData.speaker_role}
               onChange={(e) => setFormData({ ...formData, speaker_role: e.target.value as 'speaker' | 'mc' })}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+              className="rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
             >
               <option value="speaker">Speaker</option>
               <option value="mc">MC</option>
             </select>
           </div>
-
-          <div className="flex items-center gap-3">
-            <label className="text-sm font-medium text-black">Visible on Lineup</label>
-            <button
-              type="button"
-              onClick={() => setFormData({ ...formData, is_visible: !formData.is_visible })}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-                formData.is_visible ? 'bg-green-500' : 'bg-gray-300'
-              }`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.is_visible ? 'translate-x-6' : 'translate-x-1'}`} />
-            </button>
-          </div>
+            </>
+          )}
 
           <div className="flex justify-end gap-3 pt-4">
             <button type="button" onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-black cursor-pointer">
@@ -210,9 +370,9 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-semibold rounded-lg disabled:opacity-50 cursor-pointer"
+              className="px-4 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-semibold rounded-lg disabled:opacity-50 cursor-pointer"
             >
-              {isSubmitting ? 'Adding...' : 'Add Speaker'}
+              {isSubmitting ? 'Including...' : mode === 'existing' ? 'Include Selected Speaker' : 'Create Speaker'}
             </button>
           </div>
         </form>

@@ -57,6 +57,7 @@ export interface UpdateCfpSpeakerRequest {
   assistance_type?: CfpAssistanceType;
   departure_airport?: string | null;
   company_interested_in_sponsoring?: boolean | null;
+  is_admin_managed?: boolean;
   is_visible?: boolean;
   is_featured?: boolean;
   speaker_role?: CfpSpeakerRole;

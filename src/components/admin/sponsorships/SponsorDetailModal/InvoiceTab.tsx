@@ -155,7 +155,7 @@ export function InvoiceTab({ deal, total, onUpdate, isUpdating, setIsUpdating, s
             <span className="text-gray-500">Due Date:</span>
             {isEditingDueDate ? (
               <div className="flex items-center gap-2">
-                <input type="date" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)} className="px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+                <input type="date" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)} className="px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
                 <button onClick={handleUpdateDueDate} disabled={isUpdating || !editDueDate} className="p-1 text-green-600 hover:bg-green-50 rounded disabled:opacity-50"><Check className="h-4 w-4" /></button>
                 <button onClick={() => setIsEditingDueDate(false)} className="p-1 text-gray-500 hover:bg-gray-100 rounded"><X className="h-4 w-4" /></button>
               </div>
@@ -238,14 +238,14 @@ function NoInvoiceView({ deal, dueDate, setDueDate, conversion, setConversion, t
         <h3 className="text-sm font-medium text-gray-700">Create Invoice</h3>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-          <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} min={new Date().toISOString().split('T')[0]} className="w-full sm:w-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+          <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} min={new Date().toISOString().split('T')[0]} className="w-full sm:w-64 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
         </div>
 
         {deal.currency === 'CHF' && (
           <ConversionToggle conversion={conversion} setConversion={setConversion} total={total} handleRateChange={handleRateChange} handleAmountChange={handleAmountChange} />
         )}
 
-        <button onClick={onCreateInvoice} disabled={!dueDate || isUpdating || (conversion.payInEur && !isConversionValid(conversion))} className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-black bg-[#F1E271] hover:bg-[#e6d766] rounded-lg transition-colors disabled:opacity-50">
+        <button onClick={onCreateInvoice} disabled={!dueDate || isUpdating || (conversion.payInEur && !isConversionValid(conversion))} className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-black bg-brand-primary hover:bg-[#e6d766] rounded-lg transition-colors disabled:opacity-50">
           Create Invoice
         </button>
       </div>

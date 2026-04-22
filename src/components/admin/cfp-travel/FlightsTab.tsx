@@ -46,7 +46,7 @@ export function FlightsTab({
               key={dir}
               onClick={() => setFlightDirection(dir)}
               className={`px-3 py-1.5 text-sm rounded-lg transition-colors capitalize ${
-                flightDirection === dir ? 'bg-[#F1E271] text-black' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                flightDirection === dir ? 'bg-brand-primary text-black' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
               {dir}

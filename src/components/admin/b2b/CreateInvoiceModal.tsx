@@ -196,7 +196,7 @@ export function CreateInvoiceModal({ onClose, onCreated }: CreateInvoiceModalPro
                   step={0.01}
                   value={formData.unitPrice / 100}
                   onChange={(e) => updateField('unitPrice', Math.round(parseFloat(e.target.value) * 100) || 0)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-gray-900"
                 />
               </div>
             </div>
@@ -257,7 +257,7 @@ export function CreateInvoiceModal({ onClose, onCreated }: CreateInvoiceModalPro
             <button
               type="submit"
               disabled={submitting}
-              className="px-4 py-2 bg-[#F1E271] text-black rounded-lg font-medium hover:bg-[#e6d766] transition-colors disabled:opacity-50 cursor-pointer"
+              className="px-4 py-2 bg-brand-primary text-black rounded-lg font-medium hover:bg-[#e6d766] transition-colors disabled:opacity-50 cursor-pointer"
             >
               {submitting ? 'Creating...' : 'Create Invoice'}
             </button>
@@ -305,7 +305,7 @@ function FormInput({
         placeholder={placeholder}
         required={required}
         min={min}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-gray-900 placeholder:text-gray-500"
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-gray-900 placeholder:text-gray-500"
       />
     </div>
   );
@@ -328,7 +328,7 @@ function FormSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-gray-900 cursor-pointer"
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-gray-900 cursor-pointer"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -362,7 +362,7 @@ function FormTextarea({
         onChange={(e) => onChange(e.target.value)}
         rows={2}
         placeholder={placeholder}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-gray-900 placeholder:text-gray-500"
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-gray-900 placeholder:text-gray-500"
       />
     </div>
   );

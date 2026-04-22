@@ -34,7 +34,7 @@ function SessionTypeBadge({ type }: { type: string }) {
 
 function SessionItem({ session }: { session: Session }) {
   return (
-    <div className="bg-gray-50 rounded-lg p-3">
+    <div>
       <p className="text-sm font-medium text-black truncate">{session.title}</p>
       <div className="flex items-center gap-2 mt-1">
         <SessionTypeBadge type={session.submission_type} />
@@ -95,11 +95,11 @@ export function AdminSpeakerCard({
   const isPublishRisk = isIncomplete && (speaker.is_visible || speaker.is_featured);
 
   return (
-    <div className={`overflow-hidden rounded-xl border bg-white shadow-sm ${
-      isPublishRisk ? 'border-red-300 ring-1 ring-red-100' : isIncomplete ? 'border-yellow-300' : 'border-gray-200'
+    <div className={`flex flex-col justify-between rounded-xl border-2 bg-white shadow-sm ${
+      isPublishRisk ? 'border-brand-red ring-1 ring-red-100' : isIncomplete ? 'border-brand-primary' : 'border-brand-green'
     }`}>
       {/* Speaker Header */}
-      <div className="p-4 border-b border-gray-100">
+      <div className="p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-start gap-4">
             {speaker.profile_image_url ? (
@@ -145,7 +145,7 @@ export function AdminSpeakerCard({
               checked={speaker.is_featured}
               onClick={() => onToggleFeatured(speaker.id, !speaker.is_featured)}
               disabled={isTogglingFeatured}
-              activeClassName="bg-[#F1E271]"
+              activeClassName="bg-brand-primary"
               title={speaker.is_featured ? 'Featured on the frontpage speaker strip' : 'Not featured on the frontpage'}
             />
           </div>
@@ -163,7 +163,7 @@ export function AdminSpeakerCard({
       </div>
 
       {/* Sessions */}
-      <div className="p-4">
+      <div className="p-4 border-t-2 border-brand-gray-lightest">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-xs font-semibold text-gray-500 uppercase">Sessions</h4>
           <button
@@ -186,7 +186,7 @@ export function AdminSpeakerCard({
       </div>
 
       {/* Footer Actions */}
-      <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+      <div className="px-4 py-3 border-t-2 border-brand-gray-lightest flex items-center justify-between">
         <a
           href={`mailto:${speaker.email}`}
           className="text-sm text-gray-600 hover:text-black transition-colors"

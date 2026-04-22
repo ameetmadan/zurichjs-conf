@@ -93,7 +93,7 @@ export function VouchersTab({
         <h4 className="text-sm font-medium text-black">Vouchers & Gift Cards</h4>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="px-3 py-1.5 bg-[#F1E271] text-black text-sm font-medium rounded-lg hover:bg-[#E5D665] flex items-center gap-1 cursor-pointer"
+          className="px-3 py-1.5 bg-brand-primary text-black text-sm font-medium rounded-lg hover:bg-[#E5D665] flex items-center gap-1 cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           Create Vouchers
@@ -203,7 +203,7 @@ export function VouchersTab({
             <button
               onClick={handleCreate}
               disabled={isSubmitting}
-              className="px-3 py-1.5 bg-[#F1E271] text-black font-medium rounded-lg text-sm hover:bg-[#E5D665] disabled:opacity-50 cursor-pointer"
+              className="px-3 py-1.5 bg-brand-primary text-black font-medium rounded-lg text-sm hover:bg-[#E5D665] disabled:opacity-50 cursor-pointer"
             >
               {isSubmitting ? 'Creating...' : `Create ${formData.quantity} Voucher${formData.quantity > 1 ? 's' : ''}`}
             </button>

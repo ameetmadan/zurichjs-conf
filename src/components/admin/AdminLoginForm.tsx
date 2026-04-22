@@ -38,7 +38,7 @@ export function AdminLoginForm({ title = 'Admin Dashboard' }: AdminLoginFormProp
         <div className="max-w-md w-full">
           <div className="bg-white rounded-2xl shadow-xl p-8 space-y-8">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#F1E271] rounded-full mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-primary rounded-full mb-4">
                 <Lock className="w-8 h-8 text-black" />
               </div>
               <h2 className="text-3xl font-bold text-black">{title}</h2>
@@ -55,7 +55,7 @@ export function AdminLoginForm({ title = 'Admin Dashboard' }: AdminLoginFormProp
                   type="password"
                   required
                   autoFocus
-                  className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent transition-all"
+                  className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all"
                   placeholder="Enter admin password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -68,7 +68,7 @@ export function AdminLoginForm({ title = 'Admin Dashboard' }: AdminLoginFormProp
               )}
               <button
                 type="submit"
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent text-base font-medium rounded-lg text-black bg-[#F1E271] hover:bg-[#e8d95e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1E271] transition-all shadow-sm hover:shadow-md cursor-pointer"
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent text-base font-medium rounded-lg text-black bg-brand-primary hover:bg-[#e8d95e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary transition-all shadow-sm hover:shadow-md cursor-pointer"
               >
                 Sign in
               </button>

@@ -81,7 +81,7 @@ export function EditSessionModal({ session, speakers, onClose, onUpdated }: Edit
               required
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
             />
           </div>
 
@@ -92,7 +92,7 @@ export function EditSessionModal({ session, speakers, onClose, onUpdated }: Edit
               rows={5}
               value={formData.abstract}
               onChange={(e) => setFormData({ ...formData, abstract: e.target.value })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
             />
           </div>
 
@@ -102,7 +102,7 @@ export function EditSessionModal({ session, speakers, onClose, onUpdated }: Edit
               <select
                 value={formData.submission_type}
                 onChange={(e) => setFormData({ ...formData, submission_type: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
               >
                 <option value="lightning">Lightning Talk</option>
                 <option value="standard">Standard Talk</option>
@@ -115,7 +115,7 @@ export function EditSessionModal({ session, speakers, onClose, onUpdated }: Edit
               <select
                 value={formData.talk_level}
                 onChange={(e) => setFormData({ ...formData, talk_level: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
               >
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
@@ -135,7 +135,7 @@ export function EditSessionModal({ session, speakers, onClose, onUpdated }: Edit
                   step="0.5"
                   value={formData.workshop_duration_hours}
                   onChange={(e) => setFormData({ ...formData, workshop_duration_hours: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 />
               </div>
               <div>
@@ -145,7 +145,7 @@ export function EditSessionModal({ session, speakers, onClose, onUpdated }: Edit
                   min="1"
                   value={formData.workshop_max_participants}
                   onChange={(e) => setFormData({ ...formData, workshop_max_participants: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 />
               </div>
             </div>

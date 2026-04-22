@@ -211,7 +211,7 @@ export function PerksEditor({ dealId, perks, onUpdate }: PerksEditorProps) {
           value={editingPerk.name}
           onChange={(e) => setEditingPerk({ ...editingPerk, name: e.target.value })}
           placeholder="e.g., Logo on website, Booth space"
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-brand-primary focus:border-transparent"
         />
       </div>
 
@@ -224,7 +224,7 @@ export function PerksEditor({ dealId, perks, onUpdate }: PerksEditorProps) {
           value={editingPerk.description}
           onChange={(e) => setEditingPerk({ ...editingPerk, description: e.target.value })}
           placeholder="Additional details about this perk"
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-brand-primary focus:border-transparent"
         />
       </div>
 
@@ -241,7 +241,7 @@ export function PerksEditor({ dealId, perks, onUpdate }: PerksEditorProps) {
           type="button"
           onClick={isNew ? handleAddPerk : handleUpdatePerk}
           disabled={isSubmitting}
-          className="px-3 py-1.5 text-sm font-medium text-black bg-[#F1E271] hover:bg-[#e6d766] rounded transition-colors disabled:opacity-50 flex items-center gap-1"
+          className="px-3 py-1.5 text-sm font-medium text-black bg-brand-primary hover:bg-[#e6d766] rounded transition-colors disabled:opacity-50 flex items-center gap-1"
         >
           <Check className="h-4 w-4" />
           {isNew ? 'Add' : 'Save'}

@@ -269,12 +269,12 @@ export function ReviewersTab({ reviewers, isLoading }: ReviewersTabProps) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search reviewers by name or email..."
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-black placeholder-gray-500 focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-black placeholder-gray-500 focus:ring-2 focus:ring-brand-primary focus:outline-none"
           />
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+            className="px-4 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
           >
             <option value="all">All Roles</option>
             <option value={CFP_REVIEWER_ROLES.SUPER_ADMIN}>Super Admin</option>
@@ -285,7 +285,7 @@ export function ReviewersTab({ reviewers, isLoading }: ReviewersTabProps) {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+            className="px-4 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -293,7 +293,7 @@ export function ReviewersTab({ reviewers, isLoading }: ReviewersTabProps) {
           </select>
           <button
             onClick={() => setShowInviteModal(true)}
-            className="px-4 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-2 shrink-0"
+            className="px-4 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-2 shrink-0"
           >
             <Plus className="w-4 h-4" />
             Invite Reviewer
@@ -351,7 +351,7 @@ export function ReviewersTab({ reviewers, isLoading }: ReviewersTabProps) {
                   {showActivityColumns && (
                     <button
                       onClick={() => router.push(`/admin/cfp/reviewers/${r.id}`)}
-                      className="px-3 py-1.5 text-xs font-medium text-[#F1E271] bg-black hover:bg-gray-800 rounded-lg transition-colors cursor-pointer"
+                      className="px-3 py-1.5 text-xs font-medium text-brand-primary bg-black hover:bg-gray-800 rounded-lg transition-colors cursor-pointer"
                     >
                       Activity
                     </button>
@@ -465,7 +465,7 @@ export function ReviewersTab({ reviewers, isLoading }: ReviewersTabProps) {
                         {showActivityColumns && (
                           <button
                             onClick={() => router.push(`/admin/cfp/reviewers/${r.id}`)}
-                            className="px-2 py-1 text-xs font-medium text-[#F1E271] bg-black hover:bg-gray-800 rounded transition-colors cursor-pointer"
+                            className="px-2 py-1 text-xs font-medium text-brand-primary bg-black hover:bg-gray-800 rounded transition-colors cursor-pointer"
                             title="View Activity"
                           >
                             Activity
@@ -554,7 +554,7 @@ export function ReviewersTab({ reviewers, isLoading }: ReviewersTabProps) {
                     {contributors.map((r) => (
                       <tr key={r.id} className="hover:bg-gray-50">
                         <td className="px-3 py-3 text-center">
-                          <span className="inline-flex min-w-12 justify-center rounded bg-black px-2 py-1 font-bold text-[#F1E271]">
+                          <span className="inline-flex min-w-12 justify-center rounded bg-black px-2 py-1 font-bold text-brand-primary">
                             {formatScore(r.contribution_score)}
                           </span>
                         </td>

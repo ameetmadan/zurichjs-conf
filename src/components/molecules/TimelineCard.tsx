@@ -105,7 +105,7 @@ export const TimelineCard = forwardRef<HTMLDivElement, TimelineCardProps>(
           relative flex items-start gap-3 sm:gap-4
         bg-brand-gray-dark rounded-xl px-4 sm:px-5 py-3 sm:py-4
           transition-all duration-300
-          ${href ? 'cursor-pointer group hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(0,0,0,0.35)] focus-within:ring-2 focus-within:ring-[#F1E271] focus-within:ring-offset-2 focus-within:ring-offset-[#19191B]' : ''}
+          ${href ? 'cursor-pointer group hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(0,0,0,0.35)] focus-within:ring-2 focus-within:ring-brand-primary focus-within:ring-offset-2 focus-within:ring-offset-[#19191B]' : ''}
         `}
         role={href ? 'link' : 'group'}
         aria-current={isCurrent ? 'true' : undefined}

@@ -93,7 +93,7 @@ export function AttendeesSection({ invoice, onUpdate, setError }: AttendeesSecti
         {canAddAttendees && (
           <button
             onClick={() => setShowAddAttendee(true)}
-            className="px-3 py-1.5 text-sm bg-[#F1E271] text-black font-medium rounded-lg hover:bg-[#e6d766] transition-colors cursor-pointer"
+            className="px-3 py-1.5 text-sm bg-brand-primary text-black font-medium rounded-lg hover:bg-[#e6d766] transition-colors cursor-pointer"
           >
             + Add Attendee
           </button>
@@ -112,7 +112,7 @@ export function AttendeesSection({ invoice, onUpdate, setError }: AttendeesSecti
                 required
                 value={attendeeForm.firstName}
                 onChange={(e) => setAttendeeForm({ ...attendeeForm, firstName: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-gray-900"
               />
             </div>
             <div>
@@ -122,7 +122,7 @@ export function AttendeesSection({ invoice, onUpdate, setError }: AttendeesSecti
                 required
                 value={attendeeForm.lastName}
                 onChange={(e) => setAttendeeForm({ ...attendeeForm, lastName: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-gray-900"
               />
             </div>
             <div className="sm:col-span-2">
@@ -132,7 +132,7 @@ export function AttendeesSection({ invoice, onUpdate, setError }: AttendeesSecti
                 required
                 value={attendeeForm.email}
                 onChange={(e) => setAttendeeForm({ ...attendeeForm, email: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-gray-900"
               />
             </div>
             <div>
@@ -141,7 +141,7 @@ export function AttendeesSection({ invoice, onUpdate, setError }: AttendeesSecti
                 type="text"
                 value={attendeeForm.company}
                 onChange={(e) => setAttendeeForm({ ...attendeeForm, company: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-gray-900"
               />
             </div>
             <div>
@@ -150,7 +150,7 @@ export function AttendeesSection({ invoice, onUpdate, setError }: AttendeesSecti
                 type="text"
                 value={attendeeForm.jobTitle}
                 onChange={(e) => setAttendeeForm({ ...attendeeForm, jobTitle: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-gray-900"
               />
             </div>
           </div>
@@ -168,7 +168,7 @@ export function AttendeesSection({ invoice, onUpdate, setError }: AttendeesSecti
             <button
               type="submit"
               disabled={actionLoading === 'addAttendee'}
-              className="px-3 py-1.5 text-sm bg-[#F1E271] text-black font-medium rounded-lg hover:bg-[#e6d766] transition-colors disabled:opacity-50 cursor-pointer"
+              className="px-3 py-1.5 text-sm bg-brand-primary text-black font-medium rounded-lg hover:bg-[#e6d766] transition-colors disabled:opacity-50 cursor-pointer"
             >
               {actionLoading === 'addAttendee' ? 'Adding...' : 'Add Attendee'}
             </button>

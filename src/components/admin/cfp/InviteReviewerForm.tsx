@@ -101,7 +101,7 @@ export function InviteReviewerForm({
               onChange={(e) => setEmail(e.target.value)}
               placeholder="reviewer@example.com"
               required
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black placeholder-gray-500 focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black placeholder-gray-500 focus:ring-2 focus:ring-brand-primary focus:outline-none"
             />
           </div>
           <div className={variant === 'modal' ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'contents'}>
@@ -112,7 +112,7 @@ export function InviteReviewerForm({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe"
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black placeholder-gray-500 focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black placeholder-gray-500 focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
             <div>
@@ -120,7 +120,7 @@ export function InviteReviewerForm({
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as ReviewerRole)}
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none cursor-pointer"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-brand-primary focus:outline-none cursor-pointer"
               >
                 {REVIEWER_ROLES.map((r) => (
                   <option key={r.value} value={r.value}>
@@ -158,7 +158,7 @@ export function InviteReviewerForm({
             <button
               type="submit"
               disabled={inviteMutation.isPending}
-              className="px-4 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-semibold rounded-lg disabled:opacity-50 transition-all cursor-pointer"
+              className="px-4 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-semibold rounded-lg disabled:opacity-50 transition-all cursor-pointer"
             >
               {inviteMutation.isPending ? 'Sending Invite...' : 'Send Invite'}
             </button>
@@ -168,7 +168,7 @@ export function InviteReviewerForm({
             <button
               type="submit"
               disabled={inviteMutation.isPending}
-              className="px-4 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-medium rounded-lg disabled:opacity-50 transition-all cursor-pointer"
+              className="px-4 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-medium rounded-lg disabled:opacity-50 transition-all cursor-pointer"
             >
               {inviteMutation.isPending ? 'Sending Invite...' : 'Send Invite'}
             </button>

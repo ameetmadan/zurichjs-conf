@@ -512,6 +512,7 @@ export async function createSpeaker(
     portrait_foreground_url: data.portrait_foreground_url || null,
     portrait_background_url: data.portrait_background_url || null,
     speaker_role: data.speaker_role || 'speaker',
+    is_admin_managed: true,
     is_visible: data.is_visible ?? false,
   };
 

@@ -182,7 +182,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                 value={formData.email}
                 onChange={(e) => handleChange('email', e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
             <div className="flex items-center gap-3 self-end pb-2">
@@ -211,7 +211,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                 value={formData.first_name}
                 onChange={(e) => handleChange('first_name', e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
             <div>
@@ -221,7 +221,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                 value={formData.last_name}
                 onChange={(e) => handleChange('last_name', e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
           </div>
@@ -233,7 +233,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                 type="text"
                 value={formData.job_title}
                 onChange={(e) => handleChange('job_title', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
             <div>
@@ -242,7 +242,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                 type="text"
                 value={formData.company}
                 onChange={(e) => handleChange('company', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
               />
             </div>
           </div>
@@ -253,7 +253,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
               value={formData.bio}
               onChange={(e) => handleChange('bio', e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
             />
           </div>
 
@@ -267,7 +267,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                   value={formData.linkedin_url}
                   onChange={(e) => handleChange('linkedin_url', e.target.value)}
                   placeholder="https://linkedin.com/in/..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black text-sm focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black text-sm focus:ring-2 focus:ring-brand-primary focus:outline-none"
                 />
               </div>
               <div>
@@ -277,7 +277,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                   value={formData.github_url}
                   onChange={(e) => handleChange('github_url', e.target.value)}
                   placeholder="https://github.com/..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black text-sm focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black text-sm focus:ring-2 focus:ring-brand-primary focus:outline-none"
                 />
               </div>
               <div>
@@ -287,7 +287,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                   value={formData.twitter_handle}
                   onChange={(e) => handleChange('twitter_handle', e.target.value)}
                   placeholder="username"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black text-sm focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black text-sm focus:ring-2 focus:ring-brand-primary focus:outline-none"
                 />
               </div>
               <div>
@@ -297,7 +297,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
                   value={formData.bluesky_handle}
                   onChange={(e) => handleChange('bluesky_handle', e.target.value)}
                   placeholder="user.bsky.social"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black text-sm focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black text-sm focus:ring-2 focus:ring-brand-primary focus:outline-none"
                 />
               </div>
             </div>
@@ -314,7 +314,7 @@ export function AddSpeakerModal({ onClose, onCreated }: AddSpeakerModalProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-semibold rounded-lg cursor-pointer disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-semibold rounded-lg cursor-pointer disabled:opacity-50 flex items-center gap-2"
             >
               {isSubmitting && (
                 <div className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full"></div>

@@ -448,7 +448,7 @@ export const adminCreateSpeakerSchema = z.object({
   company: z.string().optional(),
   bio: z.string().max(2000).optional(),
   speaker_role: z.enum(['speaker', 'mc']).default('speaker'),
-  is_visible: z.boolean().default(true),
+  is_visible: z.boolean().default(false),
 });
 
 export type AdminCreateSpeakerFormData = z.infer<typeof adminCreateSpeakerSchema>;

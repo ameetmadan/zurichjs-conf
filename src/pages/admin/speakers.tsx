@@ -105,6 +105,28 @@ export default function SpeakersDashboard() {
     },
   });
 
+  const removeManagedSpeakerMutation = useMutation({
+    mutationFn: async (speaker: SpeakerWithSessions) => {
+      const res = await fetch(`/api/admin/cfp/speakers/${speaker.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          is_admin_managed: false,
+          is_visible: false,
+          is_featured: false,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to remove speaker');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['speakers'] });
+      toast.success('Include Reverted', 'Speaker was removed from the managed speaker list without deleting their CFP account');
+    },
+    onError: () => {
+      toast.error('Error', 'Failed to remove speaker');
+    },
+  });
+
   const deleteScheduleMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/admin/program-schedule/${id}`, { method: 'DELETE' });
@@ -156,7 +178,7 @@ export default function SpeakersDashboard() {
 
   const confirmedSpeakers = speakers.filter((speaker) => {
     const hasAcceptedSession = speaker.submissions?.some((submission) => submission.status === 'accepted');
-    return speaker.is_visible || hasAcceptedSession;
+    return speaker.is_admin_managed || speaker.is_visible || hasAcceptedSession;
   });
 
   const filteredSpeakers = confirmedSpeakers.filter((speaker) => {
@@ -282,7 +304,7 @@ export default function SpeakersDashboard() {
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={`cursor-pointer rounded-md px-6 py-2.5 text-sm font-medium transition-all ${
-                      activeTab === tab ? 'bg-[#F1E271] text-black shadow-sm' : 'text-black hover:bg-gray-50'
+                      activeTab === tab ? 'bg-brand-primary text-black shadow-sm' : 'text-black hover:bg-gray-50'
                     }`}
                   >
                     {label}
@@ -299,13 +321,13 @@ export default function SpeakersDashboard() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={activeTab === 'schedule' ? 'Search schedule rows...' : 'Search speakers or sessions...'}
-                className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
               />
 
               {activeTab === 'speakers' ? (
                 <button
                   onClick={() => setShowAddSpeaker(true)}
-                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#F1E271] px-4 py-2 font-semibold text-black transition-all hover:bg-[#e8d95e]"
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 font-semibold text-black transition-all hover:bg-[#e8d95e]"
                 >
                   <Plus className="h-4 w-4" />
                   Add Speaker
@@ -317,7 +339,7 @@ export default function SpeakersDashboard() {
                     setInitialScheduleSubmissionId(null);
                     setShowScheduleModal(true);
                   }}
-                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#F1E271] px-4 py-2 font-semibold text-black transition-all hover:bg-[#e8d95e]"
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 font-semibold text-black transition-all hover:bg-[#e8d95e]"
                 >
                   <Plus className="h-4 w-4" />
                   Add Schedule Item
@@ -481,7 +503,7 @@ export default function SpeakersDashboard() {
             onCreated={() => {
               queryClient.invalidateQueries({ queryKey: ['speakers'] });
               setShowAddSpeaker(false);
-              toast.success('Speaker Added', 'New speaker has been created');
+              toast.success('Speaker Included', 'Speaker has been added to the managed list');
             }}
           />
         ) : null}
@@ -503,6 +525,22 @@ export default function SpeakersDashboard() {
         {selectedSpeaker ? (
           <EditSpeakerModal
             speaker={selectedSpeaker}
+            canRemoveFromList={
+              selectedSpeaker.is_admin_managed ||
+              !(selectedSpeaker.submissions?.some((submission) => submission.status === 'accepted') ?? false)
+            }
+            isRemovingFromList={removeManagedSpeakerMutation.isPending}
+            onRemoveFromList={(entry) => {
+              const hasAcceptedSession = entry.submissions?.some((submission) => submission.status === 'accepted') ?? false;
+              const message = hasAcceptedSession
+                ? 'This will revert the manual/admin include and hide the speaker, but they may still appear here because they have an accepted session. Continue?'
+                : 'Revert this speaker include? Their CFP account and submissions will stay intact.';
+              if (window.confirm(message)) {
+                removeManagedSpeakerMutation.mutate(entry, {
+                  onSuccess: () => setSelectedSpeaker(null),
+                });
+              }
+            }}
             onClose={() => setSelectedSpeaker(null)}
             onUpdated={() => {
               queryClient.invalidateQueries({ queryKey: ['speakers'] });

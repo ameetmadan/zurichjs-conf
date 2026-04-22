@@ -211,7 +211,7 @@ export function UpgradeToVipModal({
                   key={mode.value}
                   className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
                     upgradeMode === mode.value
-                      ? 'border-[#F1E271] bg-yellow-50'
+                      ? 'border-brand-primary bg-yellow-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -251,7 +251,7 @@ export function UpgradeToVipModal({
                       placeholder="0.00"
                       min="0"
                       step="0.01"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -262,7 +262,7 @@ export function UpgradeToVipModal({
                   <select
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value as typeof CURRENCIES[number])}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   >
                     {CURRENCIES.map((curr) => (
                       <option key={curr} value={curr}>{curr}</option>
@@ -281,7 +281,7 @@ export function UpgradeToVipModal({
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   />
                 </div>
               )}
@@ -299,7 +299,7 @@ export function UpgradeToVipModal({
               placeholder="Internal note about this upgrade..."
               rows={2}
               maxLength={500}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent resize-none"
             />
             <p className="text-xs text-gray-500 mt-1">{adminNote.length}/500 characters</p>
           </div>

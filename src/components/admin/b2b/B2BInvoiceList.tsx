@@ -52,7 +52,7 @@ export function B2BInvoiceList({
         <p className="mt-2 text-gray-700">No invoices found</p>
         <button
           onClick={onCreateClick}
-          className="mt-4 px-4 py-2 bg-[#F1E271] text-black rounded-lg font-medium hover:bg-[#e6d766] transition-colors cursor-pointer"
+          className="mt-4 px-4 py-2 bg-brand-primary text-black rounded-lg font-medium hover:bg-[#e6d766] transition-colors cursor-pointer"
         >
           Create First Invoice
         </button>
@@ -96,7 +96,7 @@ export function B2BInvoiceList({
               </span>
               <button
                 onClick={() => handleViewDetails(invoice.id)}
-                className="px-3 py-1.5 bg-[#F1E271] text-black rounded-lg text-sm font-medium cursor-pointer"
+                className="px-3 py-1.5 bg-brand-primary text-black rounded-lg text-sm font-medium cursor-pointer"
               >
                 View Details
               </button>
@@ -149,7 +149,7 @@ export function B2BInvoiceList({
                   <td className="px-4 py-3">
                     <button
                       onClick={() => handleViewDetails(invoice.id)}
-                      className="inline-flex items-center px-3 py-1.5 border border-[#F1E271] rounded-md text-xs font-medium text-black bg-[#F1E271] hover:bg-[#e8d95e] cursor-pointer transition-colors"
+                      className="inline-flex items-center px-3 py-1.5 border border-brand-primary rounded-md text-xs font-medium text-black bg-brand-primary hover:bg-[#e8d95e] cursor-pointer transition-colors"
                       title="View invoice details"
                     >
                       <svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

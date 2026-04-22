@@ -26,7 +26,7 @@ export function AdminEmptyState({ icon, title, description, action }: AdminEmpty
       {action && (
         <button
           onClick={action.onClick}
-          className="mt-4 px-4 py-2 text-sm font-medium rounded-lg text-black bg-[#F1E271] hover:bg-[#e8d95e] transition-all cursor-pointer"
+          className="mt-4 px-4 py-2 text-sm font-medium rounded-lg text-black bg-brand-primary hover:bg-[#e8d95e] transition-all cursor-pointer"
         >
           {action.label}
         </button>

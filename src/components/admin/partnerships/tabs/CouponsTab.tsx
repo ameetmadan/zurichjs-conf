@@ -136,7 +136,7 @@ export function CouponsTab({
         <h4 className="text-sm font-medium text-black">Discount Codes</h4>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="px-3 py-1.5 bg-[#F1E271] text-black text-sm font-medium rounded-lg hover:bg-[#E5D665] flex items-center gap-1 cursor-pointer"
+          className="px-3 py-1.5 bg-brand-primary text-black text-sm font-medium rounded-lg hover:bg-[#E5D665] flex items-center gap-1 cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           Add Coupon
@@ -169,8 +169,8 @@ export function CouponsTab({
                       onClick={() => setFormData((prev) => ({ ...prev, code: suggestion }))}
                       className={`px-2 py-1 text-xs rounded-md border transition-colors cursor-pointer ${
                         formData.code === suggestion
-                          ? 'bg-[#F1E271] border-[#F1E271] text-black font-medium'
-                          : 'bg-white border-gray-200 text-black/70 hover:border-[#F1E271] hover:bg-[#F1E271]/10'
+                          ? 'bg-brand-primary border-brand-primary text-black font-medium'
+                          : 'bg-white border-gray-200 text-black/70 hover:border-brand-primary hover:bg-brand-primary/10'
                       }`}
                     >
                       {suggestion}
@@ -297,7 +297,7 @@ export function CouponsTab({
             <button
               onClick={handleCreate}
               disabled={!formData.code || isSubmitting}
-              className="px-3 py-1.5 bg-[#F1E271] text-black font-medium rounded-lg text-sm hover:bg-[#E5D665] disabled:opacity-50 cursor-pointer"
+              className="px-3 py-1.5 bg-brand-primary text-black font-medium rounded-lg text-sm hover:bg-[#E5D665] disabled:opacity-50 cursor-pointer"
             >
               {isSubmitting ? 'Creating...' : 'Create Coupon'}
             </button>

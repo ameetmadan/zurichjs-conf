@@ -110,7 +110,7 @@ export default function PartnershipsDashboard() {
           <div className="sm:order-2">
             <button
               onClick={() => setShowAddModal(true)}
-              className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-[#F1E271] text-black font-medium rounded-lg hover:bg-[#E5D665] flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-brand-primary text-black font-medium rounded-lg hover:bg-[#E5D665] flex items-center justify-center gap-2 cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               Add Partnership
@@ -125,7 +125,7 @@ export default function PartnershipsDashboard() {
                 placeholder="Search partnerships..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full sm:w-auto pl-10 pr-4 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-sm text-black placeholder-gray-500 focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271]"
+                className="w-full sm:w-auto pl-10 pr-4 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-sm text-black placeholder-gray-500 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary"
               />
             </div>
 
@@ -133,7 +133,7 @@ export default function PartnershipsDashboard() {
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value as PartnershipType | '')}
-                className="flex-1 sm:flex-none px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-sm text-black focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] bg-white"
+                className="flex-1 sm:flex-none px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-sm text-black focus:ring-2 focus:ring-brand-primary focus:border-brand-primary bg-white"
               >
                 <option value="">All Types</option>
                 <option value="community">Community</option>
@@ -145,7 +145,7 @@ export default function PartnershipsDashboard() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as PartnershipStatus | '')}
-                className="flex-1 sm:flex-none px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-sm text-black focus:ring-2 focus:ring-[#F1E271] focus:border-[#F1E271] bg-white"
+                className="flex-1 sm:flex-none px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-sm text-black focus:ring-2 focus:ring-brand-primary focus:border-brand-primary bg-white"
               >
                 <option value="">All Statuses</option>
                 <option value="active">Active</option>
@@ -159,7 +159,7 @@ export default function PartnershipsDashboard() {
 
         {isLoadingPartnerships ? (
           <div className="text-center py-12">
-            <div className="w-8 h-8 border-4 border-[#F1E271] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         ) : (
           <PartnershipList

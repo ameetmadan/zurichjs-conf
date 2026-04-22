@@ -48,7 +48,7 @@ export default function AdminHeader({ title, subtitle, onLogout }: AdminHeaderPr
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#F1E271] flex items-center justify-center shadow-sm">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-brand-primary flex items-center justify-center shadow-sm">
               <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
             </div>
             <div>
@@ -62,7 +62,7 @@ export default function AdminHeader({ title, subtitle, onLogout }: AdminHeaderPr
           {/* Mobile burger menu button */}
           <button
             onClick={toggleMobileMenu}
-            className="md:hidden inline-flex items-center justify-center p-2 rounded-lg border border-gray-300 text-black bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1E271] transition-all"
+            className="md:hidden inline-flex items-center justify-center p-2 rounded-lg border border-gray-300 text-black bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary transition-all"
             aria-expanded={isMobileMenuOpen}
             aria-label="Toggle navigation menu"
           >
@@ -84,9 +84,9 @@ export default function AdminHeader({ title, subtitle, onLogout }: AdminHeaderPr
                   href={link.href}
                   className={`inline-flex items-center px-4 py-2 border rounded-lg text-sm font-medium transition-all ${
                     isActive
-                      ? 'border-[#F1E271] bg-[#F1E271] text-black'
+                      ? 'border-brand-primary bg-brand-primary text-black'
                       : 'border-gray-300 text-black bg-white hover:bg-gray-50'
-                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1E271]`}
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary`}
                 >
                   <Icon className="w-4 h-4 mr-2" />
                   <span>{link.label}</span>
@@ -95,7 +95,7 @@ export default function AdminHeader({ title, subtitle, onLogout }: AdminHeaderPr
             })}
             <button
               onClick={onLogout}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-black bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1E271] transition-all cursor-pointer"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-black bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4 mr-2" />
               <span>Logout</span>
@@ -117,9 +117,9 @@ export default function AdminHeader({ title, subtitle, onLogout }: AdminHeaderPr
                     onClick={closeMobileMenu}
                     className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                       isActive
-                        ? 'bg-[#F1E271] text-black'
+                        ? 'bg-brand-primary text-black'
                         : 'text-black bg-gray-50 hover:bg-gray-100'
-                    } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1E271]`}
+                    } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary`}
                   >
                     <Icon className="w-5 h-5 mr-3" />
                     <span>{link.label}</span>
@@ -131,7 +131,7 @@ export default function AdminHeader({ title, subtitle, onLogout }: AdminHeaderPr
                   closeMobileMenu();
                   onLogout();
                 }}
-                className="flex items-center px-4 py-3 rounded-lg text-sm font-medium text-black bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1E271] transition-all cursor-pointer"
+                className="flex items-center px-4 py-3 rounded-lg text-sm font-medium text-black bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary transition-all cursor-pointer"
               >
                 <LogOut className="w-5 h-5 mr-3" />
                 <span>Logout</span>

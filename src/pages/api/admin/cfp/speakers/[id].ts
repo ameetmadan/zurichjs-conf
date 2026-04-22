@@ -90,6 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'portrait_foreground_url',
         'portrait_background_url',
         'speaker_role',
+        'is_admin_managed',
         'is_visible',
         'is_featured',
       ];

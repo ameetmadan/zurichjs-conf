@@ -234,7 +234,7 @@ export function LineItemsEditor({
               <select
                 value={editingItem.type}
                 onChange={(e) => setEditingItem({ ...editingItem, type: e.target.value as 'addon' | 'adjustment' })}
-                className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                 disabled={!isNew}
               >
                 <option value="addon">Add-on</option>
@@ -248,7 +248,7 @@ export function LineItemsEditor({
                 min="1"
                 value={editingItem.quantity}
                 onChange={(e) => setEditingItem({ ...editingItem, quantity: parseInt(e.target.value) || 1 })}
-                className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-brand-primary focus:border-transparent"
               />
             </div>
           </div>
@@ -261,7 +261,7 @@ export function LineItemsEditor({
             value={editingItem.description}
             onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
             placeholder={isTierBase ? 'e.g., Gold Tier Sponsorship' : 'e.g., Extra booth space, Workshop sponsorship'}
-            className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+            className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-brand-primary focus:border-transparent"
           />
         </div>
 
@@ -295,7 +295,7 @@ export function LineItemsEditor({
                 });
               }}
               placeholder="0.00"
-              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-brand-primary focus:border-transparent"
             />
           </div>
           {editingItem.type === 'addon' && (
@@ -305,7 +305,7 @@ export function LineItemsEditor({
                   type="checkbox"
                   checked={editingItem.usesCredit}
                   onChange={(e) => setEditingItem({ ...editingItem, usesCredit: e.target.checked })}
-                  className="rounded border-gray-300 text-[#F1E271] focus:ring-[#F1E271]"
+                  className="rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
                 />
                 <span className="text-sm text-gray-700">Eligible for tier credit</span>
               </label>
@@ -345,7 +345,7 @@ export function LineItemsEditor({
             type="button"
             onClick={isNew ? handleAddItem : handleUpdateItem}
             disabled={isSubmitting}
-            className="px-3 py-1.5 text-sm font-medium text-black bg-[#F1E271] hover:bg-[#e6d766] rounded transition-colors disabled:opacity-50 flex items-center gap-1"
+            className="px-3 py-1.5 text-sm font-medium text-black bg-brand-primary hover:bg-[#e6d766] rounded transition-colors disabled:opacity-50 flex items-center gap-1"
           >
             <Check className="h-4 w-4" />
             {isNew ? 'Add' : 'Save'}

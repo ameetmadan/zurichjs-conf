@@ -242,7 +242,7 @@ function TicketHeader({ tickets, filteredCount, searchQuery, setSearchQuery, fil
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input type="text" placeholder="Search by name, email, ID, status..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm text-black placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm text-black placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
           {searchQuery && (
             <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -312,7 +312,7 @@ function DesktopTable({ tickets, sortField, sortDirection, onSort, onViewTicket 
               <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-black font-semibold">{(t.amount_paid / 100).toFixed(2)} {t.currency}</td>
               <td className="px-4 lg:px-6 py-4 whitespace-nowrap"><span className={`px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full ${statusClass(t.status)}`}>{t.status}</span></td>
               <td className="px-4 lg:px-6 py-4 text-sm">
-                <button onClick={() => onViewTicket(t)} className="inline-flex items-center px-3 py-1.5 border border-[#F1E271] rounded-md text-xs font-medium text-black bg-[#F1E271] hover:bg-[#e8d95e] cursor-pointer transition-colors">
+                <button onClick={() => onViewTicket(t)} className="inline-flex items-center px-3 py-1.5 border border-brand-primary rounded-md text-xs font-medium text-black bg-brand-primary hover:bg-[#e8d95e] cursor-pointer transition-colors">
                   <svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>View
                 </button>
               </td>
@@ -344,7 +344,7 @@ function MobileCards({ tickets, onViewTicket }: { tickets: Ticket[]; onViewTicke
             <div><p className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-0.5">Ticket Type</p><div className="flex items-center gap-2"><span className="text-sm font-medium text-black capitalize">{t.ticket_category}</span><span className="text-xs text-gray-500">•</span><span className="text-xs text-gray-600 capitalize">{t.ticket_stage.replace('_', ' ')}</span></div></div>
           </div>
           <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-            <button onClick={() => onViewTicket(t)} className="w-full flex items-center justify-center px-3 py-2.5 border border-[#F1E271] rounded-lg text-sm font-medium text-black bg-[#F1E271] active:bg-[#e8d95e] transition-colors">
+            <button onClick={() => onViewTicket(t)} className="w-full flex items-center justify-center px-3 py-2.5 border border-brand-primary rounded-lg text-sm font-medium text-black bg-brand-primary active:bg-[#e8d95e] transition-colors">
               <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>View Details
             </button>
           </div>
@@ -375,7 +375,7 @@ function Pagination({ currentPage, totalPages, totalItems, itemsPerPage, onPageC
           </button>
           <div className="flex items-center gap-1">
             {pages.map((p) => (
-              <button key={p} onClick={() => onPageChange(p)} className={`w-8 h-8 text-sm font-medium rounded-lg cursor-pointer ${currentPage === p ? 'bg-[#F1E271] text-black border border-[#F1E271]' : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}`}>{p}</button>
+              <button key={p} onClick={() => onPageChange(p)} className={`w-8 h-8 text-sm font-medium rounded-lg cursor-pointer ${currentPage === p ? 'bg-brand-primary text-black border border-brand-primary' : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}`}>{p}</button>
             ))}
           </div>
           <button onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} className="px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">

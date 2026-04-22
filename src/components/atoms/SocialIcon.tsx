@@ -37,7 +37,7 @@ export const SocialIcon: React.FC<SocialIconProps> = ({
   const toneClassName =
     tone === 'dark'
       ? 'text-black hover:text-black/70 focus:ring-[rgba(0,0,0,0.2)]'
-      : 'text-brand-white hover:text-[#F1E271] focus:ring-[rgba(241,226,113,0.5)]';
+      : 'text-brand-white hover:text-brand-primary focus:ring-[rgba(241,226,113,0.5)]';
 
   const baseClassName = `inline-flex items-center justify-center w-10 h-10 transition-colors duration-200 focus:outline-none focus:ring-2 rounded-md ${toneClassName} ${className}`;
 

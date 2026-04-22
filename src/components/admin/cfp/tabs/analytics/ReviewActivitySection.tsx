@@ -60,7 +60,7 @@ export function ReviewActivitySection({ reviewActivity, timeline }: ReviewActivi
                 <span className="text-xs text-gray-500 w-12 text-right font-mono">{range}</span>
                 <div className="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
                   <div
-                    className="h-full bg-[#F1E271] rounded-full flex items-center justify-end pr-2 transition-all"
+                    className="h-full bg-brand-primary rounded-full flex items-center justify-end pr-2 transition-all"
                     style={{ width: `${maxScoreCount > 0 ? (count / maxScoreCount) * 100 : 0}%` }}
                   >
                     {count > 0 && <span className="text-xs font-semibold text-black">{count}</span>}

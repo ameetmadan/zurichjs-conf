@@ -181,7 +181,7 @@ export function ScheduleItemModal({
                         submission_id: e.target.value,
                       });
                     }}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   >
                     <option value="">{item ? 'Keep this slot open for now' : 'Select an unscheduled session'}</option>
                     {availableSessions.map((session) => (
@@ -211,7 +211,7 @@ export function ScheduleItemModal({
                     <select
                       value={formData.speaker_id}
                       onChange={(e) => setFormData({ ...formData, speaker_id: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                     >
                       <option value="">Select speaker</option>
                       {speakers.map((speaker) => (
@@ -228,7 +228,7 @@ export function ScheduleItemModal({
                       type="text"
                       value={formData.custom_title}
                       onChange={(e) => setFormData({ ...formData, custom_title: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                     />
                   </div>
 
@@ -238,7 +238,7 @@ export function ScheduleItemModal({
                       rows={4}
                       value={formData.custom_abstract}
                       onChange={(e) => setFormData({ ...formData, custom_abstract: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                     />
                   </div>
 
@@ -248,7 +248,7 @@ export function ScheduleItemModal({
                       <select
                         value={formData.custom_submission_type}
                         onChange={(e) => setFormData({ ...formData, custom_submission_type: e.target.value })}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                       >
                         <option value="lightning">Lightning Talk</option>
                         <option value="standard">Standard Talk</option>
@@ -262,7 +262,7 @@ export function ScheduleItemModal({
                       <select
                         value={formData.custom_talk_level}
                         onChange={(e) => setFormData({ ...formData, custom_talk_level: e.target.value })}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                       >
                         <option value="beginner">Beginner</option>
                         <option value="intermediate">Intermediate</option>
@@ -281,7 +281,7 @@ export function ScheduleItemModal({
                           step="0.5"
                           value={formData.custom_workshop_duration_hours}
                           onChange={(e) => setFormData({ ...formData, custom_workshop_duration_hours: e.target.value })}
-                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </div>
 
@@ -292,7 +292,7 @@ export function ScheduleItemModal({
                           min="1"
                           value={formData.custom_workshop_max_participants}
                           onChange={(e) => setFormData({ ...formData, custom_workshop_max_participants: e.target.value })}
-                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                         />
                       </div>
                     </div>
@@ -333,7 +333,7 @@ export function ScheduleItemModal({
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value as ProgramScheduleItemType })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 >
                   {EDIT_TYPE_OPTIONS.map((type) => (
                     <option key={type} value={type}>{type}</option>
@@ -346,7 +346,7 @@ export function ScheduleItemModal({
                 <select
                   value={formData.is_visible ? 'visible' : 'hidden'}
                   onChange={(e) => setFormData({ ...formData, is_visible: e.target.value === 'visible' })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 >
                   <option value="visible">Visible</option>
                   <option value="hidden">Hidden</option>
@@ -364,7 +364,7 @@ export function ScheduleItemModal({
                     type="date"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   />
                 </div>
                 <div>
@@ -373,7 +373,7 @@ export function ScheduleItemModal({
                     type="time"
                     value={formData.start_time}
                     onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   />
                 </div>
               </div>
@@ -386,7 +386,7 @@ export function ScheduleItemModal({
                     min="1"
                     value={formData.duration_minutes}
                     onChange={(e) => setFormData({ ...formData, duration_minutes: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   />
                 </div>
                 <div>
@@ -395,7 +395,7 @@ export function ScheduleItemModal({
                     type="text"
                     value={formData.room}
                     onChange={(e) => setFormData({ ...formData, room: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   />
                 </div>
               </div>
@@ -406,7 +406,7 @@ export function ScheduleItemModal({
                   <select
                     value={formData.is_visible ? 'visible' : 'hidden'}
                     onChange={(e) => setFormData({ ...formData, is_visible: e.target.value === 'visible' })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   >
                     <option value="visible">Visible</option>
                     <option value="hidden">Hidden</option>
@@ -420,7 +420,7 @@ export function ScheduleItemModal({
                   <select
                     value={formData.submission_id}
                     onChange={(e) => setFormData({ ...formData, submission_id: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                   >
                     <option value="">No linked submission yet</option>
                     {availableSessions.map((session) => (
@@ -440,7 +440,7 @@ export function ScheduleItemModal({
                       type="text"
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                     />
                   </div>
 
@@ -451,7 +451,7 @@ export function ScheduleItemModal({
                         rows={4}
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271]"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary"
                       />
                     </div>
                   ) : null}

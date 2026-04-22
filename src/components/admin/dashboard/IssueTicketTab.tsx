@@ -197,9 +197,9 @@ function PaymentTypeSelector({ paymentType, setPaymentType }: { paymentType: str
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {types.map((t) => (
           <button key={t.id} type="button" onClick={() => setPaymentType(t.id)}
-            className={`p-4 rounded-xl border-2 text-left transition-all cursor-pointer ${paymentType === t.id ? 'border-[#F1E271] bg-[#F1E271]/10' : 'border-gray-200 hover:border-gray-300'}`}>
+            className={`p-4 rounded-xl border-2 text-left transition-all cursor-pointer ${paymentType === t.id ? 'border-brand-primary bg-brand-primary/10' : 'border-gray-200 hover:border-gray-300'}`}>
             <div className="flex items-center space-x-3">
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${paymentType === t.id ? 'bg-[#F1E271]' : 'bg-gray-100'}`}>
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${paymentType === t.id ? 'bg-brand-primary' : 'bg-gray-100'}`}>
                 <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={t.icon} />
                 </svg>
@@ -222,7 +222,7 @@ function StripePaymentLookup({ stripePaymentId, setStripePaymentId, stripePaymen
       <label className="block text-sm font-bold text-black mb-2">Stripe Payment ID *</label>
       <div className="flex flex-col sm:flex-row gap-2">
         <input type="text" value={stripePaymentId} onChange={(e) => setStripePaymentId(e.target.value)} placeholder="pi_xxx, ch_xxx, or cs_xxx"
-          className="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+          className="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
         <button type="button" onClick={onLookup} disabled={lookupLoading}
           className="px-4 py-2.5 bg-blue-600 text-brand-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer whitespace-nowrap">
           {lookupLoading ? 'Looking up...' : 'Lookup Payment'}
@@ -254,19 +254,19 @@ function BankTransferDetails({ amount, setAmount, currency, setCurrency, referen
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Amount Received *</label>
           <input type="number" step="0.01" min="0" required value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="150.00"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Currency *</label>
           <select value={currency} onChange={(e) => setCurrency(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent">
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent">
             <option value="CHF">CHF</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="USD">USD</option>
           </select>
         </div>
         <div className="sm:col-span-2">
           <label className="block text-xs font-medium text-gray-600 mb-1">Reference / Notes (optional)</label>
           <input type="text" value={reference} onChange={(e) => setReference(e.target.value)} placeholder="e.g. Bank reference, invoice number, company name"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
         </div>
       </div>
       {amount && (
@@ -284,7 +284,7 @@ function ComplimentaryReason({ reason, setReason }: { reason: string; setReason:
     <div>
       <label className="block text-sm font-bold text-black mb-2">Reason for Complimentary Ticket</label>
       <select value={reason} onChange={(e) => setReason(e.target.value)}
-        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent">
+        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent">
         <option value="">Select a reason...</option>
         <option value="speaker">Speaker</option><option value="sponsor">Sponsor</option>
         <option value="organizer">Organizer / Staff</option><option value="volunteer">Volunteer</option>
@@ -303,14 +303,14 @@ function TicketTypeSelector({ category, setCategory, stage, setStage }: {
       <div>
         <label className="block text-sm font-bold text-black mb-2">Ticket Category *</label>
         <select value={category} onChange={(e) => setCategory(e.target.value)} required
-          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent">
+          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent">
           <option value="standard">Standard</option><option value="vip">VIP</option><option value="student">Student</option><option value="unemployed">Unemployed</option>
         </select>
       </div>
       <div>
         <label className="block text-sm font-bold text-black mb-2">Ticket Stage *</label>
         <select value={stage} onChange={(e) => setStage(e.target.value)} required
-          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent">
+          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent">
           <option value="blind_bird">Blind Bird</option><option value="early_bird">Early Bird</option>
           <option value="general_admission">General Admission</option><option value="late_bird">Late Bird</option>
         </select>
@@ -330,27 +330,27 @@ function AttendeeDetails({ firstName, setFirstName, lastName, setLastName, email
         <div>
           <label className="block text-sm font-bold text-black mb-2">First Name *</label>
           <input type="text" required value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="John"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
         </div>
         <div>
           <label className="block text-sm font-bold text-black mb-2">Last Name *</label>
           <input type="text" required value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Doe"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
         </div>
         <div className="sm:col-span-2">
           <label className="block text-sm font-bold text-black mb-2">Email *</label>
           <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
         </div>
         <div>
           <label className="block text-sm font-bold text-black mb-2">Company</label>
           <input type="text" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Acme Inc."
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
         </div>
         <div>
           <label className="block text-sm font-bold text-black mb-2">Job Title</label>
           <input type="text" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Software Engineer"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F1E271] focus:border-transparent" />
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent" />
         </div>
       </div>
     </div>
@@ -362,7 +362,7 @@ function EmailOption({ sendEmail, setSendEmail }: { sendEmail: boolean; setSendE
     <div className="border-t border-gray-200 pt-6">
       <label className="flex items-center space-x-3 cursor-pointer">
         <input type="checkbox" checked={sendEmail} onChange={(e) => setSendEmail(e.target.checked)}
-          className="w-5 h-5 rounded border-gray-300 text-[#F1E271] focus:ring-[#F1E271] cursor-pointer" />
+          className="w-5 h-5 rounded border-gray-300 text-brand-primary focus:ring-brand-primary cursor-pointer" />
         <div>
           <span className="font-bold text-black">Send confirmation email</span>
           <p className="text-xs text-gray-600">Send ticket with QR code and details to the attendee</p>
@@ -388,7 +388,7 @@ function SubmitButton({ isSubmitting, paymentType, stripePayment, bankTransferAm
   return (
     <div className="border-t border-gray-200 pt-6">
       <button type="submit" disabled={disabled}
-        className="w-full sm:w-auto px-8 py-3 bg-[#F1E271] text-black rounded-lg text-base font-medium hover:bg-[#e8d95e] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer">
+        className="w-full sm:w-auto px-8 py-3 bg-brand-primary text-black rounded-lg text-base font-medium hover:bg-[#e8d95e] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer">
         {isSubmitting ? 'Issuing Ticket...' : 'Issue Ticket'}
       </button>
       {paymentType === 'stripe' && !stripePayment && <p className="mt-2 text-xs text-gray-500">Please lookup the Stripe payment first</p>}

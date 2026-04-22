@@ -97,7 +97,7 @@ export function DetailsTab({ deal, onUpdate, isUpdating, setIsUpdating, setError
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 ${
                   status === 'cancelled'
                     ? 'bg-white border border-red-300 text-red-700 hover:bg-red-50'
-                    : 'bg-[#F1E271] text-black hover:bg-[#e6d766]'
+                    : 'bg-brand-primary text-black hover:bg-[#e6d766]'
                 }`}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -119,7 +119,7 @@ export function DetailsTab({ deal, onUpdate, isUpdating, setIsUpdating, setError
           ) : (
             <div className="flex items-center gap-2">
               <button onClick={() => setIsEditing(false)} disabled={isUpdating} className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded">Cancel</button>
-              <button onClick={handleSaveSponsorDetails} disabled={isUpdating} className="text-sm font-medium text-black bg-[#F1E271] hover:bg-[#e6d766] px-3 py-1 rounded flex items-center gap-1 disabled:opacity-50">
+              <button onClick={handleSaveSponsorDetails} disabled={isUpdating} className="text-sm font-medium text-black bg-brand-primary hover:bg-[#e6d766] px-3 py-1 rounded flex items-center gap-1 disabled:opacity-50">
                 <Check className="h-4 w-4" /> Save
               </button>
             </div>
@@ -171,7 +171,7 @@ export function DetailsTab({ deal, onUpdate, isUpdating, setIsUpdating, setError
               onClick={handleToggleLogoPublic}
               disabled={!sponsor.logo_url || isUpdating}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                sponsor.is_logo_public ? 'bg-[#F1E271]' : 'bg-gray-200'
+                sponsor.is_logo_public ? 'bg-brand-primary' : 'bg-gray-200'
               } ${!sponsor.logo_url || isUpdating ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${sponsor.is_logo_public ? 'translate-x-6' : 'translate-x-1'}`} />
@@ -222,7 +222,7 @@ export function DetailsTab({ deal, onUpdate, isUpdating, setIsUpdating, setError
 }
 
 function EditForm({ form, onChange }: { form: EditFormData; onChange: (field: keyof EditFormData, value: string) => void }) {
-  const inputClass = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent";
+  const inputClass = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent";
 
   return (
     <div className="space-y-6">

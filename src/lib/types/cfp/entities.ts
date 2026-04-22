@@ -44,6 +44,7 @@ export interface CfpSpeaker {
   departure_airport: string | null; // Closest airport IATA code for travel planning
   special_requirements: string | null; // Accessibility needs, dietary restrictions, etc.
   company_interested_in_sponsoring: boolean | null;
+  is_admin_managed: boolean;
   is_visible: boolean;
   is_featured: boolean;
   speaker_role: CfpSpeakerRole;

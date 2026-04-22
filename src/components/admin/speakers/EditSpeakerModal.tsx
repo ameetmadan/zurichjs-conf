@@ -3,7 +3,7 @@
  * Update speaker profile and social links
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, User } from 'lucide-react';
 import type { SpeakerWithSessions } from './types';
 
@@ -11,11 +11,21 @@ type SpeakerImageField = 'profile_image_url' | 'portrait_foreground_url' | 'port
 
 interface EditSpeakerModalProps {
   speaker: SpeakerWithSessions;
+  canRemoveFromList?: boolean;
+  isRemovingFromList?: boolean;
   onClose: () => void;
   onUpdated: () => void;
+  onRemoveFromList?: (speaker: SpeakerWithSessions) => void;
 }
 
-export function EditSpeakerModal({ speaker, onClose, onUpdated }: EditSpeakerModalProps) {
+export function EditSpeakerModal({
+  speaker,
+  canRemoveFromList = false,
+  isRemovingFromList = false,
+  onClose,
+  onUpdated,
+  onRemoveFromList,
+}: EditSpeakerModalProps) {
   const [formData, setFormData] = useState({
     first_name: speaker.first_name || '',
     last_name: speaker.last_name || '',
@@ -52,12 +62,31 @@ export function EditSpeakerModal({ speaker, onClose, onUpdated }: EditSpeakerMod
   };
 
   const inputClass = (isMissing: boolean, extra = '') =>
-    `w-full px-3 py-2 border rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none ${
+    `w-full px-3 py-2 border rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none ${
       isMissing ? 'border-red-400 bg-red-50' : 'border-gray-300'
     } ${extra}`;
 
   const labelClass = (isMissing: boolean, extra = 'text-sm') =>
     `block ${extra} font-medium mb-1 ${isMissing ? 'text-red-700' : 'text-black'}`;
+
+  const hasChanges = Object.entries(formData).some(([key, value]) => {
+    const originalValue = speaker[key as keyof typeof formData] ?? '';
+    return value !== originalValue;
+  }) ||
+    profileImageUrl !== speaker.profile_image_url ||
+    portraitForegroundUrl !== speaker.portrait_foreground_url ||
+    portraitBackgroundUrl !== speaker.portrait_background_url;
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !hasChanges && !isSubmitting && !isRemovingFromList) {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [hasChanges, isRemovingFromList, isSubmitting, onClose]);
 
   const handleImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -304,7 +333,7 @@ export function EditSpeakerModal({ speaker, onClose, onUpdated }: EditSpeakerMod
             <select
               value={formData.speaker_role}
               onChange={(e) => setFormData({ ...formData, speaker_role: e.target.value as 'speaker' | 'mc' })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-[#F1E271] focus:outline-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-brand-primary focus:outline-none"
             >
               <option value="speaker">Speaker</option>
               <option value="mc">MC</option>
@@ -368,17 +397,31 @@ export function EditSpeakerModal({ speaker, onClose, onUpdated }: EditSpeakerMod
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-black cursor-pointer">
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-4 py-2 bg-[#F1E271] hover:bg-[#e8d95e] text-black font-semibold rounded-lg disabled:opacity-50 cursor-pointer"
-            >
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
-            </button>
+          <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            {canRemoveFromList ? (
+              <button
+                type="button"
+                onClick={() => onRemoveFromList?.(speaker)}
+                disabled={isRemovingFromList || isSubmitting}
+                className="w-fit text-sm font-medium text-red-600 transition-colors hover:text-red-700 disabled:cursor-wait disabled:opacity-60 cursor-pointer"
+              >
+                {isRemovingFromList ? 'Reverting...' : 'Revert include'}
+              </button>
+            ) : (
+              <span />
+            )}
+            <div className="flex justify-end gap-3">
+              <button type="button" onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-black cursor-pointer">
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-4 py-2 bg-brand-primary hover:bg-[#e8d95e] text-black font-semibold rounded-lg disabled:opacity-50 cursor-pointer"
+              >
+                {isSubmitting ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
           </div>
         </form>
       </div>

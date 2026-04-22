@@ -95,7 +95,7 @@ export function SponsorDetailModal({ deal, onClose, onUpdate }: SponsorDetailMod
           {/* Desktop: Underline tabs */}
           <nav className="hidden sm:flex gap-6">
             {tabs.map((tab) => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2 py-4 border-b-2 text-sm font-medium transition-colors whitespace-nowrap ${activeTab === tab.id ? 'border-[#F1E271] text-black' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2 py-4 border-b-2 text-sm font-medium transition-colors whitespace-nowrap ${activeTab === tab.id ? 'border-brand-primary text-black' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
                 <tab.icon className="h-4 w-4" /><span>{tab.label}</span>
               </button>
             ))}

@@ -29,7 +29,7 @@ export function SpeakerAvatar({ speaker, size = 'md' }: SpeakerAvatarProps) {
   }
 
   return (
-    <div className={`${sizeClasses} rounded-full bg-gradient-to-br from-[#F1E271] to-[#e8d95e] flex items-center justify-center font-semibold text-black flex-shrink-0`}>
+    <div className={`${sizeClasses} rounded-full bg-gradient-to-br from-brand-primary to-[#e8d95e] flex items-center justify-center font-semibold text-black flex-shrink-0`}>
       {initials}
     </div>
   );

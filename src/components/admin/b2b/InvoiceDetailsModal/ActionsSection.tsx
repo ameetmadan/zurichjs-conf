@@ -52,7 +52,7 @@ export function ActionsSection({ invoice, onUpdate, setError }: ActionsSectionPr
             <button
               onClick={() => handleStatusUpdate('sent')}
               disabled={!!actionLoading}
-              className="px-4 py-2.5 bg-[#F1E271] text-black font-medium rounded-lg hover:bg-[#e6d766] transition-colors disabled:opacity-50 cursor-pointer"
+              className="px-4 py-2.5 bg-brand-primary text-black font-medium rounded-lg hover:bg-[#e6d766] transition-colors disabled:opacity-50 cursor-pointer"
             >
               {actionLoading === 'sent' ? 'Updating...' : 'Mark as Sent'}
             </button>

@@ -133,7 +133,7 @@ export function AddSponsorModal({
                   required
                   value={formData.companyName}
                   onChange={(e) => updateField('companyName', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder="Acme Corp"
                 />
               </div>
@@ -146,7 +146,7 @@ export function AddSponsorModal({
                   type="url"
                   value={formData.companyWebsite}
                   onChange={(e) => updateField('companyWebsite', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder="https://example.com"
                 />
               </div>
@@ -159,7 +159,7 @@ export function AddSponsorModal({
                   type="text"
                   value={formData.vatId}
                   onChange={(e) => updateField('vatId', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder="CHE-123.456.789"
                 />
               </div>
@@ -183,7 +183,7 @@ export function AddSponsorModal({
                   required
                   value={formData.contactName}
                   onChange={(e) => updateField('contactName', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder="John Doe"
                 />
               </div>
@@ -197,7 +197,7 @@ export function AddSponsorModal({
                   required
                   value={formData.contactEmail}
                   onChange={(e) => updateField('contactEmail', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder="john@example.com"
                 />
               </div>
@@ -210,7 +210,7 @@ export function AddSponsorModal({
                   type="tel"
                   value={formData.contactPhone}
                   onChange={(e) => updateField('contactPhone', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder="+41 44 123 45 67"
                 />
               </div>
@@ -234,7 +234,7 @@ export function AddSponsorModal({
                   required
                   value={formData.billingAddress.street}
                   onChange={(e) => updateAddress('street', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder="123 Main St"
                 />
               </div>
@@ -248,7 +248,7 @@ export function AddSponsorModal({
                   required
                   value={formData.billingAddress.city}
                   onChange={(e) => updateAddress('city', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder="Zürich"
                 />
               </div>
@@ -262,7 +262,7 @@ export function AddSponsorModal({
                   required
                   value={formData.billingAddress.postalCode}
                   onChange={(e) => updateAddress('postalCode', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder="8000"
                 />
               </div>
@@ -276,7 +276,7 @@ export function AddSponsorModal({
                   required
                   value={formData.billingAddress.country}
                   onChange={(e) => updateAddress('country', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder="Switzerland"
                 />
               </div>
@@ -292,7 +292,7 @@ export function AddSponsorModal({
               value={formData.internalNotes}
               onChange={(e) => updateField('internalNotes', e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent resize-none"
               placeholder="Add any notes (not visible on invoices)"
             />
           </div>
@@ -305,7 +305,7 @@ export function AddSponsorModal({
                   type="checkbox"
                   checked={createDealAfter}
                   onChange={(e) => setCreateDealAfter(e.target.checked)}
-                  className="rounded border-gray-300 text-[#F1E271] focus:ring-[#F1E271]"
+                  className="rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
                 />
                 <span className="text-sm font-medium text-gray-700">
                   Create sponsorship deal immediately
@@ -321,7 +321,7 @@ export function AddSponsorModal({
                     <select
                       value={selectedTier}
                       onChange={(e) => setSelectedTier(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                     >
                       {tiers.map((tier) => (
                         <option key={tier.id} value={tier.id}>
@@ -338,7 +338,7 @@ export function AddSponsorModal({
                     <select
                       value={selectedCurrency}
                       onChange={(e) => setSelectedCurrency(e.target.value as SponsorshipCurrency)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F1E271] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                     >
                       <option value="CHF">CHF</option>
                       <option value="EUR">EUR</option>
@@ -362,7 +362,7 @@ export function AddSponsorModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto px-4 py-2.5 sm:py-2 text-sm font-medium text-black bg-[#F1E271] hover:bg-[#e6d766] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-4 py-2.5 sm:py-2 text-sm font-medium text-black bg-brand-primary hover:bg-[#e6d766] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>

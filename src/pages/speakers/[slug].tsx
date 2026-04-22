@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { SEO } from '@/components/SEO';
 import { Button, Heading, SocialIcon } from '@/components/atoms';
 import { DayTabs, SpeakerActionSlider } from '@/components/molecules';
@@ -11,7 +12,7 @@ import { analytics } from '@/lib/analytics';
 import { shareNatively } from '@/lib/native-share';
 import { fetchPublicSpeakers } from '@/lib/queries/speakers';
 import type { PublicSession, PublicSpeaker } from '@/lib/types/cfp';
-import { BellPlus, Share2 } from 'lucide-react';
+import { BellPlus, ChevronLeft, Share2 } from 'lucide-react';
 
 type SessionTabId = 'talks' | 'workshops' | 'sessions';
 
@@ -277,7 +278,7 @@ export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
             <main className="min-h-screen bg-brand-white">
                 <section className="relative isolate overflow-hidden bg-brand-yellow-main">
                     <div className="absolute inset-0" aria-hidden="true">
-                        {hasSplitPortraitHero ? (
+                        {hasSplitPortraitHero || heroBackgroundUrl ? (
                             <div className="absolute inset-y-0 left-0 hidden md:block md:w-[58%]">
                                 {heroBackgroundUrl ? (
                                     <>
@@ -318,8 +319,8 @@ export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
                                     <>
                                         <div className="pointer-events-none absolute left-[48%] top-[22%] z-0 h-28 w-[390px] -translate-x-1/2" aria-hidden="true">
                                             <span className="absolute left-[4%] top-0 block h-8 w-[82%] -rotate-8 rounded-full bg-brand-yellow-main" />
-                                            <span className="absolute left-[18%] top-10 block h-8 w-[78%] -rotate-8 rounded-full bg-brand-blue" />
-                                            <span className="absolute left-[0%] top-20 block h-8 w-[90%] -rotate-8 rounded-full bg-brand-white" />
+                                            <span className="absolute left-[18%] top-9 block h-8 w-[78%] -rotate-8 rounded-full bg-brand-blue" />
+                                            <span className="absolute left-[0%] top-21 block h-8 w-[90%] -rotate-8 rounded-full bg-brand-white" />
                                         </div>
                                         <Image
                                             src={heroForegroundUrl}
@@ -363,6 +364,13 @@ export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
 
                 <SectionContainer className="py-16 md:py-20">
                     <div className="mx-auto max-w-screen-lg">
+                        <Link
+                            href="/speakers"
+                            className="mb-5 inline-flex items-center gap-1 text-xs font-medium text-brand-gray-medium transition-colors hover:text-brand-black"
+                        >
+                            <ChevronLeft className="size-3.5" aria-hidden="true" />
+                            All speakers
+                        </Link>
                         <p className="text-base leading-8 text-brand-gray-darkest sm:text-lg">
                             {speaker.bio || `${fullName} is part of the ZurichJS Conf lineup. Session details will be announced soon.`}
                         </p>

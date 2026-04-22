@@ -62,7 +62,7 @@ export function AnalyticsTab({ analytics, isLoading }: AnalyticsTabProps) {
           </div>
           <p className="text-2xl font-bold text-black">{formatCurrency(summary.netRevenue)}</p>
         </div>
-        <div className="bg-gradient-to-br from-[#F1E271]/20 to-[#F1E271]/5 rounded-lg p-4 border border-[#F1E271]/30">
+        <div className="bg-gradient-to-br from-brand-primary/20 to-brand-primary/5 rounded-lg p-4 border border-brand-primary/30">
           <div className="flex items-center gap-2 mb-1">
             <Ticket className="h-4 w-4 text-[#B8A830]" />
             <span className="text-xs text-[#B8A830] font-medium">Coupon Uses</span>
