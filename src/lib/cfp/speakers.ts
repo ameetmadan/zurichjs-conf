@@ -141,6 +141,21 @@ export async function getAcceptedSpeakers(): Promise<CfpSpeaker[]> {
   return (data || []) as CfpSpeaker[];
 }
 
+export async function getAcceptedSpeakerCount(): Promise<number> {
+  const supabase = createCfpServiceClient();
+  const { data, error } = await supabase
+    .from('cfp_submissions')
+    .select('speaker_id')
+    .eq('status', 'accepted');
+
+  if (error) {
+    console.error('[CFP Speakers] Error fetching accepted speaker count:', error.message);
+    return 0;
+  }
+
+  return new Set((data || []).map((submission: { speaker_id: string }) => submission.speaker_id)).size;
+}
+
 /**
  * Delete speaker (admin only)
  */
@@ -322,8 +337,8 @@ export async function getVisibleSpeakersWithSessions(): Promise<PublicSpeaker[]>
       bio: speaker.bio,
       profile_image_url: speaker.profile_image_url,
       header_image_url: null,
-      portrait_foreground_url: null,
-      portrait_background_url: null,
+      portrait_foreground_url: speaker.portrait_foreground_url,
+      portrait_background_url: speaker.portrait_background_url,
       is_featured: speaker.is_featured ?? false,
       speaker_role: 'speaker_role' in speaker ? speaker.speaker_role ?? 'speaker' : 'speaker',
       socials: {
@@ -333,17 +348,16 @@ export async function getVisibleSpeakersWithSessions(): Promise<PublicSpeaker[]>
         bluesky_handle: speaker.bluesky_handle,
         mastodon_handle: speaker.mastodon_handle,
       },
+      assigned_session_kinds: {
+        talks: false,
+        workshops: false,
+      },
       sessions: [],
     });
   }
 
   for (const speaker of visibleSpeakerRows) {
     for (const s of (speaker.cfp_submissions || []).filter((entry: SubmissionData) => entry.status === 'accepted')) {
-      const scheduleRow = scheduleRowMap.get(s.id);
-      if (!scheduleRow) {
-        continue;
-      }
-
       const participantIds = [
         speaker.id,
         ...(participantsBySubmissionId.get(s.id) || [])
@@ -351,6 +365,25 @@ export async function getVisibleSpeakersWithSessions(): Promise<PublicSpeaker[]>
           .filter((speakerId) => visibleSpeakerIdSet.has(speakerId)),
       ];
       const uniqueParticipantIds = Array.from(new Set(participantIds));
+
+      for (const participantId of uniqueParticipantIds) {
+        const publicSpeaker = publicSpeakersById.get(participantId);
+        if (!publicSpeaker) {
+          continue;
+        }
+
+        if (s.submission_type === 'workshop') {
+          publicSpeaker.assigned_session_kinds.workshops = true;
+        } else if (s.submission_type === 'standard' || s.submission_type === 'lightning') {
+          publicSpeaker.assigned_session_kinds.talks = true;
+        }
+      }
+
+      const scheduleRow = scheduleRowMap.get(s.id);
+      if (!scheduleRow) {
+        continue;
+      }
+
       const publicSessionSpeakers = uniqueParticipantIds
         .map((speakerId): PublicSessionSpeaker | null => {
           const preview = speakerPreviewsById.get(speakerId);

@@ -111,7 +111,11 @@ export default function SpeakersPage() {
   }, []);
 
   const speakers = data?.speakers ?? [];
+  const placeholderSpeakerCount = selectedTags.length === 0
+    ? Math.max(0, (data?.acceptedSpeakerCount ?? speakers.length) - speakers.length)
+    : 0;
   const hasSpeakers = speakers.length > 0;
+  const hasLineupCards = hasSpeakers || placeholderSpeakerCount > 0;
   const hasPublicTalks = speakers.some((speaker) =>
     speaker.sessions.some((session) => session.type === 'standard' || session.type === 'lightning')
   );
@@ -270,7 +274,7 @@ export default function SpeakersPage() {
                     Loading speakers...
                   </div>
                 </div>
-              ) : !hasSpeakers ? (
+              ) : !hasLineupCards ? (
                 <div className="rounded-3xl bg-brand-gray-lightest px-6 py-12 text-center">
                   <Heading level="h2" variant="light" className="text-lg font-bold">
                     No speakers announced yet
@@ -286,28 +290,31 @@ export default function SpeakersPage() {
                 >
                   <div className="grid grid-cols-[repeat(auto-fill,minmax(var(--card-size),1fr))] auto-rows-fr gap-4">
                     {visibleSpeakers.map((speaker) => {
-                      const hasPublicSession = speaker.sessions.length > 0;
-
                       const cardProps = {
-                        key: speaker.id,
                         variant: viewMode,
                         header: speaker.header_image_url || undefined,
                         avatar: speaker.profile_image_url,
                         name: [speaker.first_name, speaker.last_name].filter(Boolean).join(' '),
                         title: [speaker.job_title, speaker.company].filter(Boolean).join(' @'),
-                        badge: speaker.speaker_role === 'mc' ? 'MC' : undefined,
                         footer: speaker.sessions?.[0]?.title || 'To be announced',
                       };
 
-                      return hasPublicSession ? (
+                      return (
                         <SpeakerCard
+                          key={speaker.id}
                           {...cardProps}
                           to={`/speakers/${speaker.slug}`}
                         />
-                      ) : (
-                        <SpeakerCard {...cardProps} />
                       );
                     })}
+                    {Array.from({ length: placeholderSpeakerCount }).map((_, index) => (
+                      <SpeakerCard
+                        key={`speaker-placeholder-${index}`}
+                        variant={viewMode}
+                        name="To be announced"
+                        placeholder
+                      />
+                    ))}
                   </div>
                 </div>
               ) : (
@@ -329,7 +336,7 @@ export default function SpeakersPage() {
               )}
             </div>
 
-            {hasSpeakers ? (
+            {hasLineupCards ? (
               <div className="mt-20">
                 <p className="mb-4">This view doesn&#39;t work for you?</p>
                 <ul className="flex flex-col w-fit ml-6 list-disc gap-2">

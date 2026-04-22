@@ -12,6 +12,7 @@ type SharedSpeakerCardProps = {
   title?: string;
   badge?: string;
   footer?: string;
+  placeholder?: boolean;
   className?: string;
 };
 
@@ -40,12 +41,21 @@ function SpeakerCardInner({
   title,
   badge,
   footer,
+  placeholder = false,
 }: SharedSpeakerCardProps) {
   // TODO: Rework the sliding footer so it overlays and covers the name/role area,
   // instead of appearing only below it. This should match the intended speaker card interaction.
   const isCompact = variant === 'compact';
   const isDefault = variant === 'default';
   const isFull = variant === 'full';
+
+  if (placeholder) {
+    return (
+      <div className="relative flex h-full min-h-48 items-center justify-center overflow-hidden rounded-2xl bg-brand-gray-lightest px-4 py-8">
+        <p className="text-sm font-bold text-brand-gray-medium">To be announced</p>
+      </div>
+    );
+  }
 
   return (
           <div className="bg-white relative rounded-2xl overflow-hidden h-full transition-all duration-300

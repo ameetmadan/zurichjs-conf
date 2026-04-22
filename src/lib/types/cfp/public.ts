@@ -58,5 +58,9 @@ export interface PublicSpeaker {
     bluesky_handle: string | null;
     mastodon_handle: string | null;
   };
+  assigned_session_kinds: {
+    talks: boolean;
+    workshops: boolean;
+  };
   sessions: PublicSession[];
 }

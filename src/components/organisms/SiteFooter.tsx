@@ -22,7 +22,6 @@ const about = {
 const conferenceLinks = {
   title: 'Conference',
   links: [
-    { label: 'Call for Papers', href: '/cfp' },
     { label: 'Speakers', href: '/speakers' },
     { label: 'Schedule', href: '/schedule' },
     { label: 'Talks', href: '/talks' },
@@ -33,6 +32,7 @@ const conferenceLinks = {
     { label: 'Trip Cost Calculator', href: '/trip-cost' },
     { label: 'Convince Your Boss', href: '/convince-your-boss' },
     { label: 'Blog', href: '/blog' },
+    { label: 'Call for Papers', href: '/cfp' },
   ],
 } as const;
 

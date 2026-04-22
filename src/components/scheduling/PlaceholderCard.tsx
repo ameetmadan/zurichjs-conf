@@ -5,7 +5,7 @@ import { formatTimeRange } from './utils';
 export interface PlaceholderCardProps {
   id?: string;
   title?: string;
-  startTime: string;
+  startTime?: string | null;
   durationMinutes: number;
   variant?: 'plain' | 'slot';
   className?: string;
@@ -19,10 +19,12 @@ export function PlaceholderCard({
   variant = 'slot',
   className,
 }: PlaceholderCardProps) {
+  const timeRange = formatTimeRange(startTime, durationMinutes);
+
   if (variant === 'plain') {
     return (
-      <article id={id} className={cn('rounded-[1.25rem] px-3 py-2', className)}>
-        <p className="text-sm text-brand-gray-medium">{formatTimeRange(startTime, durationMinutes)}</p>
+      <article id={id} className={cn('rounded-2xl px-3 py-2', className)}>
+        {timeRange ? <p className="text-sm text-brand-gray-medium">{timeRange}</p> : null}
         <h3 className="mt-1 text-lg font-bold leading-tight text-brand-black">{title}</h3>
       </article>
     );
@@ -31,11 +33,11 @@ export function PlaceholderCard({
   return (
     <article
       id={id}
-      className={cn('rounded-[1.25rem] border border-brand-gray-lightest bg-brand-gray-lightest p-5', className)}
+      className={cn('rounded-2xl border border-brand-gray-lightest bg-brand-gray-lightest p-5', className)}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <p className="text-sm text-brand-gray-medium">{formatTimeRange(startTime, durationMinutes)}</p>
+          {timeRange ? <p className="text-sm text-brand-gray-medium">{timeRange}</p> : null}
           <h3 className="mt-1 text-lg font-bold leading-tight text-brand-black">{title}</h3>
         </div>
         <ChevronRight className="mt-1 size-5 shrink-0 text-brand-black" />

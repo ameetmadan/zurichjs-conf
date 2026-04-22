@@ -172,7 +172,7 @@ function ScheduleSkeleton() {
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={index}
-          className="rounded-[1.25rem] border border-brand-gray-lightest bg-brand-gray-lightest p-5 animate-pulse"
+          className="rounded-2xl border border-brand-gray-lightest bg-brand-gray-lightest p-5 animate-pulse"
         >
           <div className="h-3 w-20 rounded bg-brand-gray-light/60" />
           <div className="mt-3 h-5 w-3/4 rounded bg-brand-gray-light/70" />

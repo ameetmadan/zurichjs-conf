@@ -5,7 +5,7 @@
 
 import { queryOptions } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query-keys';
-import { getVisibleSpeakersWithSessions } from '@/lib/cfp/speakers';
+import { getAcceptedSpeakerCount, getVisibleSpeakersWithSessions } from '@/lib/cfp/speakers';
 import type { PublicSpeaker } from '@/lib/types/cfp';
 
 export interface SpeakerQueryParams {
@@ -17,6 +17,7 @@ export interface SpeakerQueryParams {
  */
 export interface PublicSpeakersResponse {
   speakers: PublicSpeaker[];
+  acceptedSpeakerCount: number;
 }
 
 /**
@@ -28,11 +29,15 @@ export interface PublicSpeakersResponse {
  */
 export async function fetchPublicSpeakers(params?: SpeakerQueryParams): Promise<PublicSpeakersResponse> {
   if (typeof window === 'undefined') {
-    let speakers = await getVisibleSpeakersWithSessions();
+    const [visibleSpeakers, acceptedSpeakerCount] = await Promise.all([
+      getVisibleSpeakersWithSessions(),
+      getAcceptedSpeakerCount(),
+    ]);
+    let speakers = visibleSpeakers;
     if (params?.featured) {
       speakers = speakers.filter((s) => s.is_featured);
     }
-    return { speakers };
+    return { speakers, acceptedSpeakerCount };
   }
 
   const url = params?.featured ? '/api/speakers?featured=true' : '/api/speakers';

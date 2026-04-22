@@ -13,7 +13,7 @@ import { fetchPublicSpeakers } from '@/lib/queries/speakers';
 import type { PublicSession, PublicSpeaker } from '@/lib/types/cfp';
 import { BellPlus, Share2 } from 'lucide-react';
 
-type SessionTabId = 'talks' | 'workshops';
+type SessionTabId = 'talks' | 'workshops' | 'sessions';
 
 interface SpeakerDetailPageProps {
     speaker: PublicSpeaker;
@@ -56,6 +56,10 @@ function sortSessions(sessions: PublicSession[]) {
 
         return left.title.localeCompare(right.title);
     });
+}
+
+function isSessionTabId(tabId: string): tabId is SessionTabId {
+    return tabId === 'talks' || tabId === 'workshops' || tabId === 'sessions';
 }
 
 function getSpeakerSocialLinks(speaker: PublicSpeaker): SpeakerSocialLink[] {
@@ -177,35 +181,66 @@ function SpeakerHeroDetails({
     );
 }
 
+function UnannouncedSessionNotice() {
+  return (
+    <article aria-disabled="true">
+      <h3 className="text-lg font-bold leading-tight">To be announced</h3>
+    </article>
+  );
+}
+
+function McProfileNotice({ firstName }: { firstName: string }) {
+  return (
+    <article>
+      <h2 className="text-lg font-bold leading-tight">{firstName} is hosting the day</h2>
+      <p className="mt-3 max-w-2xl text-sm leading-7">
+        As MC, {firstName} will guide the room, introduce speakers, and keep the ZurichJS Conf program moving.
+      </p>
+    </article>
+  );
+}
+
 export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
     const fullName = [speaker.first_name, speaker.last_name].filter(Boolean).join(' ');
     const role = [speaker.job_title, speaker.company].filter(Boolean).join(' @ ');
-    const hasSplitPortraitHero = Boolean(speaker.portrait_foreground_url);
-    const heroBackgroundUrl = hasSplitPortraitHero ? speaker.portrait_background_url : null;
-    const heroForegroundUrl = hasSplitPortraitHero ? speaker.portrait_foreground_url : null;
+    const heroForegroundUrl = speaker.portrait_foreground_url?.trim() || null;
+    const heroBackgroundUrl = speaker.portrait_background_url?.trim() || null;
+    const hasSplitPortraitHero = Boolean(heroForegroundUrl);
     const avatarUrl = speaker.profile_image_url;
     const socialLinks = getSpeakerSocialLinks(speaker);
+    const isMc = speaker.speaker_role === 'mc';
     const talks = sortSessions(speaker.sessions.filter((session) => session.type === 'standard' || session.type === 'lightning'));
     const workshops = sortSessions(speaker.sessions.filter((session) => session.type === 'workshop'));
-    const hasSessions = speaker.sessions.length > 0;
-    const sessionTabs: SessionTab[] = [
+    const hasAssignedTalks = speaker.assigned_session_kinds.talks || talks.length > 0;
+    const hasAssignedWorkshops = speaker.assigned_session_kinds.workshops || workshops.length > 0;
+    const hasKnownSessionConnection = hasAssignedTalks || hasAssignedWorkshops;
+    const sessionTabs: SessionTab[] = hasKnownSessionConnection ? [
         {
             id: 'workshops',
             label: `${speaker.first_name}'s workshops`,
             summary: 'September 10, 2026',
-            disabled: workshops.length === 0,
+            disabled: !hasAssignedWorkshops,
             sessions: workshops,
         },
         {
             id: 'talks',
             label: `${speaker.first_name}'s talks`,
             summary: 'September 11, 2026',
-            disabled: talks.length === 0,
+            disabled: !hasAssignedTalks,
             sessions: talks,
         },
+    ] : [
+        {
+            id: 'sessions',
+            label: `${speaker.first_name}'s sessions`,
+            summary: 'To be announced',
+            disabled: false,
+            sessions: [],
+        },
     ];
-  const [activeTab, setActiveTab] = useState<SessionTabId>(talks.length > 0 ? 'talks' : 'workshops');
-  const currentTab = sessionTabs.find((tab) => tab.id === activeTab) ?? sessionTabs[0] ?? null;
+  const initialSessionTab = hasAssignedTalks ? 'talks' : hasAssignedWorkshops ? 'workshops' : 'sessions';
+  const [activeTab, setActiveTab] = useState<SessionTabId>(initialSessionTab);
+  const currentTab = sessionTabs.find((tab) => tab.id === activeTab) ?? sessionTabs.find((tab) => !tab.disabled) ?? sessionTabs[0] ?? null;
   const profileUrl = `${BASE_URL}/speakers/${speaker.slug}`;
   const handleDisabledTabClick = (tabId: string) => {
     try {
@@ -281,7 +316,7 @@ export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
                             <div className="relative flex h-[480px] max-h-[480px] items-end justify-start py-10 md:-ml-8 lg:ml-0">
                                 {heroForegroundUrl ? (
                                     <>
-                                        <div className="pointer-events-none absolute left-[48%] top-[16%] z-0 h-28 w-[390px] -translate-x-1/2" aria-hidden="true">
+                                        <div className="pointer-events-none absolute left-[48%] top-[22%] z-0 h-28 w-[390px] -translate-x-1/2" aria-hidden="true">
                                             <span className="absolute left-[4%] top-0 block h-8 w-[82%] -rotate-8 rounded-full bg-brand-yellow-main" />
                                             <span className="absolute left-[18%] top-10 block h-8 w-[78%] -rotate-8 rounded-full bg-brand-blue" />
                                             <span className="absolute left-[0%] top-20 block h-8 w-[90%] -rotate-8 rounded-full bg-brand-white" />
@@ -291,7 +326,7 @@ export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
                                             alt={fullName}
                                             fill
                                             priority
-                                            className="z-10 object-contain object-bottom"
+                                            className="z-10 h-[400px] object-contain object-bottom"
                                             sizes="420px"
                                         />
                                     </>
@@ -329,25 +364,30 @@ export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
                 <SectionContainer className="py-16 md:py-20">
                     <div className="mx-auto max-w-screen-lg">
                         <p className="text-base leading-8 text-brand-gray-darkest sm:text-lg">
-                            {speaker.bio || `${fullName} is part of the ZurichJS Conf lineup. Session details are already available below while we finish the final hero composition.`}
+                            {speaker.bio || `${fullName} is part of the ZurichJS Conf lineup. Session details will be announced soon.`}
                         </p>
 
-                        {hasSessions ? (
-                        <section id="speaker-sessions" className="mt-14">
-                            {sessionTabs.length > 0 ? (
-                                <DayTabs
-                                    tabs={sessionTabs.map((tab) => ({
-                                        id: tab.id,
-                                        label: tab.label,
-                                        date: tab.summary,
-                                        disabled: tab.disabled,
-                                    }))}
-                                    activeTab={currentTab?.id ?? activeTab}
-                                    onTabChange={(tabId) => setActiveTab(tabId as SessionTabId)}
-                                    onDisabledTabClick={handleDisabledTabClick}
-                                    className="pt-0"
-                                />
-                            ) : null}
+                        <section id={isMc ? 'speaker-role' : 'speaker-sessions'} className="mt-14">
+                            {isMc ? (
+                                <McProfileNotice firstName={speaker.first_name} />
+                            ) : (
+                                <>
+                            <DayTabs
+                                tabs={sessionTabs.map((tab) => ({
+                                    id: tab.id,
+                                    label: tab.label,
+                                    date: tab.summary,
+                                    disabled: tab.disabled,
+                                }))}
+                                activeTab={currentTab?.id ?? activeTab}
+                                onTabChange={(tabId) => {
+                                    if (isSessionTabId(tabId)) {
+                                        setActiveTab(tabId);
+                                    }
+                                }}
+                                onDisabledTabClick={handleDisabledTabClick}
+                                className="pt-0"
+                            />
 
                             {currentTab && currentTab.sessions.length > 0 ? (
                                 <div className="mt-8 space-y-5">
@@ -362,9 +402,14 @@ export default function SpeakerDetailPage({ speaker }: SpeakerDetailPageProps) {
                                         />
                                     ))}
                                 </div>
-                            ) : null}
+                            ) : (
+                                <div className="mt-8">
+                                    <UnannouncedSessionNotice />
+                                </div>
+                            )}
+                                </>
+                            )}
                         </section>
-                        ) : null}
                     </div>
                 </SectionContainer>
 

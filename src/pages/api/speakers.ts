@@ -8,12 +8,13 @@
  *
  * Response format:
  * {
- *   speakers: PublicSpeaker[]
+ *   speakers: PublicSpeaker[],
+ *   acceptedSpeakerCount: number
  * }
  */
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getVisibleSpeakersWithSessions } from '@/lib/cfp/speakers';
+import { getAcceptedSpeakerCount, getVisibleSpeakersWithSessions } from '@/lib/cfp/speakers';
 import type { PublicSpeaker } from '@/lib/types/cfp';
 import { logger } from '@/lib/logger';
 
@@ -21,6 +22,7 @@ const log = logger.scope('Speakers API');
 
 interface SpeakersResponse {
   speakers: PublicSpeaker[];
+  acceptedSpeakerCount: number;
 }
 
 interface ErrorResponse {
@@ -36,7 +38,11 @@ export default async function handler(
   }
 
   try {
-    let speakers = await getVisibleSpeakersWithSessions();
+    const [visibleSpeakers, acceptedSpeakerCount] = await Promise.all([
+      getVisibleSpeakersWithSessions(),
+      getAcceptedSpeakerCount(),
+    ]);
+    let speakers = visibleSpeakers;
 
     if (req.query.featured === 'true') {
       speakers = speakers.filter((s) => s.is_featured);
@@ -45,7 +51,7 @@ export default async function handler(
     // Set cache headers for CDN caching (5 minutes)
     res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
 
-    return res.status(200).json({ speakers });
+    return res.status(200).json({ speakers, acceptedSpeakerCount });
   } catch (error) {
     log.error('Error fetching speakers', error);
     return res.status(500).json({ error: 'Internal server error' });

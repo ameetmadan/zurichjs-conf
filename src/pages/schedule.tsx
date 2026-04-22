@@ -4,7 +4,7 @@ import { SEO } from '@/components/SEO';
 import { Button, Heading, Kicker } from '@/components/atoms';
 import { DayTabs } from '@/components/molecules';
 import { ShapedSection, SiteFooter } from '@/components/organisms';
-import { ProgramScheduleItemCard } from '@/components/scheduling';
+import { PlaceholderCard, ProgramScheduleItemCard } from '@/components/scheduling';
 import { publicProgramTabs } from '@/data';
 import { buildPublicProgramScheduleItems, getPublicScheduleRows } from '@/lib/program/schedule';
 import { fetchPublicSpeakers } from '@/lib/queries/speakers';
@@ -71,17 +71,13 @@ export default function SchedulePage({ items }: SchedulePageProps) {
                   />
                 ))
               ) : (
-                <div className="rounded-[1.5rem] border border-dashed border-brand-gray-light bg-brand-white p-8">
-                  <Heading level="h2" variant="light" className="text-xl font-bold">
-                    Schedule will follow
-                  </Heading>
-                  <p className="mt-3 max-w-2xl text-sm leading-7 text-brand-gray-darkest">
-                    We are announcing speakers progressively. The timing for this day will appear here once those sessions are ready.
-                  </p>
-                  <Button variant="primary" size="sm" className="mt-6" asChild href="/speakers">
-                    Meet the speakers
-                  </Button>
-                </div>
+                <PlaceholderCard
+                  id={`schedule-${activeScheduleTab.id}-tba`}
+                  title="To be announced"
+                  startTime={null}
+                  durationMinutes={0}
+                  variant="plain"
+                />
               )}
             </div>
           </div>

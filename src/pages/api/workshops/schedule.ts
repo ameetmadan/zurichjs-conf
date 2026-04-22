@@ -139,10 +139,13 @@ export default async function handler(
       getOfferingsByCfpSubmissionId({ status: 'published' }),
     ]);
 
-    // Non-workshop schedule items continue to come from program_schedule_items.
+    // Visible schedule rows are the source of truth for the public program.
     const builtItems = buildPublicProgramScheduleItems(scheduleRows, speakers);
     const nonWorkshopItems = builtItems.filter(
       (item) => item.session_kind !== 'workshop'
+    );
+    const scheduledWorkshopItems = builtItems.filter(
+      (item) => item.session_kind === 'workshop'
     );
 
     // Workshops with a published offering. Filtering by lookup_key also
@@ -169,14 +172,20 @@ export default async function handler(
       offeringsBySubmissionId = buildSummaryMap(workshops, summaries);
     }
 
-    // Only keep synthesized workshop items that (a) have a published offering
-    // AND (b) have a resolvable Stripe price — otherwise the card on /workshops
-    // can't show a Buy button anyway.
-    const visibleWorkshopItems = synthesizedWorkshopItems.filter((item) =>
-      item.submission_id ? Boolean(offeringsBySubmissionId[item.submission_id]) : false
+    const scheduledWorkshopSubmissionIds = new Set(
+      scheduledWorkshopItems
+        .map((item) => item.submission_id)
+        .filter((submissionId): submissionId is string => Boolean(submissionId))
+    );
+    const extraOfferingWorkshopItems = synthesizedWorkshopItems.filter((item) =>
+      item.submission_id ? !scheduledWorkshopSubmissionIds.has(item.submission_id) : true
     );
 
-    const merged = [...nonWorkshopItems, ...visibleWorkshopItems].sort(compareByDateAndStart);
+    const merged = [
+      ...nonWorkshopItems,
+      ...scheduledWorkshopItems,
+      ...extraOfferingWorkshopItems,
+    ].sort(compareByDateAndStart);
 
     res.status(200).json({
       items: merged,

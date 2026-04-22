@@ -213,7 +213,7 @@ export function SessionCard({
         </Button>
       </div>
 
-      <div className="flex flex-col items-end gap-3 pt-6 md:flex-row md:items-center md:gap-4">
+      <div className="flex flex-col gap-3 pt-6 md:flex-row md:items-center md:gap-4">
         {buyEnabled && offering ? (
           <WorkshopBuyButton offering={offering} title={session.title} />
         ) : null}
@@ -255,7 +255,7 @@ export function SessionCard({
     <ScheduleCard
       id={resolvedId}
       className={cn(
-        'rounded-[1.25rem] border p-5',
+        'rounded-2xl border p-5',
         isWorkshop || isPanel ? 'border-brand-gray-lightest bg-brand-gray-lightest' : 'border-brand-gray-light bg-brand-white',
         className
       )}
